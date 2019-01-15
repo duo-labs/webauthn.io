@@ -2,14 +2,15 @@ package models
 
 import (
 	"crypto/rand"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"time"
 
 	"github.com/duo-labs/webauthn.io/config"
+	log "github.com/duo-labs/webauthn.io/logger"
 
 	_ "github.com/go-sql-driver/mysql" // Blank import needed to import mysql
 	"github.com/jinzhu/gorm"
@@ -22,14 +23,20 @@ var err error
 // ErrUsernameTaken is thrown when a user attempts to register a username that is taken.
 var ErrUsernameTaken = errors.New("username already taken")
 
-// Logger is a global logger used to show informational, warning, and error messages
-var Logger = log.New(os.Stdout, " ", log.Ldate|log.Ltime|log.Lshortfile)
-
 // Copy of auth.GenerateSecureKey to prevent cyclic import with auth library
 func generateSecureKey() string {
 	k := make([]byte, 32)
 	io.ReadFull(rand.Reader, k)
 	return fmt.Sprintf("%x", k)
+}
+
+// BytesToID converts a byte slice to a uint. This is needed because the
+// WebAuthn specification deals with byte buffers, while the primary keys in
+// our database are uints.
+func BytesToID(buf []byte) uint {
+	// TODO: Probably want to catch the number of bytes converted in production
+	id, _ := binary.Uvarint(buf)
+	return uint(id)
 }
 
 // Setup initializes the Conn object
@@ -45,7 +52,7 @@ func Setup(config *config.Config) error {
 		return err
 	}
 	db.LogMode(false)
-	db.SetLogger(Logger)
+	db.SetLogger(log.Logger)
 	db.DB().SetMaxOpenConns(1)
 	if err != nil {
 		return err
@@ -53,11 +60,9 @@ func Setup(config *config.Config) error {
 	// Migrate up to the latest version
 	//If the database didn't exist, we need to create the admin user
 	err := db.AutoMigrate(
-		&RelyingParty{},
 		&User{},
 		&Credential{},
-		&PublicKey{},
-		&SessionData{},
+		&Authenticator{},
 	).Error
 
 	if err != nil {
@@ -71,26 +76,12 @@ func Setup(config *config.Config) error {
 	if createDb {
 		// Create the default user
 		initUser := User{
-			Name:        "admin",
-			DisplayName: "Mr. Admin Face",
+			Username:    "admin",
+			DisplayName: "Example Admin",
 		}
-		// Create the default relying party
-		initRP := RelyingParty{
-			ID:          config.HostAddress,
-			DisplayName: "Acme, Inc",
-			Icon:        "lol.catpics.png",
-			Users:       []User{initUser},
-		}
-
-		err = db.Save(&initRP).Error
-		if err != nil {
-			Logger.Println(err)
-			return err
-		}
-
 		err = db.Save(&initUser).Error
 		if err != nil {
-			Logger.Println(err)
+			log.Infof("error creating initial user: %s", err)
 			return err
 		}
 	}

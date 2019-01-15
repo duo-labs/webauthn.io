@@ -9,26 +9,30 @@ import (
 	"log"
 
 	"github.com/duo-labs/webauthn.io/config"
+	"github.com/duo-labs/webauthn.io/session"
+	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 )
-
-var store = sessions.NewCookieStore([]byte("duo-rox"))
 
 // Timeout is the number of seconds to attempt a graceful shutdown, or
 // for timing out read/write operations
 const Timeout = 5 * time.Second
 
+// Option is an option that sets a particular value for the server
+type Option func(*Server)
+
 // Server is a configurable HTTP server that implements a demo of the WebAuthn
 // specification
 type Server struct {
-	server *http.Server
-	config *config.Config
+	server   *http.Server
+	config   *config.Config
+	webauthn *webauthn.WebAuthn
+	store    *session.Store
 }
 
 // NewServer returns a new instance of a Server configured with the provided
 // configuration
-func NewServer(config *config.Config) *Server {
+func NewServer(config *config.Config, opts ...Option) (*Server, error) {
 	addr := net.JoinHostPort(config.HostAddress, config.HostPort)
 	if config.HasProxy {
 		addr = config.HostPort
@@ -38,12 +42,32 @@ func NewServer(config *config.Config) *Server {
 		ReadTimeout:  Timeout,
 		WriteTimeout: Timeout,
 	}
+	defaultStore, err := session.NewStore()
+	if err != nil {
+		return nil, err
+	}
+	defaultWebAuthn, _ := webauthn.New(&webauthn.Config{
+		RPDisplayName: config.HostAddress,
+		RPID:          config.HostAddress,
+	})
 	ws := &Server{
-		server: defaultServer,
-		config: config,
+		config:   config,
+		server:   defaultServer,
+		store:    defaultStore,
+		webauthn: defaultWebAuthn,
+	}
+	for _, opt := range opts {
+		opt(ws)
 	}
 	ws.registerRoutes()
-	return ws
+	return ws, nil
+}
+
+// WithWebAuthn sets the webauthn configuration for the server
+func WithWebAuthn(w *webauthn.WebAuthn) Option {
+	return func(ws *Server) {
+		ws.webauthn = w
+	}
 }
 
 // Start starts the underlying HTTP server
@@ -61,18 +85,22 @@ func (ws *Server) Shutdown() error {
 
 func (ws *Server) registerRoutes() {
 	router := mux.NewRouter()
-	// New handlers should be added here
+	// Unauthenticated handlers for registering a new credential and logging in.
 	router.HandleFunc("/", ws.Login)
-	router.HandleFunc("/dashboard/{name}", ws.Index)
-	router.HandleFunc("/dashboard", ws.Index)
 	router.HandleFunc("/makeCredential/{name}", ws.RequestNewCredential).Methods("GET")
 	router.HandleFunc("/makeCredential", ws.MakeNewCredential).Methods("POST")
 	router.HandleFunc("/assertion/{name}", ws.GetAssertion).Methods("GET")
 	router.HandleFunc("/assertion", ws.MakeAssertion).Methods("POST")
-	router.HandleFunc("/user", ws.CreateNewUser).Methods("POST")
-	router.HandleFunc("/user/{name}", ws.GetUser).Methods("GET")
-	router.HandleFunc("/credential/{name}", ws.GetCredentials).Methods("GET")
-	router.HandleFunc("/credential/{id}", ws.DeleteCredential).Methods("DELETE")
+
+	// Authenticated handlers for viewing and managing users and credentials
+	router.HandleFunc("/dashboard/{name}", ws.LoginRequired(ws.Index))
+	router.HandleFunc("/dashboard", ws.LoginRequired(ws.Index))
+	router.HandleFunc("/user", ws.LoginRequired(ws.CreateUser)).Methods("POST")
+	router.HandleFunc("/user/{name}", ws.LoginRequired(ws.GetUser)).Methods("GET")
+	router.HandleFunc("/credential/{name}", ws.LoginRequired(ws.GetCredentials)).Methods("GET")
+	router.HandleFunc("/credential/{id}", ws.LoginRequired(ws.DeleteCredential)).Methods("DELETE")
+
+	// Static file serving
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	ws.server.Handler = router
 }

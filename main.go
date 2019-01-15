@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/duo-labs/webauthn.io/config"
+	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn.io/models"
 	"github.com/duo-labs/webauthn.io/server"
 )
@@ -22,7 +22,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := server.NewServer(config)
+	err = log.Setup(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server, err := server.NewServer(config)
+	if err != nil {
+		log.Fatal(err)
+	}
 	go server.Start()
 
 	// Handle graceful shutdown
@@ -31,6 +39,6 @@ func main() {
 	signal.Notify(c, syscall.SIGINT)
 
 	<-c
-	log.Println("Shutting down...")
+	log.Info("Shutting down...")
 	server.Shutdown()
 }

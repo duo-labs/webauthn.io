@@ -14,6 +14,7 @@ type Config struct {
 	HostAddress    string `json:"host_address"`
 	HostPort       string `json:"host_port"`
 	HasProxy       bool   `json:"has_proxy"`
+	LogFile        string `json:"log_file"`
 }
 
 // Version represents the current version of the software.
