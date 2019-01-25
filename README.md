@@ -20,7 +20,7 @@ To get started using a local instance of webauthn.io, first download the source 
 go get github.com/duo-labs/webauthn.io
 ```
 
-Then, copy or rename `config.template.json` and edit if needed.
+Then, edit `config.json` as needed.
 
 Finally, build and run the application with `go build; ./webauthn.io`)
 
