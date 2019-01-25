@@ -46,7 +46,7 @@ function setUser() {
 }
 
 function checkUserExists() {
-    $.get('/user/' + state.user.name, {}, null, 'json')
+    $.get('/user/' + state.user.name + '/exists', {}, null, 'json')
         .done(function (response) {
             return true;
         }).catch(function () {
@@ -141,33 +141,33 @@ function getAssertion() {
         return;
     }
     setUser();
-    $.get('/user/' + state.user.name, {}, null, 'json').done(function (response) {
+    $.get('/user/' + state.user.name + '/exists', {}, null, 'json').done(function (response) {
             console.log(response);
-        }).then(function () {})
-        .catch(function (error) {
-            showErrorAlert(error.responseText);
-            return;
-        });
-
-    $.get('/assertion/' + state.user.name, {}, null, 'json')
-        .done(function (makeAssertionOptions) {
-            makeAssertionOptions.publicKey.challenge = bufferDecode(makeAssertionOptions.publicKey.challenge);
-            makeAssertionOptions.publicKey.allowCredentials.forEach(function (listItem) {
-                listItem.id = bufferDecode(listItem.id)
-            });
-            console.log(makeAssertionOptions);
-            navigator.credentials.get({
-                    publicKey: makeAssertionOptions.publicKey
-                })
-                .then(function (credential) {
-                    console.log(credential);
-                    verifyAssertion(credential);
-                    //swal.clickConfirm();
-                }).catch(function (err) {
-                    console.log(err.name);
-                    showErrorAlert(err.message);
-                    //Swal.closeModal();
+        }).then(function () {
+            $.get('/assertion/' + state.user.name, {}, null, 'json')
+                .done(function (makeAssertionOptions) {
+                    makeAssertionOptions.publicKey.challenge = bufferDecode(makeAssertionOptions.publicKey.challenge);
+                    makeAssertionOptions.publicKey.allowCredentials.forEach(function (listItem) {
+                        listItem.id = bufferDecode(listItem.id)
+                    });
+                    console.log(makeAssertionOptions);
+                    navigator.credentials.get({
+                            publicKey: makeAssertionOptions.publicKey
+                        })
+                        .then(function (credential) {
+                            console.log(credential);
+                            verifyAssertion(credential);
+                        }).catch(function (err) {
+                            console.log(err.name);
+                            showErrorAlert(err.message);
+                        });
                 });
+        })
+        .catch(function (error) {
+            if (!error.exists) {
+                showErrorAlert("User not found, try registering one first!");
+            }
+            return;
         });
 }
 

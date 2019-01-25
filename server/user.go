@@ -40,15 +40,18 @@ func (ws *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, u, http.StatusCreated)
 }
 
-// GetUser retrieves a user from the database
-func (ws *Server) GetUser(w http.ResponseWriter, r *http.Request) {
+// UserExists returns a boolean indicating if the user exists or not.
+func (ws *Server) UserExists(w http.ResponseWriter, r *http.Request) {
+	type existsResponse struct {
+		Exists bool `json:"exists"`
+	}
 	vars := mux.Vars(r)
 	username := vars["name"]
-	u, err := models.GetUserByUsername(username)
+	_, err := models.GetUserByUsername(username)
 	if err != nil {
 		log.Errorf("user not found: %s: %s", username, err)
-		jsonResponse(w, "User not found, try registering one first!", http.StatusNotFound)
+		jsonResponse(w, existsResponse{Exists: false}, http.StatusNotFound)
 		return
 	}
-	jsonResponse(w, u, http.StatusOK)
+	jsonResponse(w, existsResponse{Exists: true}, http.StatusOK)
 }
