@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/base64"
 	"net/http"
 	"strings"
 
@@ -81,20 +82,28 @@ func (ws *Server) MakeNewCredential(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// Can perform additional checks
-	// Finally, save the credential (and authenticator, if needed) to the
+	// If needed, you can perform additional checks here to ensure the
+	// authenticator and generated credential conform to your requirements.
+
+	// Finally, save the credential and authenticator to the
 	// database
-	authenticator, err := models.GetOrCreateAuthenticator(cred.Authenticator)
+	authenticator, err := models.CreateAuthenticator(cred.Authenticator)
 	if err != nil {
 		log.Errorf("error creating authenticator: %v", err)
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// For our use case, we're encoding the raw credential ID as URL-safe
+	// base64 since we anticipate rendering it in templates. If you choose to
+	// do this, make sure to decode the credential ID before passing it back to
+	// the webauthn library.
+	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
 	c := &models.Credential{
-		Authenticator: authenticator,
-		UserID:        user.ID,
-		PublicKey:     cred.PublicKey,
-		CredentialID:  cred.ID,
+		Authenticator:   authenticator,
+		AuthenticatorID: authenticator.ID,
+		UserID:          user.ID,
+		PublicKey:       cred.PublicKey,
+		CredentialID:    credentialID,
 	}
 	err = models.CreateCredential(c)
 	if err != nil {

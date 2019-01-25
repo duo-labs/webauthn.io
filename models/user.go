@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/base64"
 	"encoding/binary"
 
 	log "github.com/duo-labs/webauthn.io/logger"
@@ -41,20 +42,23 @@ func (u User) WebAuthnDisplayName() string {
 	return u.DisplayName
 }
 
+// WebAuthnIcon returns the user's icon
 func (u User) WebAuthnIcon() string {
 	return u.Icon
 }
 
+// WebAuthnCredentials helps implement the webauthn.User interface by loading
+// the user's credentials from the underlying database.
 func (u User) WebAuthnCredentials() []webauthn.Credential {
-	// TODO: Should credentials be an interface? I suppose the other
-	// option would be to enumerate through them here, converting them as needed.
-	wcs := []webauthn.Credential{}
-	for _, cred := range u.Credentials {
-		wcs = append(wcs, webauthn.Credential{
-			ID:            cred.CredentialID,
+	credentials, _ := GetCredentialsForUser(&u)
+	wcs := make([]webauthn.Credential, len(credentials))
+	for i, cred := range credentials {
+		credentialID, _ := base64.URLEncoding.DecodeString(cred.CredentialID)
+		wcs[i] = webauthn.Credential{
+			ID:            credentialID,
 			PublicKey:     cred.PublicKey,
 			Authenticator: cred.WebauthnAuthenticator(),
-		})
+		}
 	}
 	return wcs
 }
@@ -63,7 +67,7 @@ func (u User) WebAuthnCredentials() []webauthn.Credential {
 // error is thrown.
 func GetUser(id uint) (User, error) {
 	u := User{}
-	err := db.Where("id=?", id).Preload("Credentials").Find(&u).Error
+	err := db.Where("id=?", id).Find(&u).Error
 	if err != nil {
 		return u, err
 	}
@@ -74,7 +78,7 @@ func GetUser(id uint) (User, error) {
 // error is thrown.
 func GetUserByUsername(username string) (User, error) {
 	u := User{}
-	err := db.Where("username = ?", username).Preload("Credentials").Find(&u).Error
+	err := db.Where("username = ?", username).Find(&u).Error
 
 	if err != nil {
 		return u, err

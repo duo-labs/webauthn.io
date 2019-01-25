@@ -5,13 +5,14 @@ import (
 	"net/http"
 
 	"github.com/duo-labs/webauthn.io/models"
+	"github.com/duo-labs/webauthn.io/session"
 )
 
 // LoginRequired sets a context variable with the user loaded from the user ID
 // stored in the session cookie
 func (ws *Server) LoginRequired(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := ws.store.Get(r, "webauthn_io")
+		session, _ := ws.store.Get(r, session.WebauthnSession)
 		// Load the user from the database and store it in the request context
 		if id, ok := session.Values["user_id"]; ok {
 			u, err := models.GetUser(id.(uint))
@@ -28,8 +29,8 @@ func (ws *Server) LoginRequired(next http.HandlerFunc) http.HandlerFunc {
 		// redirect to the main login page.
 		if u := r.Context().Value("user"); u != nil {
 			next.ServeHTTP(w, r)
-		} else {
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+			return
 		}
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	})
 }

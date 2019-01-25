@@ -1,64 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-
-    <head>
-        <title>WebAuthn.io</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <script type="text/javascript" src="/js/webauthn.js"></script>    
-        <script type="text/javascript" src="/js/cbor.js"></script>
-        <script type="text/javascript" src="/js/base64.js"></script>
-        <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>        
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.10.1/sweetalert2.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-        <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />        
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-    </head>
-
-    <body>
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    Webauthn.io
-                </a>                
+{{define "content"}}
+<div class="section">
+    <div class="hero confetti">
+        <div class="pt-5 container">
+            <div class="row">
+                <div class="main-content col-md-12">
+                    <h5><a href="/">WebAuthn.io</a></h5>
+                    <div class="row mt-3">
+                        <div class="hero-left order-2 col-lg-9 order-lg-1">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h3>You're logged in!</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p>You just logged in using Web Authentication.
+                                        Instead of using a traditional, shared-key password,
+                                        you used a piece of secure hardware to create a strong,
+                                        attested, and scoped credential that is virtually unphishable!
+                                        Read our blog post to find out more about Web Authentication and the FIDO2
+                                        framework.</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <a href="/" class="btn w-100 btn-primary btn-lg">Try it again?</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-right order-1 col-lg-3 order-lg-2"><img role="presentation" alt="" class="party-cat"
+                                src="/dist/images/cat.svg"></div>
+                    </div>
+                </div>
             </div>
-        </nav>
-        <div class="dashboard container">
-            <div class="jumbotron">
-                <h2>You're logged in!</h2>
-                <p>You've logged in to an account using WebAuthn</p>
-                <a class="btn btn-lg btn-primary" href="https://www.w3.org/TR/webauthn/" role="button">Read the WebAuthn Spec »</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Credentials for {{.User.Username}}</h3>
+                    <p class="text-muted">*Credentials are stored for 24 hours.</p>
+                </div>
             </div>
-            <div class="panel panel-default">    
-                <h3>Credentials for {{ .User }}</h3>
-                <table class="table">
-                    <tr>
-                        <th>Type</th>
-                        <th class="no-wrap">Create Date</th>
-                        <th>ID</th>
-                        <th>Public Key</th>                    
-                    </tr>
-                    {{ range $index, $element := .Credentials }}
-                    <tr>
-                        <td class="format no-wrap">{{ .CredType }}</td>
-                        <td class="no-wrap">{{ .CreateDate }}</td>
-                        <td class="break">{{ .CredID }}</td>
-                        <td>
-                            <table class="sub-table">
-                                <tr>
-                                    <td><pre>X:{{ .PubKeyX }}</pre></td>                    
-                                </tr>                        
-                                <tr>
-                                    <td><pre>Y:{{ .PubKeyY }}</pre></td>                    
-                                </tr>                        
-                            </table>
-                        </td>
-                    {{ end }}
-                </table>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-borderless credentials-table">
+                        <thead>
+                            <tr>
+                                <th style="width:20%" scope="col">Date created</th>
+                                <th style="width:35%" scope="col">Raw ID</th>
+                                <th style="width:45%" scope="col">Public Key</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ range .Credentials }}
+                            <tr>
+                                <td>{{.CreatedAt.Format "Mon, 3:04PM MST"}}</td>
+                                <td>{{.CredentialID}}</td>
+                                <td>{{printf "%s" .PublicKey}}</td>
+                            </tr>
+                            {{ end }}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>        
-    </body>
-</html>
+        </div>
+    </div>
+</div>
+{{end}}

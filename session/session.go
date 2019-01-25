@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 
+	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/sessions"
 )
@@ -51,14 +52,11 @@ func NewStore(keyPairs ...[]byte) (*Store, error) {
 // SaveWebauthnSession marhsals and saves the webauthn data to the provided
 // key given the request and responsewriter
 func (store *Store) SaveWebauthnSession(key string, data *webauthn.SessionData, r *http.Request, w http.ResponseWriter) error {
-	session, _ := store.Get(r, WebauthnSession)
 	marshaledData, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-	session.Values[key] = marshaledData
-	session.Save(r, w)
-	return nil
+	return store.Set(key, marshaledData, r, w)
 }
 
 func (store *Store) GetWebauthnSession(key string, r *http.Request) (webauthn.SessionData, error) {
@@ -75,5 +73,17 @@ func (store *Store) GetWebauthnSession(key string, r *http.Request) (webauthn.Se
 	if err != nil {
 		return sessionData, err
 	}
+	// Delete the value from the session now that it's been read
+	delete(session.Values, key)
 	return sessionData, nil
+}
+
+func (store *Store) Set(key string, value interface{}, r *http.Request, w http.ResponseWriter) error {
+	session, err := store.Get(r, WebauthnSession)
+	if err != nil {
+		log.Errorf("Error getting session %s", err)
+	}
+	session.Values[key] = value
+	session.Save(r, w)
+	return nil
 }

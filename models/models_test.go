@@ -19,21 +19,18 @@ func (ms *ModelsSuite) SetupSuite() {
 		HostAddress: "localhost",
 	}
 	err := Setup(ms.config)
-	if err != nil {
-		ms.T().Fatalf("Failed creating database: %v", err)
-	}
+	ms.Nil(err)
 }
 
 func (ms *ModelsSuite) TearDownTest() {
 	// Clear database tables between each test. If new tables are
 	// used in this test suite they will need to be cleaned up here.
 	db.Delete(Credential{})
-	db.Delete(SessionData{})
+	db.Delete(Authenticator{})
 
 	db.Not("id", 1).Delete(User{})
 	db.Model(User{}).Update("name", "admin")
 
-	db.Not("id", ms.config.HostAddress).Delete(RelyingParty{})
 }
 
 func TestRunModelsSuite(t *testing.T) {

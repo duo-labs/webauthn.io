@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/base64"
 	"errors"
 	"net/http"
 
@@ -10,7 +11,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-var ErrCredentialCloned = errors.New("The credential appears to have been cloned.")
+// ErrCredentialCloned occurs when an authenticator provides a sign count
+// during assertion that is lower than the previously recorded sign count, as
+// this would indicate that the authenticator may have been cloned.
+var ErrCredentialCloned = errors.New("credential appears to have been cloned")
 
 // GetAssertion - assemble the data we need to make an assertion against
 // a given user and authenticator
@@ -62,7 +66,10 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Infof("Finishing authentication with user: %#v\n", user)
+	log.Infof("Finishing authentication with user: %s\n", user.Username)
+	// With the session data retrieved, we need to call webauthn.FinishLogin to
+	// verify the signed challenge. This returns the webauthn.Credential that
+	// was used to authenticate.
 	cred, err := ws.webauthn.FinishLogin(user, sessionData, r)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
@@ -73,11 +80,31 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 	// sure that the sign counter is higher than what we have stored to help
 	// give assurance that this credential wasn't cloned.
 	if cred.Authenticator.CloneWarning {
+		log.Errorf("credential appears to be cloned: %s", err)
 		jsonResponse(w, ErrCredentialCloned, http.StatusForbidden)
 		return
 	}
-	// We're logged in!
-	// All that's left is to update the sign count with
-	// TODO: Set the session indicating that we're logged in
-	log.Info("Logged in!")
+	// We're logged in! All that's left is to update the sign count with the
+	// new value we received. We could join the tables on the CredentialID
+	// field, but for our purposes we'll just get the stored credential and
+	// use that to find the authenticator we need to update.
+	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	storedCredential, err := models.GetCredentialForUser(&user, credentialID)
+	if err != nil {
+		log.Errorf("error getting credentials for user: %s", err)
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = models.UpdateAuthenticatorSignCount(storedCredential.AuthenticatorID, cred.Authenticator.SignCount)
+	if err != nil {
+		log.Errorf("error updating sign count: %s", err)
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = ws.store.Set("user_id", user.ID, r, w)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	jsonResponse(w, user, http.StatusOK)
 }

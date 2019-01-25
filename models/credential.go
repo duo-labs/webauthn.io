@@ -9,10 +9,10 @@ import (
 type Credential struct {
 	gorm.Model
 
-	CredentialID []byte `json:"credential_id"`
+	CredentialID string `json:"credential_id"`
 
-	User   User `json:"user"`
-	UserID uint `json:"user_id"`
+	User   User `json:"-"`
+	UserID uint `json:"-"`
 
 	Authenticator   Authenticator `json:"authenticator"`
 	AuthenticatorID uint          `json:"authenticator_id"`
@@ -20,6 +20,8 @@ type Credential struct {
 	PublicKey []byte `json:"public_key,omitempty"`
 }
 
+// WebauthnAuthenticator returns the underlying authenticator used to generate
+// the credential.
 func (c *Credential) WebauthnAuthenticator() webauthn.Authenticator {
 	return c.Authenticator.Authenticator
 }
@@ -49,7 +51,7 @@ func GetCredentialsForUser(user *User) ([]Credential, error) {
 // GetCredentialForUser retrieves a specific credential for a user.
 func GetCredentialForUser(user *User, credentialID string) (Credential, error) {
 	cred := Credential{}
-	err := db.Where("user_id = ? AND cred_id = ?", user.ID, credentialID).Preload("Authenticator").Find(&cred).Error
+	err := db.Where("user_id = ? AND credential_id = ?", user.ID, credentialID).Preload("Authenticator").Find(&cred).Error
 	return cred, err
 }
 

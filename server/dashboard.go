@@ -1,34 +1,28 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
-	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn.io/models"
-	"github.com/gorilla/mux"
 )
 
-// Index renders the dashboard index page.
+// Index renders the dashboard index page, displaying the created credential
+// as well as any other credentials previously registered by the authenticated
+// user.
 func (ws *Server) Index(w http.ResponseWriter, r *http.Request) {
-	// TODO: Right now this is just a placeholder handler. In the future, it
-	// needs to get the authenticated user from the session, look up their
-	// credentials, and render the dashboard page.
-	vars := mux.Vars(r)
-	username := vars["username"]
-
-	if username == "" {
-		username = models.PlaceholderUsername
-	}
-
-	user, err := models.GetUserByUsername(fmt.Sprintf("%s@%s", username, "example.com"))
+	user := r.Context().Value("user").(models.User)
+	credentials, err := models.GetCredentialsForUser(&user)
 	if err != nil {
-		log.Errorf("error retrieving user for dashboard: %s", err)
-		jsonResponse(w, "Error retrieving user", http.StatusInternalServerError)
-		return
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
-
-	fmt.Fprintf(w, "Found user %#v", user)
+	templateData := struct {
+		User        models.User
+		Credentials []models.Credential
+	}{
+		user,
+		credentials,
+	}
+	renderTemplate(w, "index.html", templateData)
 }
 
 // Login renders the login/registration page.
