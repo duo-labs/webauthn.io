@@ -1,10 +1,8 @@
 
 
-The source for [webauthn.io](https://webauthn.io), a demonstration of WebAuthn.
-
 ## About
 
-This is a demonstration of the Web Authentication specification works.
+This is the source code for [webauthn.io](https://webauthn.io), a demonstration of the Web Authentication specification, or WebAuthn.
 
 ## Installation
 
@@ -24,6 +22,10 @@ Then, copy or rename `config.template.json` and edit if needed.
 
 Finally, build and run the application with `go build; ./webauthn.io`)
 
+
+## More Information
+
+For more information on how WebAuthn works, we recommend checking out [webauthn.guide](https://webauthn.guide).
 
 ### License
 
