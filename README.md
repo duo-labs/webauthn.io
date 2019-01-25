@@ -1,8 +1,10 @@
-
+<img src="https://github.com/duo-labs/webauthn.io/blob/master/static/dist/images/header-illi.png?raw=true" height="400"/>
 
 ## About
 
 This is the source code for [webauthn.io](https://webauthn.io), a demonstration of the Web Authentication specification, or WebAuthn.
+
+This server provides a simple reference implementation of how to add WebAuthn to an application using the [`duo-labs/webauthn`](https://github.com/duo-labs/webauthn) Go library.
 
 ## Installation
 
