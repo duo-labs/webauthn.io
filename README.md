@@ -1,4 +1,6 @@
+<p align="center">
 <img src="https://github.com/duo-labs/webauthn.io/blob/master/static/dist/images/header-illi.png?raw=true" height="400"/>
+</p>
 
 ## About
 
