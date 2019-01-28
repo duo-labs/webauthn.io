@@ -34,9 +34,6 @@ type Server struct {
 // configuration
 func NewServer(config *config.Config, opts ...Option) (*Server, error) {
 	addr := net.JoinHostPort(config.HostAddress, config.HostPort)
-	if config.HasProxy {
-		addr = config.HostPort
-	}
 	defaultServer := &http.Server{
 		Addr:         addr,
 		ReadTimeout:  Timeout,
@@ -47,8 +44,8 @@ func NewServer(config *config.Config, opts ...Option) (*Server, error) {
 		return nil, err
 	}
 	defaultWebAuthn, _ := webauthn.New(&webauthn.Config{
-		RPDisplayName: config.HostAddress,
-		RPID:          config.HostAddress,
+		RPDisplayName: config.RelyingParty,
+		RPID:          config.RelyingParty,
 	})
 	ws := &Server{
 		config:   config,

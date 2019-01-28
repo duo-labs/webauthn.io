@@ -8,17 +8,13 @@ import (
 
 // Config represents the configuration information.
 type Config struct {
-	DBName         string `json:"db_name"`
-	DBPath         string `json:"db_path"`
-	MigrationsPath string `json:"migrations_prefix"`
-	HostAddress    string `json:"host_address"`
-	HostPort       string `json:"host_port"`
-	HasProxy       bool   `json:"has_proxy"`
-	LogFile        string `json:"log_file"`
+	DBName       string `json:"db_name"`
+	DBPath       string `json:"db_path"`
+	HostAddress  string `json:"host_address"`
+	HostPort     string `json:"host_port"`
+	LogFile      string `json:"log_file"`
+	RelyingParty string `json:"relying_party"`
 }
-
-// Version represents the current version of the software.
-var Version = "0.3"
 
 // LoadConfig loads a configuration at the provided filepath, returning the
 // parsed configuration.
@@ -31,9 +27,5 @@ func LoadConfig(filepath string) (*Config, error) {
 	}
 	config := &Config{}
 	err = json.Unmarshal(configFile, config)
-	if err != nil {
-		return nil, err
-	}
-	config.MigrationsPath = config.MigrationsPath + config.DBName
-	return config, nil
+	return config, err
 }
