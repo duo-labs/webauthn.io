@@ -120,7 +120,7 @@ function registerNewCredential(newCredential) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            $("#login-button").tooltip('show')
+            $("#login-button").popover('show')
         }
     });
 }
@@ -216,8 +216,17 @@ function hideErrorAlert() {
     $("#alert").hide();
 }
 
+function popoverPlacement(context, source) {
+    if ($(window).width() < 992) {
+        return "bottom"
+    }
+    return "right";
+}
+
 $(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip({
-        trigger: "manual"
+    $('[data-toggle="popover"]').popover({
+        trigger: 'manual',
+        container: 'body',
+        placement: popoverPlacement
     })
 })

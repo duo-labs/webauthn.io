@@ -416,31 +416,32 @@ pre {
     flex: 1;
 }
 
-// Bootstrap tooltip styling
-.tooltip-inner {
+// Bootstrap popover styling
+.popover {
     padding: 1rem 1rem;
     font-size: 1.125rem;
     line-height: 1.5;
     border-radius: 0.3rem;
     background-color: $white;
     max-width: none;
+    border-color: white;
+}
+
+.popover-body {
     color: $gray-900;
+    padding: 0 0;
 }
 
-.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,
-.tooltip.bs-tooltip-right .arrow::before {
-    border-right-color: $white !important;
+.bs-popover-right .arrow::before,
+.bs-popover-auto[x-placement^="right"] .arrow::before {
+    border-right-color: white;
 }
 
-.bs-tooltip-right .arrow::before,
-.bs-tooltip-auto[x-placement^="right"] .arrow::before {
-    border-right-color: $white !important;
+.bs-popover-bottom .arrow::before,
+.bs-popover-auto[x-placement^="bottom"] .arrow::before {
+    border-bottom-color: white;
 }
 
-.tooltip {
-    left: 10px !important;
-    z-index: 1050;
-}
 
 .twitter-logo {
     height: 30px;
