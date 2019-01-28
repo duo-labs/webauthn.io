@@ -11,10 +11,20 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+// DefaultEncryptionKeyLength is the length of the generated encryption keys
+// used for session management.
 const DefaultEncryptionKeyLength = 32
+
+// WebauthnSession is the name of the session cookie used to manage session-
+// related information.
 const WebauthnSession = "webauthn-session"
 
+// ErrInsufficientBytesRead is returned in the rare case that an unexpected
+// number of bytes are returned from the crypto/rand reader when creating
+// session cookie encryption keys.
 var ErrInsufficientBytesRead = errors.New("insufficient bytes read")
+
+// ErrMarshal is returned if unexpected data is present in a webauthn session.
 var ErrMarshal = errors.New("error unmarshaling data")
 
 // GenerateSecureKey reads and returns n bytes from the crypto/rand reader
@@ -30,10 +40,13 @@ func GenerateSecureKey(n int) ([]byte, error) {
 	return buf, nil
 }
 
+// Store is a wrapper around sessions.CookieStore which provides some helper
+// methods related to webauthn operations.
 type Store struct {
 	*sessions.CookieStore
 }
 
+// NewStore returns a new session store.
 func NewStore(keyPairs ...[]byte) (*Store, error) {
 	// Generate a default encryption key if one isn't provided
 	if len(keyPairs) == 0 {
@@ -59,6 +72,8 @@ func (store *Store) SaveWebauthnSession(key string, data *webauthn.SessionData, 
 	return store.Set(key, marshaledData, r, w)
 }
 
+// GetWebauthnSession unmarshals and returns the webauthn session information
+// from the session cookie.
 func (store *Store) GetWebauthnSession(key string, r *http.Request) (webauthn.SessionData, error) {
 	sessionData := webauthn.SessionData{}
 	session, err := store.Get(r, WebauthnSession)
@@ -78,6 +93,7 @@ func (store *Store) GetWebauthnSession(key string, r *http.Request) (webauthn.Se
 	return sessionData, nil
 }
 
+// Set stores a value to the session with the provided key.
 func (store *Store) Set(key string, value interface{}, r *http.Request, w http.ResponseWriter) error {
 	session, err := store.Get(r, WebauthnSession)
 	if err != nil {
