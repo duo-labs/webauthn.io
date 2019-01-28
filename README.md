@@ -12,7 +12,19 @@ This server provides a simple reference implementation of how to add WebAuthn to
 
 ### Using Docker
 
-_Coming Soon_
+To run a local instance of webauthn.io in a Docker container, start by building the container image:
+
+```
+docker build -t webauthn.io .
+```
+
+Then, run the container, exposing port 9005:
+
+```
+docker run --rm -p 9005:9005 webauthn.io
+```
+
+After the container launches, you can navigate to localhost:9005 to see the application.
 
 ### Building from Source
 
