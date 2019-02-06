@@ -25,17 +25,17 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
         crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/dist/js/webauthn.js"></script>
+    <script type="text/javascript" src="/dist/js/cbor.js"></script>
+    <script type="text/javascript" src="/dist/js/base64.js"></script>
     <link href="/dist/css/index.css" rel="stylesheet">
 </head>
 
-<body>
+<body onload="detectWebAuthnSupport()">
     <div class="section">
         {{template "content" .}}
         {{template "info-footer" .}}
     </div>
-    <script type="text/javascript" src="/dist/js/webauthn.js"></script>
-    <script type="text/javascript" src="/dist/js/cbor.js"></script>
-    <script type="text/javascript" src="/dist/js/base64.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-20141016-21"></script>
     <script>

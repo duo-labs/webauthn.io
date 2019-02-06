@@ -1,3 +1,13 @@
+function detectWebAuthnSupport() {
+    if (window.PublicKeyCredential === undefined ||
+        typeof window.PublicKeyCredential !== "function") {
+        $('#register-button').attr("disabled", true);
+        $('#login-button').attr("disabled", true);
+        showErrorAlert("WebAuthn is not currently supported by this browser");
+        return;
+    }
+}
+
 function string2buffer(str) {
     return (new Uint8Array(str.length)).map(function (x, i) {
         return str.charCodeAt(i)
