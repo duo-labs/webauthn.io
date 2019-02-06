@@ -3,7 +3,11 @@ function detectWebAuthnSupport() {
         typeof window.PublicKeyCredential !== "function") {
         $('#register-button').attr("disabled", true);
         $('#login-button').attr("disabled", true);
-        showErrorAlert("WebAuthn is not currently supported by this browser");
+        var errorMessage = "Oh no! This browser doesn't currently support WebAuthn."
+        if (window.location.protocol === "http:" && (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1")){
+            errorMessage = "WebAuthn only supports secure connections. For testing over HTTP, you can use the origin \"localhost\"."
+        }
+        showErrorAlert(errorMessage);
         return;
     }
 }
@@ -218,7 +222,7 @@ function setCurrentUser(userResponse) {
 }
 
 function showErrorAlert(msg) {
-    $("#alert-msg").text(msg);
+    $("#alert-msg").text(msg)
     $("#alert").show();
 }
 
