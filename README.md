@@ -12,6 +12,12 @@ This server provides a simple reference implementation of how to add WebAuthn to
 
 ### Using Docker
 
+The easiest way to start a local instance of webauthn.io is to use the image on Docker Hub:
+
+```
+docker run --rm -p 9005:9005 duolabs/webauthn.io
+```
+
 To run a local instance of webauthn.io in a Docker container, start by building the container image:
 
 ```
