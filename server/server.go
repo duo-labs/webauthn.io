@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -92,6 +93,11 @@ func (ws *Server) registerRoutes() {
 
 	// Authenticated handlers for viewing credentials after logging in
 	router.HandleFunc("/dashboard", ws.LoginRequired(ws.Index))
+
+	if ws.config.ExposeFIDO {
+		fmt.Println("Exposing FIDO Conformance Endpoints")
+		ws.AddConformanceEndpoints(router)
+	}
 
 	// Static file serving
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))

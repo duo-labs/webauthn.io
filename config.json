@@ -3,5 +3,6 @@
     "db_path": "webauthn.db",
     "host_address": "127.0.0.1",
     "host_port": "9005",
-    "relying_party": "localhost"
+    "relying_party": "localhost",
+    "expose_fido_endpoints": true
 }
