@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -65,8 +64,6 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 	response := fido.ConformanceResponse{
 		credentialOptions.Response, "ok", "",
 	}
-
-	base64.URLEncoding.Encode(response.User.ID, credentialOptions.Response.User.ID)
 
 	jsonResponse(w, response, http.StatusOK)
 	return
