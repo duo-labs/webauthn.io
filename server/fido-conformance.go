@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"github.com/duo-labs/webauthn/protocol"
 
 	"github.com/duo-labs/webauthn.io/fido"
+	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn.io/models"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/mux"
@@ -15,7 +17,7 @@ import (
 
 func (ws *Server) AddConformanceEndpoints(r *mux.Router) {
 	r.HandleFunc("/fido/attestation/options", ws.HandleFIDOAttestationOptions).Methods("POST")
-	r.HandleFunc("/fido/attestaion/result", ws.HandleFIDOAttestationResults).Methods("POST")
+	r.HandleFunc("/fido/attestation/result", ws.HandleFIDOAttestationResults).Methods("POST")
 	r.HandleFunc("/fido/assertion/options", ws.HandleFIDOAssertionOptions).Methods("POST")
 	r.HandleFunc("/fido/assertion/result", ws.HandleFIDOAssertionResults).Methods("POST")
 }
@@ -70,12 +72,62 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 }
 
 func (ws *Server) HandleFIDOAttestationResults(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm
-	if err != nil {
+	errForm := r.ParseForm()
+	if errForm != nil {
 		jsonResponse(w, "Error parsing form data", http.StatusBadRequest)
 		return
 	}
+	fmt.Printf("During results, got req: %+v\n", r)
+	// Load the session data
+	sessionData, err := ws.store.GetWebauthnSession("registration", r)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get the user associated with the credential
+	user, err := models.GetUser(models.BytesToID(sessionData.UserID))
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// Verify that the challenge succeeded
+	cred, err := ws.webauthn.FinishRegistration(user, sessionData, r)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	// If needed, you can perform additional checks here to ensure the
+	// authenticator and generated credential conform to your requirements.
+
+	// Finally, save the credential and authenticator to the
+	// database
+	authenticator, err := models.CreateAuthenticator(cred.Authenticator)
+	if err != nil {
+		log.Errorf("error creating authenticator: %v", err)
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// For our use case, we're encoding the raw credential ID as URL-safe
+	// base64 since we anticipate rendering it in templates. If you choose to
+	// do this, make sure to decode the credential ID before passing it back to
+	// the webauthn library.
+	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	c := &models.Credential{
+		Authenticator:   authenticator,
+		AuthenticatorID: authenticator.ID,
+		UserID:          user.ID,
+		PublicKey:       cred.PublicKey,
+		CredentialID:    credentialID,
+	}
+	err = models.CreateCredential(c)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	jsonResponse(w, http.StatusText(http.StatusCreated), http.StatusCreated)
+	return
 }
 
 func (ws *Server) HandleFIDOAssertionOptions(w http.ResponseWriter, r *http.Request) {
