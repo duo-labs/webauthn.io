@@ -30,8 +30,6 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	fmt.Printf("got data: %+v\n", request)
-
 	user, err := models.GetUserByUsername(request.Username)
 	if err != nil {
 		user = models.User{
@@ -50,8 +48,17 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 		conveyancePref = protocol.ConveyancePreference(request.AttestationType)
 	}
 
-	credentialOptions, data, err := ws.webauthn.BeginRegistration(user,
-		webauthn.WithConveyancePreference(conveyancePref))
+	credentialOptions, data, err := ws.webauthn.BeginRegistration(user, webauthn.WithConveyancePreference(conveyancePref))
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := fido.MarshallTestResponse(credentialOptions.Response)
+
+	fmt.Printf("challenge is : %s\n", response.Challenge)
+
+	data.Challenge, err = base64.RawURLEncoding.DecodeString(response.Challenge)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -61,10 +68,6 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	response := fido.ConformanceResponse{
-		credentialOptions.Response, "ok", "",
 	}
 
 	jsonResponse(w, response, http.StatusOK)
