@@ -48,7 +48,16 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 		conveyancePref = protocol.ConveyancePreference(request.AttestationType)
 	}
 
-	credentialOptions, data, err := ws.webauthn.BeginRegistration(user, webauthn.WithConveyancePreference(conveyancePref))
+	credentialOptions, data, err := ws.webauthn.BeginRegistration(user,
+		webauthn.WithConveyancePreference(conveyancePref),
+		webauthn.WithAuthenticatorSelection(
+			protocol.AuthenticatorSelection{
+				AuthenticatorAttachment: request.AuthenticatorSelection.AuthenticatorAttachment,
+				RequireResidentKey:      request.AuthenticatorSelection.RequireResidentKey,
+				UserVerification:        request.AuthenticatorSelection.UserVerification,
+			}),
+		webauthn.WithExtensions(request.Extensions),
+	)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return

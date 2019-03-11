@@ -36,11 +36,12 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	rrk := false
 	credentialOptions, sessionData, err := ws.webauthn.BeginRegistration(user,
 		webauthn.WithAuthenticatorSelection(
 			protocol.AuthenticatorSelection{
 				AuthenticatorAttachment: protocol.AuthenticatorAttachment(authType),
-				RequireResidentKey:      false,
+				RequireResidentKey:      &rrk,
 				UserVerification:        protocol.VerificationPreferred,
 			}),
 		webauthn.WithConveyancePreference(protocol.ConveyancePreference(

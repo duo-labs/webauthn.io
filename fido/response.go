@@ -1,8 +1,6 @@
 package fido
 
 import (
-	"encoding/base64"
-
 	"github.com/duo-labs/webauthn/protocol"
 )
 
@@ -20,7 +18,7 @@ type TestCredentialOptions struct {
 	AuthenticatorSelection protocol.AuthenticatorSelection   `json:"authenticatorSelection,omitempty"`
 	Timeout                int                               `json:"timeout,omitempty"`
 	CredentialExcludeList  []protocol.CredentialDescriptor   `json:"excludeCredentials,omitempty"`
-	Extensions             protocol.AuthenticationExtensions `json:"extenstions,omitempty"`
+	Extensions             protocol.AuthenticationExtensions `json:"extensions,omitempty"`
 	Attestation            protocol.ConveyancePreference     `json:"attestation,omitempty"`
 }
 
@@ -40,13 +38,12 @@ func MarshallTestResponse(opts protocol.PublicKeyCredentialCreationOptions) Conf
 		Extensions:             opts.Extensions,
 		Attestation:            opts.Attestation,
 	}
-	encodedUserID := base64.RawURLEncoding.EncodeToString(opts.User.ID)
+
 	testUser := TestUserEntity{
-		opts.User.CredentialEntity, opts.User.DisplayName, encodedUserID,
+		opts.User.CredentialEntity, opts.User.DisplayName, opts.User.ID,
 	}
 	testOpts.User = testUser
-	encodedChallenge := base64.RawURLEncoding.EncodeToString(opts.Challenge)
-	testOpts.Challenge = encodedChallenge
+	testOpts.Challenge = opts.Challenge
 	return ConformanceResponse{
 		testOpts, "ok", "",
 	}
