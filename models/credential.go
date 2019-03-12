@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/duo-labs/webauthn/protocol"
+	"github.com/duo-labs/webauthn/protocol/webauthncose"
 
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/jinzhu/gorm"
@@ -39,14 +39,14 @@ func (c *Credential) WebauthnAuthenticator() webauthn.Authenticator {
 }
 
 func (c *Credential) DisplayPublicKey() string {
-	parsedKey, err := protocol.ParsePublicKey(c.PublicKey)
+	parsedKey, err := webauthncose.ParsePublicKey(c.PublicKey)
 	if err != nil {
 		log.Error("Error parsing the public key bytes:", err)
 		return "Cannot display key"
 	}
 	switch parsedKey.(type) {
-	case protocol.RSAPublicKeyData:
-		pKey := parsedKey.(protocol.RSAPublicKeyData)
+	case webauthncose.RSAPublicKeyData:
+		pKey := parsedKey.(webauthncose.RSAPublicKeyData)
 		rKey := &rsa.PublicKey{
 			N: big.NewInt(0).SetBytes(pKey.Modulus),
 			E: int(uint(pKey.Exponent[2]) | uint(pKey.Exponent[1])<<8 | uint(pKey.Exponent[0])<<16),
@@ -61,8 +61,8 @@ func (c *Credential) DisplayPublicKey() string {
 			Bytes: data,
 		})
 		return fmt.Sprintf("%s", pemBytes)
-	case protocol.EC2PublicKeyData:
-		pKey := parsedKey.(protocol.EC2PublicKeyData)
+	case webauthncose.EC2PublicKeyData:
+		pKey := parsedKey.(webauthncose.EC2PublicKeyData)
 		var curve elliptic.Curve
 		switch pKey.Algorithm {
 		case -7:
