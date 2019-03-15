@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/duo-labs/webauthn/protocol/webauthncose"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/jinzhu/gorm"
 )
@@ -24,6 +25,10 @@ type Credential struct {
 // the credential.
 func (c *Credential) WebauthnAuthenticator() webauthn.Authenticator {
 	return c.Authenticator.Authenticator
+}
+
+func (c *Credential) DisplayPublicKey() string {
+	return webauthncose.DisplayPublicKey(c.PublicKey)
 }
 
 // CreateCredential creates a new credential object

@@ -58,7 +58,7 @@
                             <tr>
                                 <td>{{.CreatedAt.Format "Mon, 3:04PM MST"}}</td>
                                 <td>{{.CredentialID}}</td>
-                                <td>{{printf "%s" .PublicKey}}</td>
+                                <td>{{.DisplayPublicKey}}</td>
                             </tr>
                             {{ end }}
                         </tbody>

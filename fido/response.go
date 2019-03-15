@@ -1,6 +1,8 @@
 package fido
 
 import (
+	"encoding/base64"
+
 	"github.com/duo-labs/webauthn/protocol"
 )
 
@@ -40,7 +42,7 @@ func MarshallTestResponse(opts protocol.PublicKeyCredentialCreationOptions) Conf
 	}
 
 	testUser := TestUserEntity{
-		opts.User.CredentialEntity, opts.User.DisplayName, opts.User.ID,
+		opts.User.CredentialEntity, opts.User.DisplayName, base64.RawURLEncoding.EncodeToString(opts.User.ID),
 	}
 	testOpts.User = testUser
 	testOpts.Challenge = opts.Challenge

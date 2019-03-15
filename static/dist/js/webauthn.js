@@ -29,6 +29,7 @@ function bufferEncode(value) {
 // Don't drop any blanks
 // decode
 function bufferDecode(value) {
+    value = value.replace(/-/g, "+").replace(/_/g, "/");
     return Uint8Array.from(atob(value), c => c.charCodeAt(0));
 }
 
