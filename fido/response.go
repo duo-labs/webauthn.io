@@ -19,7 +19,7 @@ type TestCredentialOptions struct {
 	Parameters             []protocol.CredentialParameter    `json:"pubKeyCredParams,omitempty"`
 	AuthenticatorSelection protocol.AuthenticatorSelection   `json:"authenticatorSelection,omitempty"`
 	Timeout                int                               `json:"timeout,omitempty"`
-	CredentialExcludeList  []protocol.CredentialDescriptor   `json:"excludeCredentials,omitempty"`
+	CredentialExcludeList  []protocol.CredentialDescriptor   `json:"excludeCredentials"`
 	Extensions             protocol.AuthenticationExtensions `json:"extensions,omitempty"`
 	Attestation            protocol.ConveyancePreference     `json:"attestation,omitempty"`
 }

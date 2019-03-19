@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/duo-labs/webauthn/protocol"
@@ -48,6 +47,15 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 		conveyancePref = protocol.ConveyancePreference(request.AttestationType)
 	}
 
+	credentials := user.WebAuthnCredentials()
+	excludedCredentials := make([]protocol.CredentialDescriptor, len(credentials))
+
+	for i, credential := range credentials {
+		var credentialDescriptor protocol.CredentialDescriptor
+		credentialDescriptor.CredentialID = credential.ID
+		credentialDescriptor.Type = protocol.PublicKeyCredentialType
+		excludedCredentials[i] = credentialDescriptor
+	}
 	credentialOptions, data, err := ws.webauthn.BeginRegistration(user,
 		webauthn.WithConveyancePreference(conveyancePref),
 		webauthn.WithAuthenticatorSelection(
@@ -57,6 +65,7 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 				UserVerification:        request.AuthenticatorSelection.UserVerification,
 			}),
 		webauthn.WithExtensions(request.Extensions),
+		webauthn.WithExclusions(excludedCredentials),
 	)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
@@ -65,9 +74,9 @@ func (ws *Server) HandleFIDOAttestationOptions(w http.ResponseWriter, r *http.Re
 
 	response := fido.MarshallTestResponse(credentialOptions.Response)
 
-	fmt.Printf("challenge is : %s\n", response.Challenge)
+	//fmt.Printf("challenge is : %s\n", response.Challenge)
 
-	data.Challenge, err = base64.RawURLEncoding.DecodeString(response.Challenge)
+	data.Challenge = response.Challenge
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -89,7 +98,7 @@ func (ws *Server) HandleFIDOAttestationResults(w http.ResponseWriter, r *http.Re
 		jsonResponse(w, "Error parsing form data", http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("During results, got req: %+v\n", r)
+	//fmt.Printf("During results, got req: %+v\n", r)
 	// Load the session data
 	sessionData, err := ws.store.GetWebauthnSession("registration", r)
 	if err != nil {
@@ -125,7 +134,7 @@ func (ws *Server) HandleFIDOAttestationResults(w http.ResponseWriter, r *http.Re
 	// base64 since we anticipate rendering it in templates. If you choose to
 	// do this, make sure to decode the credential ID before passing it back to
 	// the webauthn library.
-	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	credentialID := base64.RawURLEncoding.EncodeToString(cred.ID)
 	c := &models.Credential{
 		Authenticator:   authenticator,
 		AuthenticatorID: authenticator.ID,
@@ -138,7 +147,11 @@ func (ws *Server) HandleFIDOAttestationResults(w http.ResponseWriter, r *http.Re
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	jsonResponse(w, http.StatusText(http.StatusCreated), http.StatusCreated)
+	result := &protocol.ServerResponse{
+		Status:  protocol.StatusOk,
+		Message: "",
+	}
+	jsonResponse(w, result, http.StatusCreated)
 	return
 }
 

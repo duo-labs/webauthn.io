@@ -53,7 +53,7 @@ func (u User) WebAuthnCredentials() []webauthn.Credential {
 	credentials, _ := GetCredentialsForUser(&u)
 	wcs := make([]webauthn.Credential, len(credentials))
 	for i, cred := range credentials {
-		credentialID, _ := base64.URLEncoding.DecodeString(cred.CredentialID)
+		credentialID, _ := base64.RawURLEncoding.DecodeString(cred.CredentialID)
 		wcs[i] = webauthn.Credential{
 			ID:            credentialID,
 			PublicKey:     cred.PublicKey,

@@ -88,7 +88,7 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 	// new value we received. We could join the tables on the CredentialID
 	// field, but for our purposes we'll just get the stored credential and
 	// use that to find the authenticator we need to update.
-	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	credentialID := base64.RawURLEncoding.EncodeToString(cred.ID)
 	storedCredential, err := models.GetCredentialForUser(&user, credentialID)
 	if err != nil {
 		log.Errorf("error getting credentials for user: %s", err)
