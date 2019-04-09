@@ -6,13 +6,19 @@ import (
 	"github.com/duo-labs/webauthn/protocol"
 )
 
-type ConformanceResponse struct {
-	TestCredentialOptions
+type ConformanceCreationResponse struct {
+	TestCredentialCreationOptions
 	Status       string `json:"status"`
 	ErrorMessage string `json:"errorMessage"`
 }
 
-type TestCredentialOptions struct {
+type ConformanceRequestResponse struct {
+	TestCredentialRequestOptions
+	Status       string `json:"status"`
+	ErrorMessage string `json:"errorMessage"`
+}
+
+type TestCredentialCreationOptions struct {
 	Challenge              string                            `json:"challenge"`
 	RelyingParty           protocol.RelyingPartyEntity       `json:"rp"`
 	User                   TestUserEntity                    `json:"user"`
@@ -24,14 +30,25 @@ type TestCredentialOptions struct {
 	Attestation            protocol.ConveyancePreference     `json:"attestation,omitempty"`
 }
 
+type TestCredentialRequestOptions struct {
+	Challenge          string                               `json:"challenge"`
+	Timeout            int                                  `json:"timeout,omitempty"`
+	RelyingPartyID     string                               `json:"rpId,omitempty"`
+	AllowedCredentials []protocol.CredentialDescriptor      `json:"allowCredentials,omitempty"`
+	UserVerification   protocol.UserVerificationRequirement `json:"userVerification,omitempty"` // Default is "preferred"
+	Extensions         protocol.AuthenticationExtensions    `json:"extensions,omitempty"`
+	Status             protocol.ServerResponseStatus        `json:"status"`
+	Message            string                               `json:"errorMessage"`
+}
+
 type TestUserEntity struct {
 	protocol.CredentialEntity
 	DisplayName string `json:"displayName,omitempty"`
 	ID          string `json:"id"`
 }
 
-func MarshallTestResponse(opts protocol.PublicKeyCredentialCreationOptions) ConformanceResponse {
-	testOpts := TestCredentialOptions{
+func MarshallTestCreationResponse(opts protocol.PublicKeyCredentialCreationOptions) ConformanceCreationResponse {
+	testOpts := TestCredentialCreationOptions{
 		RelyingParty:           opts.RelyingParty,
 		Parameters:             opts.Parameters,
 		AuthenticatorSelection: opts.AuthenticatorSelection,
@@ -45,8 +62,23 @@ func MarshallTestResponse(opts protocol.PublicKeyCredentialCreationOptions) Conf
 		opts.User.CredentialEntity, opts.User.DisplayName, base64.RawURLEncoding.EncodeToString(opts.User.ID),
 	}
 	testOpts.User = testUser
-	testOpts.Challenge = opts.Challenge
-	return ConformanceResponse{
+	testOpts.Challenge = base64.RawURLEncoding.EncodeToString(opts.Challenge)
+	return ConformanceCreationResponse{
+		testOpts, "ok", "",
+	}
+}
+
+func MarshallTestRequestResponse(opts protocol.PublicKeyCredentialRequestOptions) ConformanceRequestResponse {
+	testOpts := TestCredentialRequestOptions{
+		Challenge:          base64.RawURLEncoding.EncodeToString(opts.Challenge),
+		Timeout:            opts.Timeout,
+		RelyingPartyID:     opts.RelyingPartyID,
+		AllowedCredentials: opts.AllowedCredentials,
+		UserVerification:   opts.UserVerification,
+		Extensions:         opts.Extensions,
+	}
+
+	return ConformanceRequestResponse{
 		testOpts, "ok", "",
 	}
 }
