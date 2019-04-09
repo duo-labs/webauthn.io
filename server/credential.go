@@ -34,8 +34,10 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 			jsonResponse(w, "Error creating new user", http.StatusInternalServerError)
 			return
 		}
-	}
 
+	}
+	credentials := user.WebAuthnCredentials()
+	excludedCredentials := make([]protocol.CredentialDescriptor, len(credentials))
 	rrk := false
 	credentialOptions, sessionData, err := ws.webauthn.BeginRegistration(user,
 		webauthn.WithAuthenticatorSelection(
@@ -45,7 +47,9 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 				UserVerification:        protocol.VerificationPreferred,
 			}),
 		webauthn.WithConveyancePreference(protocol.ConveyancePreference(
-			attType)))
+			attType)),
+		webauthn.WithExclusions(
+			excludedCredentials))
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -98,7 +102,7 @@ func (ws *Server) MakeNewCredential(w http.ResponseWriter, r *http.Request) {
 	// base64 since we anticipate rendering it in templates. If you choose to
 	// do this, make sure to decode the credential ID before passing it back to
 	// the webauthn library.
-	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	credentialID := base64.RawURLEncoding.EncodeToString(cred.ID)
 	c := &models.Credential{
 		Authenticator:   authenticator,
 		AuthenticatorID: authenticator.ID,
