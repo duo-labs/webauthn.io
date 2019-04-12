@@ -97,9 +97,24 @@ func (ws *Server) registerRoutes() {
 	if ws.config.ExposeFIDO {
 		fmt.Println("Exposing FIDO Conformance Endpoints")
 		ws.AddConformanceEndpoints(router)
+		client := NewClient(nil)
+		client.GetConformanceMetadata("https://" + ws.config.RelyingParty + ":" + ws.config.HostPort + "/fido")
 	}
 
 	// Static file serving
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	ws.server.Handler = router
+}
+
+type Client struct {
+	httpClient *http.Client
+}
+
+func NewClient(httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = &http.Client{
+			Timeout: time.Second * 30,
+		}
+	}
+	return &Client{httpClient: httpClient}
 }

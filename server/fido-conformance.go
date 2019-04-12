@@ -1,10 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/duo-labs/webauthn/metadata"
 	"github.com/duo-labs/webauthn/protocol"
 	"github.com/jinzhu/gorm"
 
@@ -13,8 +17,58 @@ import (
 	"github.com/duo-labs/webauthn.io/models"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 )
 
+func (c *Client) GetConformanceMetadata(e string) {
+	jsonReq, err := json.Marshal(metadata.MDSGetEndpointsRequest{Endpoint: e})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req, err := http.NewRequest("POST", "https://fidoalliance.co.nz/mds/getEndpoints", bytes.NewBuffer(jsonReq))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+	var mdsEndpoints metadata.MDSGetEndpointsResponse
+	err = json.Unmarshal(body, &mdsEndpoints)
+	if err != nil || mdsEndpoints.Status != "ok" {
+		fmt.Println("Error getting conformance MDS endpoints")
+		return
+	}
+
+	for _, e := range mdsEndpoints.Result {
+		toc, alg, err := metadata.ProcessMDSTOC(e, *c.httpClient)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		for _, entry := range toc.Entries {
+			ms, err := metadata.GetMetadataStatement(entry, alg, *c.httpClient)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				aaguid, err := uuid.FromString(ms.AaGUID)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					entry.MetadataStatement = ms
+					metadata.Metadata[aaguid] = entry
+				}
+			}
+		}
+	}
+	metadata.Conformance = true
+}
 func (ws *Server) AddConformanceEndpoints(r *mux.Router) {
 	r.HandleFunc("/fido/attestation/options", ws.HandleFIDOAttestationOptions).Methods("POST")
 	r.HandleFunc("/fido/attestation/result", ws.HandleFIDOAttestationResults).Methods("POST")
