@@ -92,7 +92,7 @@ function makeCredential() {
             attType: attestation_type,
             authType: authenticator_attachment
         }, null, 'json')
-        .done(function (makeCredentialOptions) {
+        .done(function (makeCredentialOptions) {            
             makeCredentialOptions.publicKey.challenge = bufferDecode(makeCredentialOptions.publicKey.challenge);
             makeCredentialOptions.publicKey.user.id = bufferDecode(makeCredentialOptions.publicKey.user.id);
             if (makeCredentialOptions.publicKey.excludeCredentials) {
@@ -100,6 +100,8 @@ function makeCredential() {
                     makeCredentialOptions.publicKey.excludeCredentials[i].id = bufferDecode(makeCredentialOptions.publicKey.excludeCredentials[i].id);
                 }
             }
+            console.log("Credential Creation Options");
+            console.log(makeCredentialOptions);
             navigator.credentials.create({
                 publicKey: makeCredentialOptions.publicKey
             }).then(function (newCredential) {
@@ -107,7 +109,9 @@ function makeCredential() {
                 console.log(newCredential);
                 state.createResponse = newCredential;
                 registerNewCredential(newCredential);
-            }).catch(function (err) {});
+            }).catch(function (err) {
+                console.info(err);
+            });
         });
 }
 
@@ -160,6 +164,8 @@ function getAssertion() {
         }).then(function () {
             $.get('/assertion/' + state.user.name, {}, null, 'json')
                 .done(function (makeAssertionOptions) {
+                    console.log("Assertion Options:");
+                    console.log(makeAssertionOptions);
                     makeAssertionOptions.publicKey.challenge = bufferDecode(makeAssertionOptions.publicKey.challenge);
                     makeAssertionOptions.publicKey.allowCredentials.forEach(function (listItem) {
                         listItem.id = bufferDecode(listItem.id)

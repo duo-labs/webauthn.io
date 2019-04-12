@@ -40,7 +40,7 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 		webauthn.WithAuthenticatorSelection(
 			protocol.AuthenticatorSelection{
 				AuthenticatorAttachment: protocol.AuthenticatorAttachment(authType),
-				RequireResidentKey:      false,
+				RequireResidentKey:      protocol.ResidentKeyUnrequired(),
 				UserVerification:        protocol.VerificationPreferred,
 			}),
 		webauthn.WithConveyancePreference(protocol.ConveyancePreference(
