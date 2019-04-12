@@ -67,6 +67,33 @@ func (c *Client) GetConformanceMetadata(e string) {
 			}
 		}
 	}
+	files, err := ioutil.ReadDir("metadataStatements")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	reports := []metadata.StatusReport{metadata.StatusReport{
+		Status: metadata.NotFidoCertified,
+	}}
+
+	for _, file := range files {
+		b, err := ioutil.ReadFile("metadataStatements" + "/" + file.Name())
+		if err != nil {
+			fmt.Print(err)
+		}
+		var statement metadata.MetadataStatement
+		json.Unmarshal(b, &statement)
+		var entry metadata.MetadataTOCPayloadEntry
+		entry.AaGUID = statement.AaGUID
+		entry.MetadataStatement = statement
+		entry.StatusReports = reports
+		aaguid, err := uuid.FromString(entry.AaGUID)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			metadata.Metadata[aaguid] = entry
+		}
+	}
 	metadata.Conformance = true
 }
 func (ws *Server) AddConformanceEndpoints(r *mux.Router) {
