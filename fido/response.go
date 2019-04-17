@@ -86,7 +86,7 @@ func MarshallTestCreationResponse(opts protocol.PublicKeyCredentialCreationOptio
 	}
 }
 
-func MarshallTestRequestResponse(opts protocol.PublicKeyCredentialRequestOptions) ConformanceRequestResponse {
+func MarshallTestRequestResponse(opts protocol.CredentialAssertion) ConformanceRequestResponse {
 	response := opts.Response
 	testOpts := TestCredentialRequestOptions{
 		Challenge:          base64.RawURLEncoding.EncodeToString(response.Challenge),
