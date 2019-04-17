@@ -68,14 +68,14 @@ func MarshallTestCreationResponse(opts protocol.PublicKeyCredentialCreationOptio
 	}
 }
 
-func MarshallTestRequestResponse(opts protocol.PublicKeyCredentialRequestOptions) ConformanceRequestResponse {
+func MarshallTestRequestResponse(opts protocol.CredentialAssertion) ConformanceRequestResponse {
 	testOpts := TestCredentialRequestOptions{
-		Challenge:          base64.RawURLEncoding.EncodeToString(opts.Challenge),
-		Timeout:            opts.Timeout,
-		RelyingPartyID:     opts.RelyingPartyID,
-		AllowedCredentials: opts.AllowedCredentials,
-		UserVerification:   opts.UserVerification,
-		Extensions:         opts.Extensions,
+		Challenge:          base64.RawURLEncoding.EncodeToString(opts.Response.Challenge),
+		Timeout:            opts.Response.Timeout,
+		RelyingPartyID:     opts.Response.RelyingPartyID,
+		AllowedCredentials: opts.Response.AllowedCredentials,
+		UserVerification:   opts.Response.UserVerification,
+		Extensions:         opts.Response.Extensions,
 	}
 
 	return ConformanceRequestResponse{
