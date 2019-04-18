@@ -2,17 +2,22 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"log"
 
 	"github.com/duo-labs/webauthn.io/config"
 	"github.com/duo-labs/webauthn.io/session"
+	"github.com/duo-labs/webauthn/metadata"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Timeout is the number of seconds to attempt a graceful shutdown, or
@@ -99,6 +104,13 @@ func (ws *Server) registerRoutes() {
 		ws.AddConformanceEndpoints(router)
 		client := NewClient(nil)
 		client.GetConformanceMetadata("https://" + ws.config.RelyingParty + ":" + ws.config.HostPort + "/fido")
+		fmt.Println("Finished loading FIDO Conformance Metadata")
+	} else {
+		mdskey := os.Getenv("FIDO2_MDSAccessKey")
+		if len(mdskey) != 0 {
+			client := NewClient(nil)
+			client.GetMetadata("/?token=" + mdskey)
+		}
 	}
 
 	// Static file serving
@@ -117,4 +129,62 @@ func NewClient(httpClient *http.Client) *Client {
 		}
 	}
 	return &Client{httpClient: httpClient}
+}
+
+func (c *Client) GetMetadata(e string) {
+	toc, alg, err := metadata.ProcessMDSTOC("https://mds2.fidoalliance.org", e, *c.httpClient)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for _, entry := range toc.Entries {
+		if entry.AaGUID == "" {
+			continue
+		}
+		ms, err := metadata.GetMetadataStatement(entry, e, alg, *c.httpClient)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			aaguid, err := uuid.FromString(ms.AaGUID)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				entry.MetadataStatement = ms
+				metadata.Metadata[aaguid] = entry
+				fmt.Println("Loaded metadata for " + entry.MetadataStatement.Description + ", AAGUID: " + entry.MetadataStatement.AaGUID)
+			}
+		}
+	}
+	LoadMetadataFromFolder("CustomMetadata")
+}
+
+func LoadMetadataFromFolder(folder string) {
+	files, err := ioutil.ReadDir(folder)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	reports := []metadata.StatusReport{metadata.StatusReport{
+		Status: metadata.NotFidoCertified,
+	}}
+
+	for _, file := range files {
+		b, err := ioutil.ReadFile(folder + "/" + file.Name())
+		if err != nil {
+			fmt.Print(err)
+		}
+		var statement metadata.MetadataStatement
+		json.Unmarshal(b, &statement)
+		var entry metadata.MetadataTOCPayloadEntry
+		entry.AaGUID = statement.AaGUID
+		entry.MetadataStatement = statement
+		entry.StatusReports = reports
+		aaguid, err := uuid.FromString(entry.AaGUID)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			metadata.Metadata[aaguid] = entry
+			fmt.Println("Loaded metadata for " + entry.MetadataStatement.Description + ", AAGUID: " + entry.MetadataStatement.AaGUID)
+		}
+	}
 }

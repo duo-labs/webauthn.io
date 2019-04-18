@@ -47,13 +47,13 @@ func (c *Client) GetConformanceMetadata(e string) {
 	}
 
 	for _, e := range mdsEndpoints.Result {
-		toc, alg, err := metadata.ProcessMDSTOC(e, *c.httpClient)
+		toc, alg, err := metadata.ProcessMDSTOC(e, "", *c.httpClient)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		for _, entry := range toc.Entries {
-			ms, err := metadata.GetMetadataStatement(entry, alg, *c.httpClient)
+			ms, err := metadata.GetMetadataStatement(entry, "", alg, *c.httpClient)
 			if err != nil {
 				fmt.Println(err)
 			} else {
@@ -67,33 +67,8 @@ func (c *Client) GetConformanceMetadata(e string) {
 			}
 		}
 	}
-	files, err := ioutil.ReadDir("metadataStatements")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	reports := []metadata.StatusReport{metadata.StatusReport{
-		Status: metadata.NotFidoCertified,
-	}}
+	LoadMetadataFromFolder("metadataStatements")
 
-	for _, file := range files {
-		b, err := ioutil.ReadFile("metadataStatements" + "/" + file.Name())
-		if err != nil {
-			fmt.Print(err)
-		}
-		var statement metadata.MetadataStatement
-		json.Unmarshal(b, &statement)
-		var entry metadata.MetadataTOCPayloadEntry
-		entry.AaGUID = statement.AaGUID
-		entry.MetadataStatement = statement
-		entry.StatusReports = reports
-		aaguid, err := uuid.FromString(entry.AaGUID)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			metadata.Metadata[aaguid] = entry
-		}
-	}
 	metadata.Conformance = true
 }
 func (ws *Server) AddConformanceEndpoints(r *mux.Router) {
