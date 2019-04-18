@@ -76,7 +76,7 @@ func WithWebAuthn(w *webauthn.WebAuthn) Option {
 // Start starts the underlying HTTP server
 func (ws *Server) Start() error {
 	log.Printf("Starting webauthn server at %s", ws.server.Addr)
-	return ws.server.ListenAndServeTLS("server.crt", "server.key")
+	return ws.server.ListenAndServe() 
 }
 
 // Shutdown attempts to gracefully shutdown the underlying HTTP server.
