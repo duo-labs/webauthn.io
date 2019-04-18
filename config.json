@@ -1,8 +1,8 @@
 {
     "db_name": "sqlite3",
     "db_path": "webauthn.db",
-    "host_address": "192.168.129.6",
+    "host_address": "127.0.0.1",
     "host_port": "9005",
-    "relying_party": "aseigler.webauthn.io",
+    "relying_party": "localhost",
     "expose_fido_endpoints": true
 }
