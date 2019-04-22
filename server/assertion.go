@@ -5,6 +5,9 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/duo-labs/webauthn/protocol"
+	"github.com/duo-labs/webauthn/webauthn"
+
 	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn.io/models"
 	"github.com/gorilla/mux"
@@ -71,6 +74,80 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 	// verify the signed challenge. This returns the webauthn.Credential that
 	// was used to authenticate.
 	cred, err := ws.webauthn.FinishLogin(user, sessionData, r)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// At this point, we've confirmed the correct authenticator has been
+	// provided and it passed the challenge we gave it. We now need to make
+	// sure that the sign counter is higher than what we have stored to help
+	// give assurance that this credential wasn't cloned.
+	if cred.Authenticator.CloneWarning {
+		log.Errorf("credential appears to be cloned: %s", err)
+		jsonResponse(w, ErrCredentialCloned, http.StatusForbidden)
+		return
+	}
+	// We're logged in! All that's left is to update the sign count with the
+	// new value we received. We could join the tables on the CredentialID
+	// field, but for our purposes we'll just get the stored credential and
+	// use that to find the authenticator we need to update.
+	credentialID := base64.URLEncoding.EncodeToString(cred.ID)
+	storedCredential, err := models.GetCredentialForUser(&user, credentialID)
+	if err != nil {
+		log.Errorf("error getting credentials for user: %s", err)
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = models.UpdateAuthenticatorSignCount(storedCredential.AuthenticatorID, cred.Authenticator.SignCount)
+	if err != nil {
+		log.Errorf("error updating sign count: %s", err)
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = ws.store.Set("user_id", user.ID, r, w)
+	if err != nil {
+		jsonResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	jsonResponse(w, user, http.StatusOK)
+}
+
+func (ws *Server) MakeSessionlessAssertion(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["name"]
+	// TODO: Change these to POST's
+	//username := r.FormValue("username")
+	if username == "" {
+		jsonResponse(w, "No username specified", http.StatusBadRequest)
+		return
+	}
+
+	user, err := models.GetUserByUsername(username)
+	if err == gorm.ErrRecordNotFound {
+		log.Errorf("error creating assertion: user doesn't exist: %s", username)
+		jsonResponse(w, "User doesn't exist", http.StatusBadRequest)
+		return
+	}
+
+	parsedAssertionData, err := protocol.ParseCredentialRequestResponse(r)
+	if err != nil {
+		log.Errorf("Error parsing sessionless assertion response")
+		jsonResponse(w, "Error parsing assertion data", http.StatusBadRequest)
+		return
+	}
+
+	// Propagate the session data that should exist
+	sessionlessData := webauthn.SessionData{
+		Challenge:            parsedAssertionData.Response.CollectedClientData.Challenge,
+		UserID:               user.WebAuthnID(),
+		AllowedCredentialIDs: user.WebAuthnCredentialIDs(),
+		UserVerification:     protocol.VerificationPreferred,
+	}
+
+	// With the session data retrieved, we need to call webauthn.FinishLogin to
+	// verify the signed challenge. This returns the webauthn.Credential that
+	// was used to authenticate.
+	cred, err := ws.webauthn.FinishLogin(user, sessionlessData, r)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return

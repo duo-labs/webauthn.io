@@ -176,7 +176,7 @@ function getAssertion() {
                         })
                         .then(function (credential) {
                             console.log(credential);
-                            verifyAssertion(credential);
+                            verifyAssertionSessionless(credential);
                         }).catch(function (err) {
                             console.log(err.name);
                             showErrorAlert(err.message);
@@ -201,6 +201,36 @@ function verifyAssertion(assertedCredential) {
     let userHandle = new Uint8Array(assertedCredential.response.userHandle);
     $.ajax({
         url: '/assertion',
+        type: 'POST',
+        data: JSON.stringify({
+            id: assertedCredential.id,
+            rawId: bufferEncode(rawId),
+            type: assertedCredential.type,
+            response: {
+                authenticatorData: bufferEncode(authData),
+                clientDataJSON: bufferEncode(clientDataJSON),
+                signature: bufferEncode(sig),
+                userHandle: bufferEncode(userHandle),
+            },
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            window.location = "/dashboard"
+            console.log(response)
+        }
+    });
+}
+
+function verifyAssertionSessionless(assertedCredential) {
+    // Move data into Arrays incase it is super long    
+    let authData = new Uint8Array(assertedCredential.response.authenticatorData);
+    let clientDataJSON = new Uint8Array(assertedCredential.response.clientDataJSON);
+    let rawId = new Uint8Array(assertedCredential.rawId);
+    let sig = new Uint8Array(assertedCredential.response.signature);
+    let userHandle = new Uint8Array(assertedCredential.response.userHandle);
+    $.ajax({
+        url: '/user/' + state.user.name + '/assertion',
         type: 'POST',
         data: JSON.stringify({
             id: assertedCredential.id,

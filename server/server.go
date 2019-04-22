@@ -94,6 +94,9 @@ func (ws *Server) registerRoutes() {
 	// Authenticated handlers for viewing credentials after logging in
 	router.HandleFunc("/dashboard", ws.LoginRequired(ws.Index))
 
+	// Add Android endpoint
+	router.HandleFunc("/user/{name}/assertion", ws.MakeSessionlessAssertion).Methods("POST")
+
 	// Static file serving
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	ws.server.Handler = router
