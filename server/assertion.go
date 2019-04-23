@@ -1,8 +1,10 @@
 package server
 
 import (
+	"bytes"
 	"encoding/base64"
 	"errors"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/duo-labs/webauthn/protocol"
@@ -115,8 +117,6 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 func (ws *Server) MakeSessionlessAssertion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["name"]
-	// TODO: Change these to POST's
-	//username := r.FormValue("username")
 	if username == "" {
 		jsonResponse(w, "No username specified", http.StatusBadRequest)
 		return
@@ -129,12 +129,23 @@ func (ws *Server) MakeSessionlessAssertion(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// Read the request body contents
+	buf, err := ioutil.ReadAll(r.Body)
+	// Create a copy of the request body
+	readerCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
+	// Create a copy to reset the request body
+	readerReplace := ioutil.NopCloser(bytes.NewBuffer(buf))
+
+	r.Body = readerCopy
 	parsedAssertionData, err := protocol.ParseCredentialRequestResponse(r)
 	if err != nil {
 		log.Errorf("Error parsing sessionless assertion response")
 		jsonResponse(w, "Error parsing assertion data", http.StatusBadRequest)
 		return
 	}
+
+	// Reset the reader in the request body
+	r.Body = readerReplace
 
 	// Propagate the session data that should exist
 	sessionlessData := webauthn.SessionData{

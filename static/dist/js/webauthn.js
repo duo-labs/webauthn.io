@@ -176,7 +176,7 @@ function getAssertion() {
                         })
                         .then(function (credential) {
                             console.log(credential);
-                            verifyAssertionSessionless(credential);
+                            verifyAssertion(credential);
                         }).catch(function (err) {
                             console.log(err.name);
                             showErrorAlert(err.message);
