@@ -7,6 +7,8 @@ import (
 
 	log "github.com/duo-labs/webauthn.io/logger"
 	"github.com/duo-labs/webauthn.io/models"
+	"github.com/duo-labs/webauthn/protocol"
+	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
@@ -35,7 +37,8 @@ func (ws *Server) GetAssertion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assertion, sessionData, err := ws.webauthn.BeginLogin(user)
+	assertion, sessionData, err := ws.webauthn.BeginLogin(user,
+		webauthn.WithUserVerification(protocol.VerificationDiscouraged))
 	if err != nil {
 		log.Errorf("error creating assertion: %v", err)
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
