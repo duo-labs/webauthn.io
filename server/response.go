@@ -26,7 +26,7 @@ func jsonResponse(w http.ResponseWriter, d interface{}, c int) {
 func renderTemplate(w http.ResponseWriter, f string, data interface{}) {
 	t, err := template.ParseFiles(append(defaultTemplates, fmt.Sprintf("./templates/%s", f))...)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error rendering template: %s", err), http.StatusInternalServerError)
 		return
 	}
 	t.ExecuteTemplate(w, "base", data)
