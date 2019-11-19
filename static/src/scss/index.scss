@@ -132,6 +132,12 @@ pre span {
     color: $gray-900;
 }
 
+.advanced-settings {
+    .input-group-text {
+        background-color: rgb(190, 221, 232);
+    }
+}
+
 .container {
     @include media-breakpoint-up(lg) {
         max-width: 960px;

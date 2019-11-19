@@ -23,12 +23,17 @@ var ErrCredentialCloned = errors.New("credential appears to have been cloned")
 func (ws *Server) GetAssertion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["name"]
+	userVerification := vars["userVer"]
+	txAuthExtension := vars["txAuthExtension"]
+
 	// TODO: Change these to POST's
 	//username := r.FormValue("username")
 	if username == "" {
 		jsonResponse(w, "No username specified", http.StatusBadRequest)
 		return
 	}
+
+	testExtension := protocol.AuthenticationExtensions(map[string]interface{}{"txAuthSimple": txAuthExtension})
 
 	user, err := models.GetUserByUsername(username)
 	if err == gorm.ErrRecordNotFound {
@@ -38,7 +43,10 @@ func (ws *Server) GetAssertion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	assertion, sessionData, err := ws.webauthn.BeginLogin(user,
-		webauthn.WithUserVerification(protocol.VerificationDiscouraged))
+		webauthn.WithUserVerification(protocol.UserVerificationRequirement(userVerification)),
+		webauthn.WithAssertionExtensions(testExtension),
+	)
+
 	if err != nil {
 		log.Errorf("error creating assertion: %v", err)
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +77,9 @@ func (ws *Server) MakeAssertion(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	log.Infof("Finishing authentication with user: %s\n", user.Username)
+
 	// With the session data retrieved, we need to call webauthn.FinishLogin to
 	// verify the signed challenge. This returns the webauthn.Credential that
 	// was used to authenticate.

@@ -87,10 +87,17 @@ function makeCredential() {
 
     var attestation_type = $('#select-attestation').find(':selected').val();
     var authenticator_attachment = $('#select-authenticator').find(':selected').val();
+    
+    var user_verification = $('#select-verification').find(':selected').val();
+    var resident_key_requirement = $('#select-residency').find(':selected').val();
+    var txAuthSimple_extension = $('#extension-input').val();
 
     $.get('/makeCredential/' + state.user.name, {
             attType: attestation_type,
-            authType: authenticator_attachment
+            authType: authenticator_attachment,
+            userVerification: user_verification,
+            residentKeyRequirement: resident_key_requirement,
+            txAuthExtension: txAuthSimple_extension,
         }, null, 'json')
         .done(function (makeCredentialOptions) {            
             makeCredentialOptions.publicKey.challenge = bufferDecode(makeCredentialOptions.publicKey.challenge);
@@ -121,7 +128,6 @@ function registerNewCredential(newCredential) {
     let attestationObject = new Uint8Array(newCredential.response.attestationObject);
     let clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
     let rawId = new Uint8Array(newCredential.rawId);
-
 
     $.ajax({
         url: '/makeCredential',
@@ -162,7 +168,14 @@ function getAssertion() {
     $.get('/user/' + state.user.name + '/exists', {}, null, 'json').done(function (response) {
             console.log(response);
         }).then(function () {
-            $.get('/assertion/' + state.user.name, {}, null, 'json')
+            
+            var user_verification = $('#select-verification').find(':selected').val();            
+            var txAuthSimple_extension = $('#extension-input').val();
+
+            $.get('/assertion/' + state.user.name, {
+                userVer: user_verification,
+                txAuthExtension: txAuthSimple_extension
+            }, null, 'json')
                 .done(function (makeAssertionOptions) {
                     console.log("Assertion Options:");
                     console.log(makeAssertionOptions);

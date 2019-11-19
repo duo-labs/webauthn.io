@@ -22,7 +22,20 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 	attType := r.FormValue("attType")
 	authType := r.FormValue("authType")
 
-	// models.GetorCreateUser(User)
+	// Advanced settings
+	userVer := r.FormValue("userVerification")
+	resKey := r.FormValue("residentKeyRequirement")
+	testExtension := r.FormValue("txAuthExtension")
+
+	var residentKeyRequirement *bool
+	if strings.EqualFold(resKey, "true") {
+		residentKeyRequirement = protocol.ResidentKeyRequired()
+	} else {
+		residentKeyRequirement = protocol.ResidentKeyUnrequired()
+	}
+
+	testEx := protocol.AuthenticationExtensions(map[string]interface{}{"txAuthSimple": testExtension})
+
 	user, err := models.GetUserByUsername(username)
 	if err != nil {
 		user = models.User{
@@ -40,11 +53,12 @@ func (ws *Server) RequestNewCredential(w http.ResponseWriter, r *http.Request) {
 		webauthn.WithAuthenticatorSelection(
 			protocol.AuthenticatorSelection{
 				AuthenticatorAttachment: protocol.AuthenticatorAttachment(authType),
-				RequireResidentKey:      protocol.ResidentKeyUnrequired(),
-				UserVerification:        protocol.VerificationDiscouraged,
+				RequireResidentKey:      residentKeyRequirement,
+				UserVerification:        protocol.UserVerificationRequirement(userVer),
 			}),
-		webauthn.WithConveyancePreference(protocol.ConveyancePreference(
-			attType)))
+		webauthn.WithConveyancePreference(protocol.ConveyancePreference(attType)),
+		webauthn.WithExtensions(testEx),
+	)
 	if err != nil {
 		jsonResponse(w, err.Error(), http.StatusInternalServerError)
 		return
