@@ -23,8 +23,8 @@ var ErrCredentialCloned = errors.New("credential appears to have been cloned")
 func (ws *Server) GetAssertion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["name"]
-	userVerification := vars["userVer"]
-	txAuthExtension := vars["txAuthExtension"]
+	userVerification := r.FormValue("userVer")
+	txAuthExtension := r.FormValue("txAuthExtension")
 
 	// TODO: Change these to POST's
 	//username := r.FormValue("username")
