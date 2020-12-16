@@ -63,6 +63,19 @@ func (u User) WebAuthnCredentials() []webauthn.Credential {
 	return wcs
 }
 
+// WebAuthnCredentialIDs helps implement the webauthn.User interface by loading
+// the user's credentials IDs from the underlying database. This is used currently
+// to retreive allowedList credential IDs
+func (u User) WebAuthnCredentialIDs() [][]byte {
+	credentials, _ := GetCredentialsForUser(&u)
+	wcs := make([][]byte, len(credentials))
+	for i, cred := range credentials {
+		credentialID, _ := base64.URLEncoding.DecodeString(cred.CredentialID)
+		wcs[i] = credentialID
+	}
+	return wcs
+}
+
 // GetUser returns the user that the given id corresponds to. If no user is found, an
 // error is thrown.
 func GetUser(id uint) (User, error) {
