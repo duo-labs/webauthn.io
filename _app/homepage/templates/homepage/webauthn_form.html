@@ -4,3 +4,7 @@
   <button type="button" id="usernameBtnRegister">Register</button>
   <button type="button" id="usernameBtnAuthenticate">Authenticate</button>
 </form>
+<script type="module">
+  import { browserSupportsWebauthn } from '{% static "simplewebauthn-browser-5.0.0.index.js" %}';
+  console.log(browserSupportsWebauthn());
+</script>
