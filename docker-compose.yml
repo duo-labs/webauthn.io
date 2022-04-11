@@ -61,11 +61,11 @@ services:
       - POSTGRES_PASSWORD
       - PROD_HOST_NAME
 
-  cloudflaretunnel:
-    image: cloudflare/cloudflared:2022.3.4
-    entrypoint: ["cloudflared", "tunnel", "--no-autoupdate", "run", "--token", "$CLOUDFLARE_TUNNEL_TOKEN"]
-    networks:
-      - nginx_network
+  # cloudflaretunnel:
+  #   image: cloudflare/cloudflared:2022.3.4
+  #   entrypoint: ["cloudflared", "tunnel", "--no-autoupdate", "run", "--token", "$CLOUDFLARE_TUNNEL_TOKEN"]
+  #   networks:
+  #     - nginx_network
 
 volumes:
   static_files_volume:
