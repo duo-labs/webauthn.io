@@ -1,0 +1,77 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:14.1
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+    networks:
+      - database_network
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+
+  redis:
+    image: redis:6.2.6
+    networks:
+      - redis_network
+
+  nginx:
+    image: nginx:1.21.4-alpine
+    ports:
+      # Will be available @ localhost:80
+      - "80:80"
+    depends_on:
+      # Make sure Django's built so Nginx can serve its static content
+      - django
+    volumes:
+      # Django's static files
+      - static_files_volume:/usr/share/nginx/html/static
+      # Nginx config
+      - ./_nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./_nginx/templates:/etc/nginx/templates
+    networks:
+      - nginx_network
+    environment:
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.conf
+      - PROD_HOST_NAME
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DJANGO_SECRET_KEY
+    depends_on:
+      - db
+      - redis
+    command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py
+    volumes:
+      - ./_app:/usr/src/app
+      # Django static files will go here so Nginx can access them
+      - static_files_volume:/usr/src/app/static
+    networks:
+      - nginx_network
+      - database_network
+      - redis_network
+    environment:
+      - PYTHONUNBUFFERED=0
+      - DJANGO_SECRET_KEY
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - PROD_HOST_NAME
+
+  cloudflaretunnel:
+    image: cloudflare/cloudflared:2022.3.4
+    entrypoint: ["cloudflared", "tunnel", "--no-autoupdate", "run", "--token", "$CLOUDFLARE_TUNNEL_TOKEN"]
+    networks:
+      - nginx_network
+
+volumes:
+  static_files_volume:
+  database_volume:
+
+networks:
+  nginx_network:
+  database_network:
+  redis_network:

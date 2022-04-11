@@ -1,0 +1,9 @@
+*.yml
+.git
+.gitignore
+.editorconfig
+.vscode
+*.md
+*.sh
+*.log
+.env

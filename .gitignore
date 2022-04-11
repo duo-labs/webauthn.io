@@ -1,0 +1,5 @@
+*.pyc
+*.sqlite3
+_psql
+*.log
+*.env
