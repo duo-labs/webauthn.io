@@ -1,0 +1,29 @@
+main {
+  max-width: 30rem;
+  margin: auto;
+  border: 1px solid gray;
+  padding: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form label {
+  flex: 1;
+  display: flex;
+}
+
+.form input {
+  flex: 1;
+  margin-left: 0.5rem;
+}
+
+.form button {
+  margin-top: 1rem;
+}
+
+#advanced-settings label {
+  display: block;
+}

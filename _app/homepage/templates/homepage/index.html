@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebAuthn.io</title>
+  <link rel="stylesheet" href="{% static "styles.css" %}">
 </head>
 <body>
   <h1>WebAuthn.io - Now with passkeys</h1>
-  {% include "homepage/webauthn_form.html" %}
+  <main>
+    {% include "homepage/webauthn_form.html" %}
+  </main>
 </body>
 </html>
