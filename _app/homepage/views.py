@@ -15,3 +15,14 @@ def index(request):
     }
 
     return render(request, "homepage/index.html", context)
+
+
+def profile(request):
+    """
+    Render the logged-in user's "profile" page
+    """
+    context = {
+        "libraries": libraries,
+    }
+
+    return render(request, "homepage/profile.html", context)
