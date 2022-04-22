@@ -1,0 +1,35 @@
+{% load static %}
+<section class="libraries">
+  <div class="row">
+    <div class="mx-0 col-lg-6 libraries-header">
+      <h3>Using WebAuthn</h3>
+      <p>Get started using WebAuthn with one of these libraries:</p>
+    </div>
+  </div>
+  <div class="row">
+    {% for library in libraries %}
+    <div class="mt-3 col-sm-12 col-md-6 col-lg-4 d-flex flex-column">
+      <a
+        class="library"
+        href="{{ library.url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h5>{{ library.language }}</h5>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/github.svg' %}" />
+          <span class="ml-2">{{ library.title }}</span>
+        </p>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/author.svg' %}" />
+          <span class="ml-2">{{ library.author }}</span>
+        </p>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/brackets.svg' %}" />
+          <span class="ml-2">{{ library.type }}</span>
+        </p>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
