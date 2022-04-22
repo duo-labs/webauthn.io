@@ -1,5 +1,4 @@
-$font-family-base: "Roboto Slab",
-serif;
+$font-family-base: "Roboto Slab", serif;
 
 @import "./_quicksand.scss";
 @import "./_roboto-slab.scss";
@@ -61,7 +60,6 @@ h2 {
     }
 }
 
-
 h3 {
     @include media-breakpoint-up(lg) {
         font-size: 48px;
@@ -71,7 +69,6 @@ h3 {
     font-size: 28px;
     font-weight: normal;
 }
-
 
 h4 {
     font-size: 24px;
@@ -145,7 +142,6 @@ pre span {
 }
 
 .hero {
-
     margin-bottom: 3rem;
     overflow: hidden;
 
@@ -155,7 +151,6 @@ pre span {
         .container {
             height: 594px;
         }
-
     }
 
     @include media-breakpoint-up(lg) {
@@ -165,8 +160,13 @@ pre span {
     }
 
     @include media-breakpoint-down(md) {
-        background: #C2EC98;
-        background-image: linear-gradient(-67deg, #8BC4E4 0%, rgba(134, 193, 226, 0.70) 15%, rgba(119, 183, 219, 0.00) 99%);
+        background: #c2ec98;
+        background-image: linear-gradient(
+            -67deg,
+            #8bc4e4 0%,
+            rgba(134, 193, 226, 0.7) 15%,
+            rgba(119, 183, 219, 0) 99%
+        );
     }
 
     @include media-breakpoint-down(md) {
@@ -186,7 +186,7 @@ pre span {
     }
 
     @include media-breakpoint-down(md) {
-        background: #C2EC98;
+        background: #c2ec98;
         background-image: url("../images/confetti.svg"),
             linear-gradient(
                 -67deg,
@@ -331,7 +331,9 @@ pre {
     font-size: 14px;
 }
 
-.section {
+section,
+header,
+footer {
     @include media-breakpoint-up(lg) {
         margin-bottom: 5.5rem;
     }
@@ -375,10 +377,10 @@ pre {
         width: 140px;
 
         p {
-            font-family: 'Quicksand', sans-serif;
+            font-family: "Quicksand", sans-serif;
         }
 
-        >* {
+        > * {
             margin-bottom: 1.5rem;
         }
     }
@@ -402,16 +404,16 @@ pre {
     font-size: 18px;
 }
 
-.input-group-lg>.form-control,
-.input-group-lg>.input-group-prepend>.input-group-text,
-.input-group-lg>.input-group-append>.input-group-text,
-.input-group-lg>.input-group-prepend>.btn,
-.input-group-lg>.input-group-append>.btn {
+.input-group-lg > .form-control,
+.input-group-lg > .input-group-prepend > .input-group-text,
+.input-group-lg > .input-group-append > .input-group-text,
+.input-group-lg > .input-group-prepend > .btn,
+.input-group-lg > .input-group-append > .btn {
     font-size: 1rem;
 }
 
 .btn-lg,
-.btn-group-lg>.btn {
+.btn-group-lg > .btn {
     padding: 1rem 1rem;
     font-size: 1.125rem;
 }
@@ -455,7 +457,6 @@ pre {
     border-bottom-color: white;
 }
 
-
 .twitter-logo {
     height: 30px;
     margin-right: 10px;
@@ -471,13 +472,12 @@ pre {
         table-layout: fixed;
 
         th.date-created {
-            width: 10%
+            width: 10%;
         }
 
         th.credential-info {
             width: 45%;
         }
-
     }
 }
 
