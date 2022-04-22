@@ -150,7 +150,7 @@ pre span {
     overflow: hidden;
 
     @include media-breakpoint-up(lg) {
-        margin-bottom: 5rem;
+        margin-bottom: 5.5rem;
 
         .container {
             height: 594px;
@@ -159,7 +159,7 @@ pre span {
     }
 
     @include media-breakpoint-up(lg) {
-        background-image: url(/dist/images/header-bg.svg);
+        background-image: url("../images/header-bg.svg");
         background-repeat: no-repeat;
         background-position: top;
     }
@@ -181,12 +181,19 @@ pre span {
     background-position: top;
 
     @include media-breakpoint-up(lg) {
-        background-image: url(/dist/images/confetti.svg), url(/dist/images/header-bg.svg);
+        background-image: url("../images/confetti.svg"),
+            url("../images/header-bg.svg");
     }
 
     @include media-breakpoint-down(md) {
         background: #C2EC98;
-        background-image: url(/dist/images/confetti.svg), linear-gradient(-67deg, #8BC4E4 0%, rgba(134, 193, 226, 0.70) 15%, rgba(119, 183, 219, 0.00) 99%);
+        background-image: url("../images/confetti.svg"),
+            linear-gradient(
+                -67deg,
+                #8bc4e4 0%,
+                rgba(134, 193, 226, 0.7) 15%,
+                rgba(119, 183, 219, 0) 99%
+            );
     }
 }
 
@@ -203,7 +210,7 @@ pre span {
     img.main {
         @include media-breakpoint-up(lg) {
             position: absolute;
-            top: -120;
+            top: -120px;
             width: auto;
         }
     }
