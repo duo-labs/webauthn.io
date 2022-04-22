@@ -3,3 +3,4 @@
 _psql
 *.log
 *.env
+.DS_Store
