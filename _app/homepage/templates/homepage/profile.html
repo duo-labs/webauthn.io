@@ -1,4 +1,5 @@
 {% extends 'homepage/base.html' %}
+{% load static %}
 
 {% block header %}
 <header>
@@ -39,7 +40,7 @@
                 role="presentation"
                 alt=""
                 class="party-cat"
-                src="/dist/images/cat.svg"
+                src="{% static 'images/cat.svg' %}"
               />
             </div>
           </div>
