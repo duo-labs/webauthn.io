@@ -151,7 +151,7 @@ pre span {
         margin-bottom: 5.5rem;
 
         .container {
-            height: 594px;
+            min-height: 594px;
         }
     }
 
@@ -159,6 +159,7 @@ pre span {
         background-image: url("../images/header-bg.svg");
         background-repeat: no-repeat;
         background-position: top;
+        background-size: cover;
     }
 
     @include media-breakpoint-down(md) {
@@ -244,12 +245,6 @@ pre span {
     }
 
     input {
-        color: $gray-900;
-        border-color: rgba(255, 255, 255, 0.38);
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .custom-select {
         color: $gray-900;
         border-color: rgba(255, 255, 255, 0.38);
         background-color: rgba(255, 255, 255, 0.3);
@@ -486,16 +481,27 @@ footer {
 #alert {
     background-color: rgba(58, 55, 59, 0.91);
     border-radius: 6px;
-    padding: 15px 17px;
+    padding: .375rem .75rem;
     color: white;
     width: 100%;
     display: flex;
     align-items: center;
-    display: none;
 }
 
 .warning-icon {
     width: auto;
     margin-right: 10px;
-    height: 35px;
+    height: 24px;
+}
+
+/* WebAuthn form styles */
+[x-cloak] {
+    display: none !important;
+}
+
+#advanced-settings {
+    label {
+        display: block;
+    }
+
 }

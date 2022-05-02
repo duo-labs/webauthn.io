@@ -1,81 +1,291 @@
 {% load static %}
 
-<div class="mt-5 hero-form">
-  <div class="form-group">
-    <input
-      type="email"
-      class="form-control form-control-lg"
-      id="input-email"
-      placeholder="example_username"
-    />
-  </div>
-  <div class="input-group input-group-lg mb-3">
-    <div class="input-group-prepend">
-      <label class="input-group-text" for="select-authenticator">
-        Attestation Type
-      </label>
-    </div>
-    <select
-      class="custom-select form-control"
-      id="select-attestation"
-    >
-      <option selected value="none">None</option>
-      <option value="indirect">Indirect</option>
-      <option value="direct">Direct</option>
-    </select>
-  </div>
-  <div class="input-group input-group-lg mb-3">
-    <div class="input-group-prepend">
-      <label class="input-group-text" for="select-authenticator">
-        Authenticator Type
-      </label>
-    </div>
-    <select
-      class="custom-select form-control"
-      id="select-authenticator"
-    >
-      <option selected value="">Unspecified</option>
-      <option value="cross-platform">Cross platform</option>
-      <option value="platform">Platform (TPM)</option>
-    </select>
-  </div>
-  <div class="input-group mb-3">
-    <button
-      onclick="makeCredential()"
-      id="register-button"
-      class="btn btn-lg btn-primary"
-    >
-      Register
-    </button>
-    <button
-      onclick="getAssertion()"
-      id="login-button"
-      class="btn btn-lg btn-primary"
-      data-toggle="popover"
-      data-content="Success! Now try logging in :)"
-    >
-      Authenticate
-    </button>
-  </div>
-  <div class="mb-3">
-    <button
-      class="btn btn-primary"
-      type="button"
-      data-toggle="collapse"
-      data-target="#advancedSettings"
-      aria-expanded="false"
-      aria-controls="collapseExample"
-    >
-      Advanced Settings
-    </button>
-  </div>
-  <div class="input-group">
-    <div id="alert">
-      <img
-        class="warning-icon"
-        src="{% static 'images/warning.svg' %}"
-      />
-      <span id="alert-msg"></span>
-    </div>
-  </div>
+<div class="mt-5 hero-form" x-data="global">
+  <template x-if="webauthnSupported">
+    <section class="form-group">
+      <form @submit.prevent="handleSubmit()">
+        <div class="form-row">
+          <div class="col-sm-12 mb-3">
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              id="input-email"
+              placeholder="example_username"
+              x-model="username"
+              required
+            />
+          </div>
+          <template x-if="alert.show">
+            <div class="col-sm-12">
+              <div
+                :class="alert.alertClass"
+                x-text="alert.text"
+              ></div>
+            </div>
+          </template>
+        </div>
+        <div class="form-row">
+          <div class="col-sm-6 mb-3">
+            <button
+              class="btn btn-block btn-primary"
+              type="submit"
+              id="register-button"
+              @click="handleClickRegister()"
+            >
+              Register
+            </button>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <button
+              class="btn btn-block btn-primary"
+              id="login-button"
+              @click="handleClickAuthenticate()"
+            >
+              Authenticate
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="advanced-settings" class="mb-3">
+        <button
+          class="btn btn-secondary mb-3"
+          @click="toggleDrawer()"
+          :class="{
+            'btn-light': showAdvancedSettings,
+          }"
+        >
+          Advanced Settings
+        </button>
+
+        <div class="card settings-drawer" x-cloak x-show="showAdvancedSettings">
+          <div class="card-body">
+
+            <section class="mb-2">
+              <p class="mb-1">
+                <ins>User Settings</ins>
+              </p>
+              <!-- User Verification -->
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input
+                  type="checkbox"
+                  name="optRequireUV"
+                  id="optRequireUV"
+                  class="custom-control-input"
+                  x-model="options.requireUserVerification"
+                />
+                <label for="optRequireUV" class="custom-control-label">
+                  Require User Verification
+                </label>
+              </div>
+            </section>
+
+            <section class="mb-2">
+              <p class="mb-1">
+                <ins>Credential Algorithms</ins>
+              </p>
+
+              <!-- Algorithm - ES256 -->
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input
+                  type="checkbox"
+                  name="optAlgES256"
+                  id="optAlgES256"
+                  class="custom-control-input"
+                  x-model="options.algES256"
+                />
+                <label for="optAlgES256" class="custom-control-label">
+                  ES256
+                </label>
+              </div>
+
+              <!-- Algorithm - RS256 -->
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input
+                  type="checkbox"
+                  name="optAlgRS256"
+                  id="optAlgRS256"
+                  class="custom-control-input"
+                  x-model="options.algRS256"
+                />
+                <label for="optAlgRS256" class="custom-control-label">
+                  RS256
+                </label>
+              </div>
+            </section>
+
+            <!-- Attachment -->
+            <label for="attachment">
+              <ins>Authenticator Attachment</ins>
+              <br>
+              <select
+                name="attachment"
+                id="attachment"
+                class="custom-select"
+                x-model="options.attachment"
+              >
+                <option value="">All Supported</option>
+                <template x-for="attachment in attachments" :key="attachment.value">
+                  <option
+                    :value="attachment.value"
+                    :selected="options.attachment === attachment.value"
+                    x-text="attachment.label"
+                  ></option>
+                </template>
+              </select>
+            </label>
+
+            <!-- Attestation dropdown -->
+            <label for="attestation">
+              <ins>Attestation</ins>
+              <br />
+              <select
+                name="attestation"
+                id="attestation"
+                class="custom-select"
+                x-model="options.attestation"
+              >
+                <template x-for="attestation in attestations" :key="attestation.value">
+                  <option
+                    :value="attestation.value"
+                    :selected="options.attestation === attestation.value"
+                    x-text="attestation.label"
+                  ></option>
+                </template>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template x-if="!webauthnSupported">
+    <h2>WebAuthn isn't supported. Please consider switching to a modern browser.</h2>
+  </template>
 </div>
+
+<script src="{% static "simplewebauthn-browser.5.1.0.umd.min.js" %}"></script>
+<script>
+  // Initialize advanced options
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('global', () => ({
+      init() {
+        // Make sure WebAuthn is available in the browser
+        const { browserSupportsWebauthn } = SimpleWebAuthnBrowser;
+        this.webauthnSupported = browserSupportsWebauthn();
+        if (!this.webauthnSupported) {
+          // TODO: Show something when this is false
+          return;
+        }
+
+        // Read options from query params if set
+        if (location.search) {
+          console.log('initializing options from query params');
+          this.showAdvancedSettings = true;
+
+          // Read query params
+          const currentParams = new URLSearchParams(location.search);
+
+          // Initialize data from query params
+          this.options.requireUserVerification =
+            currentParams.get('requireUserVerification') === 'true';
+          this.options.algES256 = currentParams.get('algES256') === 'true';
+          this.options.algRS256 = currentParams.get('algRS256') === 'true';
+
+          const _attestation = currentParams.get('attestation');
+          for (const attestation of this.attestations) {
+            if (attestation.value === _attestation) {
+              this.options.attestation = _attestation;
+              break;
+            }
+          }
+
+          const _attachment = currentParams.get('attachment');
+          for (const attachment of this.attachments) {
+            if (attachment.value === _attachment) {
+              this.options.attachment = _attachment;
+              break;
+            }
+          }
+        }
+
+        // Update query parameters when options change
+        this.$watch('options', () => {
+          const newParams = new URLSearchParams(this.options);
+          window.history.replaceState(
+            {},
+            "",
+            `${location.pathname}?${newParams}`
+          );
+        });
+      },
+
+      // Default state
+      webauthnSupported: true,
+      showAdvancedSettings: false,
+      formAction: 'registration',
+      options: {
+        requireUserVerification: true,
+        attestation: 'none',
+        attachment: '',
+        algES256: true,
+        algRS256: true,
+      },
+      username: '',
+      alert: {
+        show: false,
+        alertClass: 'alert alert-success',
+        text: '',
+      },
+      // Possible values for options.attestation
+      attestations: [
+        { label: 'None', value: 'none' },
+        { label: 'Direct', value: 'direct' },
+      ],
+      // Possible values for options.attachment
+      attachments: [
+        { label: 'Cross-Platform', value: 'cross_platform' },
+        { label: 'Platform', value: 'platform' },
+      ],
+
+      // Event handlers
+      toggleDrawer() {
+        this.showAdvancedSettings = !this.showAdvancedSettings;
+      },
+      hideAlert() {
+        this.alert.show = false;
+      },
+      showSuccessAlert(text) {
+        this.alert.alertClass = 'alert alert-success';
+        this.alert.text = text;
+        this.alert.show = true;
+      },
+      showErrorAlert(text) {
+        this.alert.alertClass = 'alert alert-danger';
+        this.alert.text = text;
+        this.alert.show = true;
+      },
+      handleClickRegister() {
+        this.formAction = 'register';
+      },
+      handleClickAuthenticate() {
+        this.formAction = 'authenticate';
+      },
+      handleSubmit() {
+        this.hideAlert();
+
+        console.log(this.options);
+        console.log(this.formAction);
+        console.log(this.username);
+
+        if (this.formAction === 'register') {
+          this.showSuccessAlert('success');
+        } else {
+          this.showErrorAlert('whoops');
+        }
+      },
+    }));
+  });
+</script>
+<script defer src="{% static "alpinejs-3.10.2.min.js" %}"></script>
