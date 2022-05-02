@@ -154,6 +154,12 @@
                 </template>
               </select>
             </label>
+
+            <section class="mb-0">
+              <button class="btn btn-warning" @click="resetSettings()">
+                Reset Settings
+              </button>
+            </section>
           </div>
         </div>
       </div>
@@ -284,6 +290,10 @@
         } else {
           this.showErrorAlert('whoops');
         }
+      },
+      resetSettings() {
+        // Reload the page sans query params
+        window.location.href = '/';
       },
     }));
   });
