@@ -285,15 +285,40 @@
         console.log(this.formAction);
         console.log(this.username);
 
+        // Perform action
         if (this.formAction === 'register') {
-          this.showSuccessAlert('success');
+          this._startRegistration(this.username, this.options);
         } else {
-          this.showErrorAlert('whoops');
+          this._start_authentication(this.username, this.options);
         }
       },
       resetSettings() {
         // Reload the page sans query params
         window.location.href = '/';
+      },
+
+      // Internal Methods
+      async _startRegistration() {
+        this.showSuccessAlert('success');
+
+        // TODO: Submit options
+
+        // TODO: Start WebAuthn registration
+
+        // TODO: Submit response
+
+        // TODO: Display outcome
+      },
+      async _start_authentication() {
+        this.showErrorAlert('whoops');
+
+        // TODO: Submit options
+
+        // TODO: Start WebAuthn authentication
+
+        // TODO: Submit response
+
+        // TODO: Display outcome
       },
     }));
   });
