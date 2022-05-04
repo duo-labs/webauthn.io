@@ -4,6 +4,7 @@ from typing import List, Optional
 from django.shortcuts import render
 from django.http import JsonResponse, HttpRequest, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from webauthn import generate_registration_options, options_to_json
 from webauthn.helpers.structs import (
     AttestationConveyancePreference,
@@ -86,8 +87,8 @@ def registration_options(request: HttpRequest):
             supported_pub_key_algs.append(COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
 
     registration_options = generate_registration_options(
-        rp_id="webauthn.io",
-        rp_name="WebAuthn.io",
+        rp_id=settings.RP_ID,
+        rp_name=settings.RP_NAME,
         user_id=options_username,
         user_name=options_username,
         attestation=attestation,

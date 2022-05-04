@@ -60,6 +60,8 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - PROD_HOST_NAME
+      - RP_ID
+      - RP_NAME
 
   # cloudflaretunnel:
   #   image: cloudflare/cloudflared:2022.3.4

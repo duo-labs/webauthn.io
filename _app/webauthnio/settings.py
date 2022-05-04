@@ -131,3 +131,9 @@ STATIC_ROOT = "static"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Relying party information for py_webauthn
+
+RP_ID = os.getenv("RP_ID")
+RP_NAME = os.getenv("RP_NAME")

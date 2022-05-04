@@ -17,3 +17,5 @@ services:
     command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py --reload
     environment:
       - DEBUG=true
+      - RP_ID=localhost
+      - RP_NAME=WebAuthn.io (Dev)
