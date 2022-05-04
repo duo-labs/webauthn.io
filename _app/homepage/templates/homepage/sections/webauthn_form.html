@@ -301,7 +301,43 @@
       async _startRegistration() {
         this.showSuccessAlert('success');
 
-        // TODO: Submit options
+        // Submit options
+        const {
+          requireUserVerification,
+          algES256,
+          algRS256,
+          attestation,
+          attachment,
+        } = this.options;
+
+        const algorithms = [];
+
+        if (algES256) {
+          algorithms.push('es256');
+        }
+
+        if (algRS256) {
+          algorithms.push('rs256');
+        }
+
+        const body = {
+          username: this.username,
+          // e.g. true
+          require_user_verification: requireUserVerification,
+          // e.g. 'direct'
+          attestation,
+          // e.g. 'platform'
+          attachment,
+          // e.g. ['es256', 'rs256']
+          algorithms,
+        };
+
+        const resp = await fetch('{% url "registration-options" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const registrationOptionsJSON = await resp.json();
 
         // TODO: Start WebAuthn registration
 
