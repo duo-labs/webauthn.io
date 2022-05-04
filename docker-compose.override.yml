@@ -19,3 +19,4 @@ services:
       - DEBUG=true
       - RP_ID=localhost
       - RP_NAME=WebAuthn.io (Dev)
+      - RP_EXPECTED_ORIGIN=http://localhost:8000

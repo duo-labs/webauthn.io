@@ -62,6 +62,7 @@ services:
       - PROD_HOST_NAME
       - RP_ID
       - RP_NAME
+      - RP_EXPECTED_ORIGIN
 
   # cloudflaretunnel:
   #   image: cloudflare/cloudflared:2022.3.4

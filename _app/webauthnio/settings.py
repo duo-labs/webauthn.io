@@ -137,3 +137,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 RP_ID = os.getenv("RP_ID")
 RP_NAME = os.getenv("RP_NAME")
+RP_EXPECTED_ORIGIN = os.getenv("RP_EXPECTED_ORIGIN")
