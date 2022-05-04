@@ -2,7 +2,7 @@ import json
 from typing import List, Optional
 
 from django.shortcuts import render
-from django.http import JsonResponse, HttpRequest, HttpResponseBadRequest
+from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from webauthn import generate_registration_options, options_to_json
