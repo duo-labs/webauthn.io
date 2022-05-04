@@ -124,7 +124,6 @@
                 class="custom-select"
                 x-model="options.attachment"
               >
-                <option value="">All Supported</option>
                 <template x-for="attachment in attachments" :key="attachment.value">
                   <option
                     :value="attachment.value"
@@ -234,7 +233,7 @@
       options: {
         requireUserVerification: true,
         attestation: 'none',
-        attachment: '',
+        attachment: 'all',
         algES256: true,
         algRS256: true,
       },
@@ -251,6 +250,7 @@
       ],
       // Possible values for options.attachment
       attachments: [
+        { label: 'All Supported', value: 'all' },
         { label: 'Cross-Platform', value: 'cross_platform' },
         { label: 'Platform', value: 'platform' },
       ],
