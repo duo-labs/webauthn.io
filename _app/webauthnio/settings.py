@@ -79,10 +79,12 @@ DATABASES = {
 # Redis cache support
 # https://docs.djangoproject.com/en/4.0/topics/cache/#redis-1
 
+REDIS_HOSTNAME = "redis"
+REDIS_PORT = 6379
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": f"redis://{REDIS_HOSTNAME}:{REDIS_PORT}/1",
     }
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
