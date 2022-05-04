@@ -16,6 +16,7 @@ black = "*"
 mypy = "*"
 flake8 = "*"
 flake8-quotes = "*"
+types-redis = "*"
 
 [requires]
 python_version = "3.10"
