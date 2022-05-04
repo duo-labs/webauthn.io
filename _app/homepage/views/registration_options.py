@@ -1,7 +1,6 @@
 import json
 from typing import List, Optional
 
-from django.shortcuts import render
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -14,43 +13,24 @@ from webauthn.helpers.structs import (
     COSEAlgorithmIdentifier,
 )
 
-from .forms import UsernameForm, RegistrationOptionsRequestForm
-from .const import libraries
-
-
-def index(request):
-    """
-    Render the homepage
-    """
-    username_form = UsernameForm()
-    context = {
-        "username_form": username_form,
-        "libraries": libraries,
-    }
-
-    return render(request, "homepage/index.html", context)
-
-
-def profile(request):
-    """
-    Render the logged-in user's "profile" page
-    """
-    context = {
-        "libraries": libraries,
-    }
-
-    return render(request, "homepage/profile.html", context)
+from homepage.services import RegistrationService
+from homepage.forms import RegistrationOptionsRequestForm
+from homepage.response import JsonResponseBadRequest
 
 
 @csrf_exempt
-def registration_options(request: HttpRequest):
+def registration_options(request: HttpRequest) -> JsonResponse:
+    """
+    Generate options for a WebAuthn registration ceremony
+    """
+
     body_json: dict = json.loads(request.body)
+
+    # TODO: Move this all into RegistrationService?
     options_form = RegistrationOptionsRequestForm(body_json)
 
     if not options_form.is_valid():
-        resp = JsonResponse(dict(options_form.errors.items()))
-        resp.status_code = 400
-        return resp
+        return JsonResponseBadRequest(dict(options_form.errors.items()))
 
     form_data = options_form.cleaned_data
     options_attestation = form_data["attestation"]
@@ -95,4 +75,8 @@ def registration_options(request: HttpRequest):
         authenticator_selection=authenticator_selection,
         supported_pub_key_algs=supported_pub_key_algs,
     )
+
+    registration_service = RegistrationService()
+    registration_service.save_options(username=options_username, options=registration_options)
+
     return JsonResponse(json.loads(options_to_json(registration_options)))
