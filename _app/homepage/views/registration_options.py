@@ -76,6 +76,11 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         supported_pub_key_algs=supported_pub_key_algs,
     )
 
+    # py_webauthn will default to all supported algorithms on an empty `options_algorithms` list
+    # so clear it manually so we can test out that scenario
+    if len(options_algorithms) == 0:
+        registration_options.pub_key_cred_params = []
+
     registration_service = RegistrationService()
     registration_service.save_options(username=options_username, options=registration_options)
 

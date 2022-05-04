@@ -25,7 +25,7 @@ class RegistrationOptionsRequestForm(forms.Form):
         ],
     )
     algorithms = forms.MultipleChoiceField(
-        required=True, choices=[("es256", "ES256"), ("rs256", "RS256")]
+        required=False, choices=[("es256", "ES256"), ("rs256", "RS256")]
     )
 
 
