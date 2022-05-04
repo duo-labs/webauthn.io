@@ -27,3 +27,8 @@ class RegistrationOptionsRequestForm(forms.Form):
     algorithms = forms.MultipleChoiceField(
         required=True, choices=[("es256", "ES256"), ("rs256", "RS256")]
     )
+
+
+class RegistrationResponseForm(forms.Form):
+    username = forms.CharField(required=True, max_length=64)
+    response = forms.JSONField(required=True)

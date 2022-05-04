@@ -6,4 +6,9 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("profile", views.profile, name="profile"),
     path("registration/options", views.registration_options, name="registration-options"),
+    path(
+        "registration/verification",
+        views.registration_verification,
+        name="registration-verification",
+    ),
 ]
