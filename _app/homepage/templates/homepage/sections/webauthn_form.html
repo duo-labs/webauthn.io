@@ -172,12 +172,16 @@
 
 <script src="{% static "simplewebauthn-browser.5.1.0.umd.min.js" %}"></script>
 <script>
+  const {
+    browserSupportsWebauthn,
+    startRegistration,
+  } = SimpleWebAuthnBrowser;
+
   // Initialize advanced options
   document.addEventListener('alpine:init', () => {
     Alpine.data('global', () => ({
       init() {
         // Make sure WebAuthn is available in the browser
-        const { browserSupportsWebauthn } = SimpleWebAuthnBrowser;
         this.webauthnSupported = browserSupportsWebauthn();
         if (!this.webauthnSupported) {
           // TODO: Show something when this is false
@@ -339,7 +343,13 @@
         });
         const registrationOptionsJSON = await resp.json();
 
-        // TODO: Start WebAuthn registration
+        // Start WebAuthn registration
+        let regResp;
+        try {
+          regResp = await startRegistration(registrationOptionsJSON);
+        } catch (err) {
+          this.showErrorAlert(err.message);
+        }
 
         // TODO: Submit response
 
