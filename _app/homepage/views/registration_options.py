@@ -74,6 +74,7 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         attestation=attestation,
         authenticator_selection=authenticator_selection,
         supported_pub_key_algs=supported_pub_key_algs,
+        # TODO: Populate exclude_credentials from existing credentials for the given username?
     )
 
     # py_webauthn will default to all supported algorithms on an empty `options_algorithms` list
