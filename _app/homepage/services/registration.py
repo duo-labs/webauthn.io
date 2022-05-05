@@ -95,13 +95,17 @@ class RegistrationService:
 
         self._delete_options(username=username)
 
-        return verify_registration_response(
+        verification = verify_registration_response(
             credential=credential,
             expected_challenge=options.challenge,
             expected_rp_id=settings.RP_ID,
             expected_origin=settings.RP_EXPECTED_ORIGIN,
             require_user_verification=require_user_verification,
         )
+
+        # TODO: Store credential for later
+
+        return verification
 
     def _save_options(self, username: str, options: PublicKeyCredentialCreationOptions):
         """

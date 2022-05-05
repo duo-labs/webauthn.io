@@ -36,6 +36,4 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     except Exception as err:
         return JsonResponseBadRequest(err, safe=False)
 
-    # TODO: Store credential for later
-
     return JsonResponse({"verified": True})
