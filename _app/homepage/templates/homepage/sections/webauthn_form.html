@@ -184,7 +184,6 @@
         // Make sure WebAuthn is available in the browser
         this.webauthnSupported = browserSupportsWebauthn();
         if (!this.webauthnSupported) {
-          // TODO: Show something when this is false
           return;
         }
 
@@ -284,10 +283,6 @@
       },
       handleSubmit() {
         this.hideAlert();
-
-        console.log(this.options);
-        console.log(this.formAction);
-        console.log(this.username);
 
         // Perform action
         if (this.formAction === 'register') {
