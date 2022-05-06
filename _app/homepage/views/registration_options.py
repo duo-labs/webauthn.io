@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from webauthn import options_to_json
 
-from homepage.services import RegistrationService
+from homepage.services import RegistrationService, CredentialService
 from homepage.forms import RegistrationOptionsRequestForm
 from homepage.response import JsonResponseBadRequest
 
@@ -30,6 +30,7 @@ def registration_options(request: HttpRequest) -> JsonResponse:
     options_username = form_data["username"]
 
     registration_service = RegistrationService()
+    credential_service = CredentialService()
 
     registration_options = registration_service.generate_registration_options(
         username=options_username,
@@ -37,6 +38,9 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         attestation=options_attestation,
         algorithms=options_algorithms,
         require_user_verification=options_require_user_verification,
+        existing_credentials=credential_service.retrieve_credentials_by_username(
+            username=options_username
+        ),
     )
 
     return JsonResponse(json.loads(options_to_json(registration_options)))

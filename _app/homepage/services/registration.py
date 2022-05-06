@@ -12,10 +12,12 @@ from webauthn.helpers.structs import (
     AuthenticatorSelectionCriteria,
     AuthenticatorAttachment,
     COSEAlgorithmIdentifier,
+    PublicKeyCredentialDescriptor,
 )
 
 from homepage.services import RedisService
 from homepage.exceptions import InvalidRegistrationSession
+from homepage.models import WebAuthnCredential
 
 
 class RegistrationService:
@@ -32,6 +34,7 @@ class RegistrationService:
         attachment: str,
         require_user_verification: bool,
         algorithms: List[str],
+        existing_credentials: List[WebAuthnCredential],
     ):
         _attestation = AttestationConveyancePreference.NONE
 
@@ -69,7 +72,12 @@ class RegistrationService:
             attestation=_attestation,
             authenticator_selection=authenticator_selection,
             supported_pub_key_algs=supported_pub_key_algs,
-            # TODO: Populate exclude_credentials from existing credentials for the given username?
+            exclude_credentials=[
+                PublicKeyCredentialDescriptor(
+                    id=base64url_to_bytes(cred.id), transports=cred.transports
+                )
+                for cred in existing_credentials
+            ],
         )
 
         # py_webauthn will default to all supported algorithms on an empty `algorithms` list
