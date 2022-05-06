@@ -121,7 +121,7 @@ class AuthenticationService:
         options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
         options_json["allowCredentials"] = [
             {**cred, "id": base64url_to_bytes(cred["id"])}
-            for cred in options_json["excludeCredentials"]
+            for cred in options_json["allowCredentials"]
         ]
 
         return PublicKeyCredentialRequestOptions.parse_obj(options_json)
