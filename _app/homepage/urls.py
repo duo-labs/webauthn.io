@@ -11,4 +11,5 @@ urlpatterns = [
         views.registration_verification,
         name="registration-verification",
     ),
+    path("authentication/options", views.authentication_options, name="authentication-options"),
 ]
