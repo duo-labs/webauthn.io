@@ -1,3 +1,4 @@
+import json
 from typing import Union, List, Optional
 
 from django.conf import settings
@@ -80,7 +81,8 @@ class RegistrationService:
 
         return registration_options
 
-    def verify_registration_response(self, *, username: str, credential: RegistrationCredential):
+    def verify_registration_response(self, *, username: str, response: dict):
+        credential = RegistrationCredential.parse_raw(json.dumps(response))
         options = self._get_options(username=username)
 
         if not options:

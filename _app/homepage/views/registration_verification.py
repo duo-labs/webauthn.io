@@ -25,14 +25,15 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
         return JsonResponseBadRequest(dict(response_form.errors.items()))
 
     form_data = response_form.cleaned_data
-    username = form_data["username"]
-    response = form_data["response"]
+    username: str = form_data["username"]
+    webauthn_response: dict = form_data["response"]
 
     registration_service = RegistrationService()
 
     try:
-        credential = RegistrationCredential.parse_raw(json.dumps(response))
-        registration_service.verify_registration_response(username=username, credential=credential)
+        registration_service.verify_registration_response(
+            username=username, response=webauthn_response
+        )
     except Exception as err:
         return JsonResponseBadRequest(err, safe=False)
 
