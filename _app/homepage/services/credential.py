@@ -57,7 +57,9 @@ class CredentialService:
         pass
 
     def retrieve_credentials_by_username(self, *, username: str) -> List[WebAuthnCredential]:
-        return []
+        credentials = [WebAuthnCredential.parse_raw(cred) for cred in self.redis.retrieve_all()]
+
+        return [cred for cred in credentials if cred.username == username]
 
     def update_credential_sign_count(self, *, credential_id: str, new_sign_count: int) -> None:
         """
