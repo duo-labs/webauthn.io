@@ -1,5 +1,8 @@
-from django.conf import settings
+from typing import List, Optional
+
 from django.db import models
+from pydantic import BaseModel
+from webauthn.helpers.structs import AuthenticatorTransport
 
 
 class TimestampedModel(models.Model):
@@ -14,24 +17,17 @@ class TimestampedModel(models.Model):
         abstract = True
 
 
-class WebAuthnCredential(TimestampedModel):
+class WebAuthnCredential(BaseModel):
     """
-    A class for storying WebAuthn credentials. Includes information py_webauthn will need for
-    verifying authentication attempts after registration.
+    A Pydantic class for WebAuthn credentials in Redis. Includes information py_webauthn will need
+    for verifying authentication attempts after registration.
+
+    ID and public key bytes should be **Base64URL-encoded** for ease of storing in and referencing
+    from Redis
     """
 
-    id = models.BinaryField(primary_key=True)
-    public_key = models.BinaryField()
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    sign_count = models.IntegerField()
-    # "usb,nfc,ble,internal,cable" = 26 + buffer
-    transports = models.CharField(max_length=32)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["id"], name="credential_id_idx"),
-            models.Index(fields=["user"], name="credential_user_idx"),
-        ]
-        constraints = [
-            models.UniqueConstraint(fields=["id", "user"], name="unique_credential_user")
-        ]
+    id: str
+    public_key: str
+    username: str
+    sign_count: int
+    transports: Optional[List[AuthenticatorTransport]]
