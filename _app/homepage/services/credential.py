@@ -40,11 +40,7 @@ class CredentialService:
             transports=transports,
         )
 
-        self.redis.store(
-            key=new_credential.id,
-            value=json.dumps(new_credential.dict()),
-            expiration_seconds=60 * 60 * 24,  # 24 hours
-        )
+        self._temporarily_store_in_redis(new_credential)
 
         return new_credential
 
@@ -73,3 +69,12 @@ class CredentialService:
         Raises `homepage.exceptions.InvalidCredentialID` if the given credential ID is invalid
         """
         pass
+    def _temporarily_store_in_redis(self, credential: WebAuthnCredential) -> None:
+        """
+        We only ever want to save credentials for a finite period of time
+        """
+        self.redis.store(
+            key=credential.id,
+            value=json.dumps(credential.dict()),
+            expiration_seconds=60 * 60 * 24,  # 24 hours
+        )
