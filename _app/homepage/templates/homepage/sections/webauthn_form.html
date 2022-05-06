@@ -58,107 +58,144 @@
           Advanced Settings
         </button>
 
-        <div class="card settings-drawer" x-cloak x-show="showAdvancedSettings">
+        <div class="card container settings-drawer" x-cloak x-show="showAdvancedSettings">
           <div class="card-body">
-
-            <section class="mb-2">
-              <p class="mb-1">
-                <ins>User Settings</ins>
-              </p>
-              <!-- User Verification -->
-              <div class="custom-control custom-checkbox custom-control-inline">
-                <input
-                  type="checkbox"
-                  name="optRequireUV"
-                  id="optRequireUV"
-                  class="custom-control-input"
-                  x-model="options.requireUserVerification"
-                />
-                <label for="optRequireUV" class="custom-control-label">
-                  Require User Verification
-                </label>
-              </div>
-            </section>
-
-            <section class="mb-2">
-              <p class="mb-1">
-                <ins>Credential Algorithms</ins>
+            <div class="row">
+              <p class="col-12 px-0 mb-1">
+                <ins>Registration Settings</ins>
               </p>
 
-              <!-- Algorithm - ES256 -->
-              <div class="custom-control custom-checkbox custom-control-inline">
-                <input
-                  type="checkbox"
-                  name="optAlgES256"
-                  id="optAlgES256"
-                  class="custom-control-input"
-                  x-model="options.algES256"
-                />
-                <label for="optAlgES256" class="custom-control-label">
-                  ES256
-                </label>
-              </div>
+              <section class="col-12 mb-2">
+                <!-- User Verification -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optRegRequireUV"
+                    id="optRegRequireUV"
+                    class="custom-control-input"
+                    x-model="options.regRequireUserVerification"
+                  />
+                  <label for="optRegRequireUV" class="custom-control-label">
+                    Require User Verification
+                  </label>
+                </div>
 
-              <!-- Algorithm - RS256 -->
-              <div class="custom-control custom-checkbox custom-control-inline">
-                <input
-                  type="checkbox"
-                  name="optAlgRS256"
-                  id="optAlgRS256"
-                  class="custom-control-input"
-                  x-model="options.algRS256"
-                />
-                <label for="optAlgRS256" class="custom-control-label">
-                  RS256
-                </label>
-              </div>
-            </section>
+                <br>
 
-            <!-- Attachment -->
-            <label for="attachment" class="mb-2">
-              <ins>Authenticator Attachment</ins>
-              <br>
-              <select
-                name="attachment"
-                id="attachment"
-                class="custom-select"
-                x-model="options.attachment"
-              >
-                <template x-for="attachment in attachments" :key="attachment.value">
-                  <option
-                    :value="attachment.value"
-                    :selected="options.attachment === attachment.value"
-                    x-text="attachment.label"
-                  ></option>
-                </template>
-              </select>
-            </label>
+                <!-- Algorithm - ES256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgES256"
+                    id="optAlgES256"
+                    class="custom-control-input"
+                    x-model="options.algES256"
+                  />
+                  <label for="optAlgES256" class="custom-control-label">
+                    Support ES256
+                  </label>
+                </div>
 
-            <!-- Attestation dropdown -->
-            <label for="attestation" class="mb-3">
-              <ins>Attestation</ins>
-              <br />
-              <select
-                name="attestation"
-                id="attestation"
-                class="custom-select"
-                x-model="options.attestation"
-              >
-                <template x-for="attestation in attestations" :key="attestation.value">
-                  <option
-                    :value="attestation.value"
-                    :selected="options.attestation === attestation.value"
-                    x-text="attestation.label"
-                  ></option>
-                </template>
-              </select>
-            </label>
+                <!-- Algorithm - RS256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgRS256"
+                    id="optAlgRS256"
+                    class="custom-control-input"
+                    x-model="options.algRS256"
+                  />
+                  <label for="optAlgRS256" class="custom-control-label">
+                    Support RS256
+                  </label>
+                </div>
+              </section>
 
-            <section class="mb-0">
-              <button class="btn btn-warning" @click="resetSettings()">
-                Reset Settings
-              </button>
-            </section>
+              <!-- Attachment -->
+              <label for="attachment" class="col-7 mb-2">
+                Authenticator Attachment
+                <br>
+                <select
+                  name="attachment"
+                  id="attachment"
+                  class="custom-select"
+                  x-model="options.attachment"
+                >
+                  <template x-for="attachment in attachments" :key="attachment.value">
+                    <option
+                      :value="attachment.value"
+                      :selected="options.attachment === attachment.value"
+                      x-text="attachment.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <!-- Attestation dropdown -->
+              <label for="attestation" class="col-5 mb-2">
+                Attestation
+                <br />
+                <select
+                  name="attestation"
+                  id="attestation"
+                  class="custom-select"
+                  x-model="options.attestation"
+                >
+                  <template x-for="attestation in attestations" :key="attestation.value">
+                    <option
+                      :value="attestation.value"
+                      :selected="options.attestation === attestation.value"
+                      x-text="attestation.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+            </div>
+
+            <div class="row">
+              <p class="col-12 px-0 mb-1">
+                <ins>Authentication Settings</ins>
+              </p>
+
+              <section class="col-12 mb-2">
+                <!-- User Verification -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAuthRequireUV"
+                    id="optAuthRequireUV"
+                    class="custom-control-input"
+                    x-model="options.authRequireUserVerification"
+                  />
+                  <label for="optAuthRequireUV" class="custom-control-label">
+                    Require User Verification
+                  </label>
+                </div>
+
+                <!-- Only allow registered authenticators -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAuthOnlyRegisteredAuthenticators"
+                    id="optAuthOnlyRegisteredAuthenticators"
+                    class="custom-control-input"
+                    x-model="options.authOnlyRegisteredAuthenticators"
+                  />
+                  <label for="optAuthOnlyRegisteredAuthenticators" class="custom-control-label">
+                    Only Registered Authenticators
+                  </label>
+                </div>
+              </section>
+            </div>
+
+            <div class="row">
+              <section class="col-12 px-0 mb-0">
+                <button class="btn btn-warning" @click="resetSettings()">
+                  Reset Settings
+                </button>
+              </section>
+            </div>
+
           </div>
         </div>
       </div>
@@ -196,8 +233,12 @@
           const currentParams = new URLSearchParams(location.search);
 
           // Initialize data from query params
-          this.options.requireUserVerification =
-            currentParams.get('requireUserVerification') === 'true';
+
+          /**
+           * Registration Settings
+           */
+          this.options.regRequireUserVerification =
+            currentParams.get('regRequireUserVerification') === 'true';
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
 
@@ -234,7 +275,8 @@
       showAdvancedSettings: false,
       formAction: 'registration',
       options: {
-        requireUserVerification: true,
+        // Registration
+        regRequireUserVerification: true,
         attestation: 'none',
         attachment: 'all',
         algES256: true,
@@ -300,7 +342,7 @@
       async _startRegistration() {
         // Submit options
         const {
-          requireUserVerification,
+          regRequireUserVerification,
           algES256,
           algRS256,
           attestation,
@@ -323,7 +365,7 @@
           body: JSON.stringify({
             username: this.username,
             // e.g. true
-            require_user_verification: requireUserVerification,
+            require_user_verification: regRequireUserVerification,
             // e.g. 'direct'
             attestation,
             // e.g. 'platform'
