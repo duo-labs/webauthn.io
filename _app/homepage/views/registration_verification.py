@@ -46,6 +46,6 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
             transports=transports,
         )
     except Exception as err:
-        return JsonResponseBadRequest(err, safe=False)
+        return JsonResponseBadRequest({"error": str(err)})
 
     return JsonResponse({"verified": True})

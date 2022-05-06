@@ -412,7 +412,7 @@
         if (verificationJSON.verified === true) {
           this.showSuccessAlert('Success! Now try to authenticate...');
         } else {
-          this.showErrorAlert(`Verification failed: ${json.stringify(verificationJSON)}`);
+          this.showErrorAlert(`Registration failed: ${verificationJSON.error}`);
         }
       },
       async _start_authentication() {
