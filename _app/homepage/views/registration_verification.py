@@ -33,12 +33,12 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
             username=username, response=webauthn_response
         )
 
-        credential_service = CredentialService()
-
         transports = []
         if "transports" in webauthn_response:
             transports = webauthn_response["transports"]
 
+        # Store credential for later
+        credential_service = CredentialService()
         credential_service.store_credential(
             username=username, registration=registration, transports=transports
         )

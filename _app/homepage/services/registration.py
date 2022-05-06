@@ -113,8 +113,6 @@ class RegistrationService:
             require_user_verification=require_user_verification,
         )
 
-        # TODO: Store credential for later
-
         return verification
 
     def _save_options(self, username: str, options: PublicKeyCredentialCreationOptions):
