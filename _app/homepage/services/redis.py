@@ -31,5 +31,9 @@ class RedisService:
     def retrieve(self, *, key: str):
         return self._instance.get(key)
 
+    def retrieve_all(self):
+        all_keys = self._instance.keys("*")
+        return [self._instance.get(key) for key in all_keys]
+
     def delete(self, *, key: str):
         return self._instance.delete(key)
