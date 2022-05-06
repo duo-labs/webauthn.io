@@ -257,6 +257,14 @@
               break;
             }
           }
+
+          /**
+           * Authentication Settings
+           */
+           this.options.authRequireUserVerification =
+            currentParams.get('authRequireUserVerification') === 'true';
+           this.options.authOnlyRegisteredAuthenticators =
+            currentParams.get('authOnlyRegisteredAuthenticators') === 'true';
         }
 
         // Update query parameters when options change
@@ -281,6 +289,9 @@
         attachment: 'all',
         algES256: true,
         algRS256: true,
+        // Authentication
+        authRequireUserVerification: true,
+        authOnlyRegisteredAuthenticators: true,
       },
       username: '',
       alert: {
