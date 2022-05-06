@@ -12,4 +12,9 @@ urlpatterns = [
         name="registration-verification",
     ),
     path("authentication/options", views.authentication_options, name="authentication-options"),
+    path(
+        "authentication/verification",
+        views.authentication_verification,
+        name="authentication-verification",
+    ),
 ]

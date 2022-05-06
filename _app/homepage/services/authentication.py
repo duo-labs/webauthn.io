@@ -1,16 +1,23 @@
 from typing import List, Union
+import json
 
 from django.conf import settings
-from webauthn import generate_authentication_options, options_to_json
+from webauthn import (
+    generate_authentication_options,
+    options_to_json,
+    verify_authentication_response,
+)
 from webauthn.helpers import json_loads_base64url_to_bytes, base64url_to_bytes
 from webauthn.helpers.structs import (
     PublicKeyCredentialRequestOptions,
     UserVerificationRequirement,
     PublicKeyCredentialDescriptor,
+    AuthenticationCredential,
 )
 
 from homepage.services import RedisService
 from homepage.models import WebAuthnCredential
+from homepage.exceptions import InvalidAuthenticationResponse
 
 
 class AuthenticationService:
@@ -48,6 +55,39 @@ class AuthenticationService:
         self._save_options(username=username, options=authentication_options)
 
         return authentication_options
+
+    def verify_authentication_response(
+        self,
+        *,
+        username: str,
+        existing_credential: WebAuthnCredential,
+        response: dict,
+    ):
+        credential = AuthenticationCredential.parse_raw(json.dumps(response))
+        options = self._get_options(username=username)
+
+        if not options:
+            raise InvalidAuthenticationResponse(f"no options for user {username}")
+
+        require_user_verification = False
+        if options.user_verification:
+            require_user_verification = (
+                options.user_verification == UserVerificationRequirement.REQUIRED
+            )
+
+        self._delete_options(username=username)
+
+        verification = verify_authentication_response(
+            credential=credential,
+            expected_challenge=options.challenge,
+            expected_rp_id=settings.RP_ID,
+            expected_origin=settings.RP_EXPECTED_ORIGIN,
+            require_user_verification=require_user_verification,
+            credential_public_key=base64url_to_bytes(existing_credential.public_key),
+            credential_current_sign_count=existing_credential.sign_count,
+        )
+
+        return verification
 
     def _save_options(self, *, username: str, options: PublicKeyCredentialRequestOptions):
         """
