@@ -146,6 +146,10 @@ class RegistrationService:
         options_json: dict = json_loads_base64url_to_bytes(options)
         options_json["user"]["id"] = base64url_to_bytes(options_json["user"]["id"])
         options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
+        options_json["excludeCredentials"] = [
+            {**cred, "id": base64url_to_bytes(cred["id"])}
+            for cred in options_json["excludeCredentials"]
+        ]
 
         return PublicKeyCredentialCreationOptions.parse_obj(options_json)
 
