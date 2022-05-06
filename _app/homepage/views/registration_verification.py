@@ -2,9 +2,7 @@ import json
 
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
-from webauthn.helpers.structs import (
-    RegistrationCredential,
-)
+from homepage.services.credential import CredentialService
 
 from homepage.services.registration import RegistrationService
 from homepage.forms import RegistrationResponseForm
@@ -31,8 +29,18 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     registration_service = RegistrationService()
 
     try:
-        registration_service.verify_registration_response(
+        registration = registration_service.verify_registration_response(
             username=username, response=webauthn_response
+        )
+
+        credential_service = CredentialService()
+
+        transports = []
+        if "transports" in webauthn_response:
+            transports = webauthn_response["transports"]
+
+        credential_service.store_credential(
+            username=username, registration=registration, transports=transports
         )
     except Exception as err:
         return JsonResponseBadRequest(err, safe=False)
