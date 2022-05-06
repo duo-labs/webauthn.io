@@ -29,8 +29,9 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     registration_service = RegistrationService()
 
     try:
-        registration = registration_service.verify_registration_response(
-            username=username, response=webauthn_response
+        verification = registration_service.verify_registration_response(
+            username=username,
+            response=webauthn_response,
         )
 
         transports = []
@@ -40,7 +41,9 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
         # Store credential for later
         credential_service = CredentialService()
         credential_service.store_credential(
-            username=username, registration=registration, transports=transports
+            username=username,
+            verification=verification,
+            transports=transports,
         )
     except Exception as err:
         return JsonResponseBadRequest(err, safe=False)
