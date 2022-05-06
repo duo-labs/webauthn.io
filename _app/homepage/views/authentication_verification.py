@@ -23,31 +23,26 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
         return JsonResponseBadRequest(dict(response_form.errors.items()))
 
     form_data = response_form.cleaned_data
-    username: str = form_data["username"]
-    webauthn_response: dict = form_data["response"]
+    options_username: str = form_data["username"]
+    options_webauthn_response: dict = form_data["response"]
 
     authentication_service = AuthenticationService()
     credential_service = CredentialService()
 
     try:
         existing_credential = credential_service.retrieve_credential_by_id(
-            credential_id=webauthn_response["id"],
+            credential_id=options_webauthn_response["id"],
+            username=options_username,
         )
 
         verification = authentication_service.verify_authentication_response(
-            username=username,
+            username=options_username,
             existing_credential=existing_credential,
-            response=webauthn_response,
+            response=options_webauthn_response,
         )
 
         # Update credential with new sign count
         credential_service.update_credential_sign_count(verification=verification)
-    except InvalidCredentialID:
-        return JsonResponseBadRequest(
-            {
-                "error": "This authenticator has not been registered by this user",
-            }
-        )
     except Exception as err:
         return JsonResponseBadRequest({"error": str(err)})
 

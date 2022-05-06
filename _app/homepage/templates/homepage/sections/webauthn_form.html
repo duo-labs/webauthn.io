@@ -442,8 +442,8 @@
           return;
         }
 
-        // TODO: Submit response
-        const apiAuthVerResp = await fetch('', {
+        // Submit response
+        const apiAuthVerResp = await fetch('{% url "authentication-verification" %}', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -453,14 +453,14 @@
         });
         const verificationJSON = await apiAuthVerResp.json()
 
-        // TODO: Display outcome
+        // Display outcome
         if (verificationJSON.verified === true) {
           this.showSuccessAlert('Success! Logging you in...');
           setTimeout(() => {
             this.showSuccessAlert('Redirecting...');
           }, 500);
         } else {
-          this.showErrorAlert(`Verification failed: ${json.stringify(verificationJSON)}`);
+          this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
       },
     }));

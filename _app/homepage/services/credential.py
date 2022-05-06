@@ -44,7 +44,12 @@ class CredentialService:
 
         return new_credential
 
-    def retrieve_credential_by_id(self, *, credential_id: str) -> WebAuthnCredential:
+    def retrieve_credential_by_id(
+        self,
+        *,
+        credential_id: str,
+        username: Optional[str] = None,
+    ) -> WebAuthnCredential:
         """
         Retrieve a credential from Redis
 
@@ -53,9 +58,14 @@ class CredentialService:
         raw_credential: str | None = self.redis.retrieve(key=credential_id)
 
         if not raw_credential:
-            raise InvalidCredentialID()
+            raise InvalidCredentialID("Credential does not exist")
 
-        return WebAuthnCredential.parse_raw(raw_credential)
+        credential = WebAuthnCredential.parse_raw(raw_credential)
+
+        if username and credential.username != username:
+            raise InvalidCredentialID("Credential does not belong to user")
+
+        return credential
 
     def retrieve_credentials_by_username(self, *, username: str) -> List[WebAuthnCredential]:
         """
