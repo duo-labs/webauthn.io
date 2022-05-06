@@ -71,7 +71,17 @@ class CredentialService:
 
         Raises `homepage.exceptions.InvalidCredentialID` if the given credential ID is invalid
         """
-        pass
+        raw_credential: str | None = self.redis.retrieve(key=credential_id)
+
+        if not raw_credential:
+            raise InvalidCredentialID()
+
+        credential = WebAuthnCredential.parse_raw(raw_credential)
+
+        credential.sign_count = new_sign_count
+
+        self._temporarily_store_in_redis(credential)
+
     def _temporarily_store_in_redis(self, credential: WebAuthnCredential) -> None:
         """
         We only ever want to save credentials for a finite period of time
