@@ -212,6 +212,7 @@
   const {
     browserSupportsWebauthn,
     startRegistration,
+    startAuthentication,
   } = SimpleWebAuthnBrowser;
 
   // Initialize advanced options
@@ -415,15 +416,52 @@
         }
       },
       async _start_authentication() {
-        this.showErrorAlert('whoops');
+        const {
+          authRequireUserVerification,
+          authOnlyRegisteredAuthenticators,
+        } = this.options;
 
-        // TODO: Submit options
+        // Submit options
+        const apiAuthOptsResp = await fetch('{% url "authentication-options" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            require_user_verification: authRequireUserVerification,
+            only_registered_authenticators: authOnlyRegisteredAuthenticators,
+          }),
+        });
+        const authenticationOptionsJSON = await apiAuthOptsResp.json();
 
-        // TODO: Start WebAuthn authentication
+        // Start WebAuthn authentication
+        let authResp;
+        try {
+          authResp = await startAuthentication(authenticationOptionsJSON);
+        } catch (err) {
+          this.showErrorAlert(err.message);
+          return;
+        }
 
         // TODO: Submit response
+        const apiAuthVerResp = await fetch('', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            response: authResp,
+          }),
+        });
+        const verificationJSON = await apiAuthVerResp.json()
 
         // TODO: Display outcome
+        if (verificationJSON.verified === true) {
+          this.showSuccessAlert('Success! Logging you in...');
+          setTimeout(() => {
+            this.showSuccessAlert('Redirecting...');
+          }, 500);
+        } else {
+          this.showErrorAlert(`Verification failed: ${json.stringify(verificationJSON)}`);
+        }
       },
     }));
   });
