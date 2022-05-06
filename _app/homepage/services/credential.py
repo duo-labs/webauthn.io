@@ -50,14 +50,17 @@ class CredentialService:
 
         Raises `homepage.exceptions.InvalidCredentialID` if the given credential ID is invalid
         """
-        credential: str | None = self.redis.retrieve(key=credential_id)
+        raw_credential: str | None = self.redis.retrieve(key=credential_id)
 
-        if not credential:
+        if not raw_credential:
             raise InvalidCredentialID()
 
-        return WebAuthnCredential.parse_raw(credential)
+        return WebAuthnCredential.parse_raw(raw_credential)
 
     def retrieve_credentials_by_username(self, *, username: str) -> List[WebAuthnCredential]:
+        """
+        Get all credentials for a given user
+        """
         credentials = [WebAuthnCredential.parse_raw(cred) for cred in self.redis.retrieve_all()]
 
         return [cred for cred in credentials if cred.username == username]
