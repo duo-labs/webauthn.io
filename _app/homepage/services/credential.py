@@ -2,6 +2,7 @@ from typing import List, Optional
 import json
 
 from webauthn.registration.verify_registration_response import VerifiedRegistration
+from webauthn.authentication.verify_authentication_response import VerifiedAuthentication
 from webauthn.helpers import bytes_to_base64url
 
 from homepage.services.redis import RedisService
@@ -23,8 +24,8 @@ class CredentialService:
         self,
         *,
         username: str,
-        registration: VerifiedRegistration,
-        transports: Optional[List[str]] = None
+        verification: VerifiedRegistration,
+        transports: Optional[List[str]] = None,
     ) -> WebAuthnCredential:
         """
         Temporarily store a new credential in Redis so we can leverage its record expiration to
@@ -34,9 +35,9 @@ class CredentialService:
         """
         new_credential = WebAuthnCredential(
             username=username,
-            id=bytes_to_base64url(registration.credential_id),
-            public_key=bytes_to_base64url(registration.credential_public_key),
-            sign_count=registration.sign_count,
+            id=bytes_to_base64url(verification.credential_id),
+            public_key=bytes_to_base64url(verification.credential_public_key),
+            sign_count=verification.sign_count,
             transports=transports,
         )
 
@@ -75,12 +76,13 @@ class CredentialService:
 
         return [cred for cred in credentials if cred.username == username]
 
-    def update_credential_sign_count(self, *, credential_id: str, new_sign_count: int) -> None:
+    def update_credential_sign_count(self, *, verification: VerifiedAuthentication) -> None:
         """
         Update a credential's number of times it's been used
 
         Raises `homepage.exceptions.InvalidCredentialID` if the given credential ID is invalid
         """
+        credential_id = bytes_to_base64url(verification.credential_id)
         raw_credential: str | None = self.redis.retrieve(key=credential_id)
 
         if not raw_credential:
@@ -88,7 +90,7 @@ class CredentialService:
 
         credential = WebAuthnCredential.parse_raw(raw_credential)
 
-        credential.sign_count = new_sign_count
+        credential.sign_count = verification.new_sign_count
 
         self._temporarily_store_in_redis(credential)
 
