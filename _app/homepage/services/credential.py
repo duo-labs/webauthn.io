@@ -8,6 +8,7 @@ from webauthn.helpers import bytes_to_base64url
 from homepage.services.redis import RedisService
 from homepage.models import WebAuthnCredential
 from homepage.exceptions import InvalidCredentialID
+from homepage.logging import logger
 
 
 class CredentialService:
@@ -44,6 +45,13 @@ class CredentialService:
         )
 
         self._temporarily_store_in_redis(new_credential)
+
+        transports_str = ", ".join([f'"{transport}"' for transport in transports or []])
+        cred_type = "discoverable credential" if is_discoverable_credential else "credential"
+
+        logger.info(
+            f'User "{username}" registered a {cred_type} with transports [{transports_str}]'
+        )
 
         return new_credential
 
