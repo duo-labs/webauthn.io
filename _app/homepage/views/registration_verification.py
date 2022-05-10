@@ -37,6 +37,9 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
         transports = []
         if "transports" in webauthn_response:
             transports = webauthn_response["transports"]
+        extensions: dict = webauthn_response.get("clientExtensionResults", {})
+        ext_cred_props: dict = extensions.get("credProps", {})
+        is_discoverable_credential: bool = ext_cred_props.get("rk", False)
 
         # Store credential for later
         credential_service = CredentialService()
@@ -44,6 +47,7 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
             username=username,
             verification=verification,
             transports=transports,
+            is_discoverable_credential=is_discoverable_credential,
         )
     except Exception as err:
         return JsonResponseBadRequest({"error": str(err)})

@@ -25,6 +25,7 @@ class CredentialService:
         *,
         username: str,
         verification: VerifiedRegistration,
+        is_discoverable_credential: bool,
         transports: Optional[List[str]] = None,
     ) -> WebAuthnCredential:
         """
@@ -39,6 +40,7 @@ class CredentialService:
             public_key=bytes_to_base64url(verification.credential_public_key),
             sign_count=verification.sign_count,
             transports=transports,
+            is_discoverable_credential=is_discoverable_credential,
         )
 
         self._temporarily_store_in_redis(new_credential)
