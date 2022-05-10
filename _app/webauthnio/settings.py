@@ -76,6 +76,53 @@ DATABASES = {
 }
 
 
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "django_default": {
+            "class": "logging.StreamHandler",
+        },
+        "console": {
+            "level": "INFO",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["django_default"],
+            "propagate": True,
+        },
+        "webauthnio.homepage": {
+            "level": "INFO",
+        },
+    },
+}
+
+
 # Redis cache support
 # https://docs.djangoproject.com/en/4.0/topics/cache/#redis-1
 
