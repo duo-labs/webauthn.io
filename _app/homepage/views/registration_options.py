@@ -43,4 +43,11 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         ),
     )
 
-    return JsonResponse(json.loads(options_to_json(registration_options)))
+    options_json = json.loads(options_to_json(registration_options))
+
+    # Add in credProps extension
+    options_json["extensions"] = {
+        "credProps": True,
+    }
+
+    return JsonResponse(options_json)
