@@ -13,6 +13,7 @@ from webauthn.helpers.structs import (
     AuthenticatorAttachment,
     COSEAlgorithmIdentifier,
     PublicKeyCredentialDescriptor,
+    ResidentKeyRequirement,
 )
 
 from homepage.services import RedisService
@@ -43,6 +44,7 @@ class RegistrationService:
 
         authenticator_selection = AuthenticatorSelectionCriteria(
             user_verification=UserVerificationRequirement.DISCOURAGED,
+            resident_key=ResidentKeyRequirement.PREFERRED,
         )
         if attachment != "all":
             attachment = AuthenticatorAttachment.CROSS_PLATFORM
