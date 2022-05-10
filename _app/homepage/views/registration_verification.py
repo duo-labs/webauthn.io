@@ -34,9 +34,7 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
             response=webauthn_response,
         )
 
-        transports = []
-        if "transports" in webauthn_response:
-            transports = webauthn_response["transports"]
+        transports: list = webauthn_response.get("transports", [])
         extensions: dict = webauthn_response.get("clientExtensionResults", {})
         ext_cred_props: dict = extensions.get("credProps", {})
         is_discoverable_credential: bool = ext_cred_props.get("rk", False)
