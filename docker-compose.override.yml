@@ -12,6 +12,10 @@ services:
       # Will be available @ localhost:8000
       - "8000:80"
 
+  redis:
+    ports:
+      - "6379:6379"
+
   django:
     # Automatically reload Gunicorn when a file changes
     command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py --reload
