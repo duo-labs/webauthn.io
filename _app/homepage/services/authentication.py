@@ -1,5 +1,6 @@
 from typing import List, Union
 import json
+from dataclasses import dataclass
 
 from django.conf import settings
 from webauthn import (
@@ -18,6 +19,18 @@ from webauthn.helpers.structs import (
 from homepage.services import RedisService
 from homepage.models import WebAuthnCredential
 from homepage.exceptions import InvalidAuthenticationResponse
+
+
+@dataclass
+class VerifiedAuthentication:
+    """
+    A custom version of py_webauthn's VerifiedAuthentication since it doesn't output username from
+    the response
+    """
+
+    credential_id: bytes
+    new_sign_count: int
+    username: str
 
 
 class AuthenticationService:
@@ -62,7 +75,7 @@ class AuthenticationService:
         username: str,
         existing_credential: WebAuthnCredential,
         response: dict,
-    ):
+    ) -> VerifiedAuthentication:
         credential = AuthenticationCredential.parse_raw(json.dumps(response))
         options = self._get_options(username=username)
 
@@ -87,7 +100,16 @@ class AuthenticationService:
             credential_current_sign_count=existing_credential.sign_count,
         )
 
-        return verification
+        confirmed_username = username
+        if credential.response.user_handle:
+            # Use the username provided by the authenticator if present
+            confirmed_username = credential.response.user_handle.decode("utf-8")
+
+        return VerifiedAuthentication(
+            credential_id=verification.credential_id,
+            new_sign_count=verification.new_sign_count,
+            username=confirmed_username,
+        )
 
     def _save_options(self, *, username: str, options: PublicKeyCredentialRequestOptions):
         """
