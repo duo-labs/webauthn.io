@@ -65,10 +65,19 @@
         <table class="table table-borderless credentials-table">
           <thead>
             <tr>
-              <th style="width: 20%" scope="col">Date created</th>
-              <th style="width: 35%" scope="col">Raw ID</th>
-              <th style="width: 45%" scope="col">Public Key</th>
+              <th scope="col">Raw ID</th>
+              <th scope="col">Sign Count</th>
+              <th scope="col">Transports</th>
+              <th scope="col">Discoverable Credential?</th>
             </tr>
+            {% for cred in credentials %}
+            <tr>
+              <td>{{ cred.id }}</td>
+              <td>{{ cred.sign_count }}</td>
+              <td>{{ cred.transports }}</td>
+              <td>{{ cred.is_disc_cred }}</td>
+            </tr>
+            {% endfor %}
           </thead>
 
         </table>
