@@ -15,7 +15,7 @@ class SessionService:
         """
         request.session.flush()
 
-    def user_has_session(self, *, request) -> bool:
+    def user_is_logged_in(self, *, request) -> bool:
         try:
             username = request.session["username"]
             return username is not None
