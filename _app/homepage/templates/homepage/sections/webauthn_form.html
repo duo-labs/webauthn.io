@@ -453,12 +453,9 @@
         });
         const verificationJSON = await apiAuthVerResp.json()
 
-        // Display outcome
         if (verificationJSON.verified === true) {
-          this.showSuccessAlert('Success! Logging you in...');
-          setTimeout(() => {
-            this.showSuccessAlert('Redirecting...');
-          }, 500);
+          // Redirect to profile page
+          window.location.href = '{% url "profile" %}';
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }

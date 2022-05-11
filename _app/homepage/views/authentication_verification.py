@@ -3,10 +3,9 @@ import json
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 
-from homepage.services import AuthenticationService, CredentialService
+from homepage.services import AuthenticationService, CredentialService, SessionService
 from homepage.forms import AuthenticationResponseForm
 from homepage.response import JsonResponseBadRequest
-from homepage.exceptions import InvalidCredentialID
 
 
 @csrf_exempt
@@ -45,5 +44,8 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
         credential_service.update_credential_sign_count(verification=verification)
     except Exception as err:
         return JsonResponseBadRequest({"error": str(err)})
+
+    session_service = SessionService()
+    session_service.log_in_user(request=request, username=verification.username)
 
     return JsonResponse({"verified": True})
