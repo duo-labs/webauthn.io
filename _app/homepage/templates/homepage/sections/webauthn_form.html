@@ -347,7 +347,7 @@
       },
       resetSettings() {
         // Reload the page sans query params
-        window.location.href = '/';
+        window.location.href = '{% url "index" %}';
       },
 
       // Internal Methods
@@ -454,8 +454,8 @@
         const verificationJSON = await apiAuthVerResp.json()
 
         if (verificationJSON.verified === true) {
-          // Redirect to profile page
-          window.location.href = '{% url "profile" %}';
+          // Reload page to display profile
+          window.location.href = '{% url "index" %}';
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
