@@ -1,10 +1,6 @@
 from django import forms
 
 
-class UsernameForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=100, required=True)
-
-
 class RegistrationOptionsRequestForm(forms.Form):
     username = forms.CharField(required=True, max_length=64)
     require_user_verification = forms.BooleanField(required=False, initial=False)
