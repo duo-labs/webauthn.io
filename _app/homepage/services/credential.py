@@ -69,7 +69,7 @@ class CredentialService:
         raw_credential: str | None = self.redis.retrieve(key=credential_id)
 
         if not raw_credential:
-            raise InvalidCredentialID("Credential does not exist")
+            raise InvalidCredentialID("Unrecognized credential ID")
 
         credential = WebAuthnCredential.parse_raw(raw_credential)
 
