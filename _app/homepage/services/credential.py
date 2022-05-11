@@ -9,6 +9,7 @@ from homepage.services.authentication import VerifiedAuthentication
 from homepage.models import WebAuthnCredential
 from homepage.exceptions import InvalidCredentialID
 from homepage.logging import logger
+from homepage.helpers import transports_to_ui_string
 
 
 class CredentialService:
@@ -46,12 +47,10 @@ class CredentialService:
 
         self._temporarily_store_in_redis(new_credential)
 
-        transports_str = ", ".join([f'"{transport}"' for transport in transports or []])
+        transports_str = transports_to_ui_string(transports or [])
         cred_type = "discoverable credential" if is_discoverable_credential else "credential"
 
-        logger.info(
-            f'User "{username}" registered a {cred_type} with transports [{transports_str}]'
-        )
+        logger.info(f'User "{username}" registered a {cred_type} with transports {transports_str}')
 
         return new_credential
 
