@@ -4,7 +4,7 @@ import json
 from webauthn.registration.verify_registration_response import VerifiedRegistration
 from webauthn.helpers import bytes_to_base64url
 
-from homepage.services.redis import RedisService
+from homepage.services import RedisService
 from homepage.services.authentication import VerifiedAuthentication
 from homepage.models import WebAuthnCredential
 from homepage.exceptions import InvalidCredentialID
