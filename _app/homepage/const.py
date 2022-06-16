@@ -31,7 +31,7 @@ libraries = [
         language="TypeScript",
         url="https://github.com/MasterKale/SimpleWebAuthn",
         title="SimpleWebAuthn",
-        author="MasterKale",
+        author="Matthew Miller",
         type="Library",
     ),
     WebAuthnExample(
