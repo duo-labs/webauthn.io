@@ -1,0 +1,35 @@
+{% load static %}
+<section class="libraries">
+  <div class="row">
+    <div class="mx-0 col-lg-12 libraries-header">
+      <h3>Previewing WebAuthn</h3>
+      <p>See WebAuthn in action with one of these demos:</p>
+    </div>
+  </div>
+  <div class="row">
+    {% for demo in demos %}
+    <div class="mt-3 col-sm-12 col-md-6 col-lg-4 d-flex flex-column">
+      <a
+        class="library"
+        href="{{ demo.url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h5>{{ demo.language }}</h5>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/github.svg' %}" />
+          <span class="ml-2">{{ demo.title }}</span>
+        </p>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/author.svg' %}" />
+          <span class="ml-2">{{ demo.author }}</span>
+        </p>
+        <p class="mb-1">
+          <img class="icon" src="{% static 'images/brackets.svg' %}" />
+          <span class="ml-2">{{ demo.type }}</span>
+        </p>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>

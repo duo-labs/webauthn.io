@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from homepage.const import libraries
+from homepage.const import libraries, demos
 from homepage.services import SessionService, CredentialService
 from homepage.helpers import transports_to_ui_string, truncate_credential_id_to_ui_string
 
@@ -11,6 +11,7 @@ def index(request):
     """
     context = {
         "libraries": libraries,
+        "demos": demos,
     }
 
     session_service = SessionService()
