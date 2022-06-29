@@ -1,28 +1,69 @@
 {% load static %}
-<section class="bio-section d-flex flex-wrap section footer-image">
-  <div class="row bio-content">
-    <div class="col-lg-5">
-      <h4 class="bio-header">Nick Steele</h4>
-      <p>
-        Nick Steele is an R&D engineer with
-        <a href="https://duo.com/labs">Duo Labs</a> and a W3C Invited Expert for
-        the WebAuthn standard.
-      </p>
-      <p>
-        While his focus lies in user authentication and authorization, he also
-        has strong opinions about sci-fi and ramen.
-      </p>
-      <p>
-        <a href="https://twitter.com/codekaiju"
-          ><img
-            class="twitter-logo"
-            src="{% static 'images/twitter.svg' %}"
-          />@codekaiju</a
-        >
-      </p>
+<section class="footer-image">
+  <div class="container">
+    <div class="row bio-content">
+      <div class="col-sm-7">
+        <h4 class="bio-header">Matthew Miller</h4>
+        <p>
+          Matthew Miller is a Tech Lead on the Cisco Secure team helping to build a user-centric
+          <a href="https://duo.com/">Duo</a> Passwordless experience.
+        </p>
+        <p>
+          In addition to representing Cisco in two WebAuthn Working Groups, and being a founding
+          member of the WebAuthn Adoption Community Group, Matthew created and maintains
+          two WebAuthn libraries including py_webauthn and SimpleWebAuthn.
+        </p>
+        <p>
+          <a
+          href="https://twitter.com/iamkale"
+          target="_blank"
+          rel="noopener noreferrer"
+          >
+            <img class="twitter-logo" src="{% static 'images/twitter.svg' %}"/>
+            @iamkale
+          </a>
+        </p>
+      </div>
+      <div class="col-sm-5">
+        <div class="bio-image">
+          <img src="{% static 'images/matt-full.svg' %}" />
+        </div>
+      </div>
     </div>
   </div>
-  <div class="bio-image">
-    <img src="{% static 'images/nickbio.svg' %}" />
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 mx-auto">
+        <div class="container">
+          <div class="row">
+            <div class="col-4 col-md-3">
+              <div class="bio-image">
+                <img src="{% static 'images/nick-mini.svg' %}" />
+              </div>
+            </div>
+            <div class="col-6 col-md-7">
+              <h4 class="bio-header">Special Thanks to Nick Steele</h4>
+              <p>
+                Nick Steele is a cybersecurity researcher, contributor to the WebAuthn
+                specification. While he's no longer at Duo, he thinks about them every time he gets
+                a push notification.
+              </p>
+              <p>
+                <a
+                href="https://twitter.com/codekaiju"
+                target="_blank"
+                rel="noopener noreferrer"
+                >
+                  <img class="twitter-logo" src="{% static 'images/twitter.svg' %}"/>
+                  @codekaiju
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

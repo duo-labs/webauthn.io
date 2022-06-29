@@ -340,14 +340,14 @@ footer {
 
 .bio-image {
     @include media-breakpoint-up(lg) {
-        position: absolute;
-        right: 15%;
-        z-index: -9999;
+        // position: absolute;
+        // right: 15%;
+        // z-index: -9999;
 
-        img {
-            width: auto;
-            height: auto;
-        }
+        // img {
+        //     width: auto;
+        //     height: 200px;
+        // }
     }
 }
 
