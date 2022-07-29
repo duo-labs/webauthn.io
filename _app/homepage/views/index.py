@@ -31,6 +31,8 @@ def index(request):
                 "sign_count": cred.sign_count,
                 "is_disc_cred": cred.is_discoverable_credential,
                 "transports": transports_to_ui_string(cred.transports or []),
+                "device_type": cred.device_type.lower().replace("_", "-"),
+                "backed_up": cred.backed_up,
             }
             for cred in user_credentials
         ]

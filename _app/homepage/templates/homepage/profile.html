@@ -69,6 +69,8 @@
               <th scope="col">Sign Count</th>
               <th scope="col">Transports</th>
               <th scope="col">Discoverable Credential?</th>
+              <th scope="col">Credential Type</th>
+              <th scope="col">Backed Up</th>
             </tr>
             {% for cred in credentials %}
             <tr>
@@ -76,6 +78,8 @@
               <td>{{ cred.sign_count }}</td>
               <td>{{ cred.transports }}</td>
               <td>{{ cred.is_disc_cred }}</td>
+              <td>{{ cred.device_type }}</td>
+              <td>{{ cred.backed_up }}</td>
             </tr>
             {% endfor %}
           </thead>

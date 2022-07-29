@@ -43,6 +43,8 @@ class CredentialService:
             sign_count=verification.sign_count,
             transports=transports,
             is_discoverable_credential=is_discoverable_credential,
+            device_type=verification.credential_device_type,
+            backed_up=verification.credential_backed_up,
         )
 
         self._temporarily_store_in_redis(new_credential)
