@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from django.db import models
 from pydantic import BaseModel
-from webauthn.helpers.structs import AuthenticatorTransport
+from webauthn.helpers.structs import AuthenticatorTransport, CredentialDeviceType
 
 
 class TimestampedModel(models.Model):
@@ -31,4 +31,6 @@ class WebAuthnCredential(BaseModel):
     username: str
     sign_count: int
     is_discoverable_credential: bool
+    device_type: CredentialDeviceType
+    backed_up: bool
     transports: Optional[List[AuthenticatorTransport]]
