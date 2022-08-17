@@ -158,7 +158,7 @@ pre span {
     @include media-breakpoint-up(lg) {
         background-image: url("../images/header-bg.svg");
         background-repeat: no-repeat;
-        background-position: top;
+        background-position: bottom;
         background-size: cover;
     }
 
