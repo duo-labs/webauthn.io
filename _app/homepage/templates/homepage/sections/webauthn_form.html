@@ -210,7 +210,7 @@
 <script src="{% static "js/simplewebauthn-browser.6.0.0.umd.min.js" %}"></script>
 <script>
   const {
-    browserSupportsWebauthn,
+    browserSupportsWebAuthn,
     startRegistration,
     startAuthentication,
   } = SimpleWebAuthnBrowser;
@@ -220,7 +220,7 @@
     Alpine.data('global', () => ({
       init() {
         // Make sure WebAuthn is available in the browser
-        this.webauthnSupported = browserSupportsWebauthn();
+        this.webauthnSupported = browserSupportsWebAuthn();
         if (!this.webauthnSupported) {
           return;
         }
