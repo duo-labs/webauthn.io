@@ -31,3 +31,11 @@ class SessionService:
             pass
 
         return False
+
+    def get_session_key(self, *, request: HttpRequest) -> str:
+        key = request.session.session_key
+
+        if not key:
+            raise Exception("Attempted to get session key before session was created")
+
+        return key
