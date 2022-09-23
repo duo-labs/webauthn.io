@@ -12,7 +12,7 @@
               id="input-email"
               placeholder="example_username"
               x-model="username"
-              required
+              autocomplete="username webauthn"
             />
           </div>
           <template x-if="alert.show">
@@ -213,6 +213,7 @@
     browserSupportsWebAuthn,
     startRegistration,
     startAuthentication,
+    browserSupportsWebAuthnAutofill,
   } = SimpleWebAuthnBrowser;
 
   // Initialize advanced options
@@ -277,6 +278,18 @@
             `${location.pathname}?${newParams}`
           );
         });
+
+        // Set up Conditional UI if supported
+        browserSupportsWebAuthnAutofill().then(async (supported) => {
+          if (supported) {
+            console.log('Setting up Conditional UI');
+            try {
+              await this._startAuthentication(true);
+            } catch (err) {
+              console.error('Conditional UI error:', err);
+            }
+          }
+        });
       },
 
       // Default state
@@ -335,14 +348,18 @@
       handleClickAuthenticate() {
         this.formAction = 'authenticate';
       },
-      handleSubmit() {
+      async handleSubmit() {
         this.hideAlert();
 
         // Perform action
-        if (this.formAction === 'register') {
-          this._startRegistration(this.username, this.options);
-        } else {
-          this._start_authentication(this.username, this.options);
+        try {
+          if (this.formAction === 'register') {
+            await this._startRegistration();
+          } else {
+            await this._startAuthentication(false);
+          }
+        } catch (err) {
+          this.showErrorAlert(err.message);
         }
       },
       resetSettings() {
@@ -371,6 +388,11 @@
           algorithms.push('rs256');
         }
 
+        if (!this.username) {
+          this.showErrorAlert('Please enter a username to register');
+          return;
+        }
+
         const apiRegOptsResp = await fetch('{% url "registration-options" %}', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -389,13 +411,7 @@
         const registrationOptionsJSON = await apiRegOptsResp.json();
 
         // Start WebAuthn registration
-        let regResp;
-        try {
-          regResp = await startRegistration(registrationOptionsJSON);
-        } catch (err) {
-          this.showErrorAlert(err.message);
-          return;
-        }
+        const regResp = await startRegistration(registrationOptionsJSON);
 
         // Submit response
         const apiRegVerResp = await fetch('{% url "registration-verification" %}', {
@@ -415,7 +431,7 @@
           this.showErrorAlert(`Registration failed: ${verificationJSON.error}`);
         }
       },
-      async _start_authentication() {
+      async _startAuthentication(startConditionalUI = false) {
         const {
           authRequireUserVerification,
           authOnlyRegisteredAuthenticators,
@@ -434,13 +450,7 @@
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
 
         // Start WebAuthn authentication
-        let authResp;
-        try {
-          authResp = await startAuthentication(authenticationOptionsJSON);
-        } catch (err) {
-          this.showErrorAlert(err.message);
-          return;
-        }
+        const authResp = await startAuthentication(authenticationOptionsJSON, startConditionalUI);
 
         // Submit response
         const apiAuthVerResp = await fetch('{% url "authentication-verification" %}', {
