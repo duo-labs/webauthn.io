@@ -30,11 +30,11 @@ class RegistrationResponseForm(forms.Form):
 
 
 class AuthenticationOptionsRequestForm(forms.Form):
-    username = forms.CharField(required=True, max_length=64)
+    username = forms.CharField(required=False, max_length=64)
     require_user_verification = forms.BooleanField(required=False, initial=False)
     only_registered_authenticators = forms.BooleanField(required=False, initial=False)
 
 
 class AuthenticationResponseForm(forms.Form):
-    username = forms.CharField(required=True, max_length=64)
+    username = forms.CharField(required=False, max_length=64)
     response = forms.JSONField(required=True)
