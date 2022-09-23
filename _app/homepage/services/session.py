@@ -2,12 +2,20 @@ from django.http import HttpRequest
 
 
 class SessionService:
+    def start_session(self, *, request: HttpRequest) -> None:
+        """
+        Start a session so that we have a unique ID we can associate options with, even when
+        we don't have a username
+        """
+        if not request.session.exists(request.session.session_key):
+            request.session.create()
+            request.session.set_expiry(0)
+
     def log_in_user(self, *, request: HttpRequest, username: str) -> None:
         """
         Use a session cookie to temporarily remember the user
         """
         request.session["username"] = username
-        request.session.set_expiry(0)
 
     def log_out_user(self, *, request: HttpRequest) -> None:
         """

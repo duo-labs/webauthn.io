@@ -15,6 +15,7 @@ def index(request):
     }
 
     session_service = SessionService()
+    session_service.start_session(request=request)
 
     template = "homepage/index.html"
     if session_service.user_is_logged_in(request=request):
