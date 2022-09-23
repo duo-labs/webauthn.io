@@ -42,7 +42,7 @@ class AuthenticationService:
     def generate_authentication_options(
         self,
         *,
-        username: str,
+        cache_key: str,
         require_user_verification: bool,
         existing_credentials: List[WebAuthnCredential],
     ) -> PublicKeyCredentialRequestOptions:
@@ -65,22 +65,22 @@ class AuthenticationService:
             ],
         )
 
-        self._save_options(username=username, options=authentication_options)
+        self._save_options(cache_key=cache_key, options=authentication_options)
 
         return authentication_options
 
     def verify_authentication_response(
         self,
         *,
-        username: str,
+        cache_key: str,
         existing_credential: WebAuthnCredential,
         response: dict,
     ) -> VerifiedAuthentication:
         credential = AuthenticationCredential.parse_raw(json.dumps(response))
-        options = self._get_options(username=username)
+        options = self._get_options(cache_key=cache_key)
 
         if not options:
-            raise InvalidAuthenticationResponse(f"no options for user {username}")
+            raise InvalidAuthenticationResponse(f"no options for user {cache_key}")
 
         require_user_verification = False
         if options.user_verification:
@@ -88,7 +88,7 @@ class AuthenticationService:
                 options.user_verification == UserVerificationRequirement.REQUIRED
             )
 
-        self._delete_options(username=username)
+        self._delete_options(cache_key=cache_key)
 
         verification = verify_authentication_response(
             credential=credential,
@@ -100,7 +100,7 @@ class AuthenticationService:
             credential_current_sign_count=existing_credential.sign_count,
         )
 
-        confirmed_username = username
+        confirmed_username = cache_key
         if credential.response.user_handle:
             # Use the username provided by the authenticator if present
             confirmed_username = credential.response.user_handle.decode("utf-8")
@@ -111,7 +111,7 @@ class AuthenticationService:
             username=confirmed_username,
         )
 
-    def _save_options(self, *, username: str, options: PublicKeyCredentialRequestOptions):
+    def _save_options(self, *, cache_key: str, options: PublicKeyCredentialRequestOptions):
         """
         Store authentication options for the user so we can reference them later
         """
@@ -125,14 +125,14 @@ class AuthenticationService:
             expiration = 120
 
         return self.redis.store(
-            key=username, value=options_to_json(options), expiration_seconds=expiration
+            key=cache_key, value=options_to_json(options), expiration_seconds=expiration
         )
 
-    def _get_options(self, *, username: str) -> Union[PublicKeyCredentialRequestOptions, None]:
+    def _get_options(self, *, cache_key: str) -> Union[PublicKeyCredentialRequestOptions, None]:
         """
         Attempt to retrieve saved authentication options for the user
         """
-        options: str = self.redis.retrieve(key=username)
+        options: str = self.redis.retrieve(key=cache_key)
         if options is None:
             return options
 
@@ -148,5 +148,5 @@ class AuthenticationService:
 
         return PublicKeyCredentialRequestOptions.parse_obj(options_json)
 
-    def _delete_options(self, *, username: str) -> int:
-        return self.redis.delete(key=username)
+    def _delete_options(self, *, cache_key: str) -> int:
+        return self.redis.delete(key=cache_key)

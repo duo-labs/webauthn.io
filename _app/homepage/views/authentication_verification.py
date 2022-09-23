@@ -22,11 +22,12 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
         return JsonResponseBadRequest(dict(response_form.errors.items()))
 
     form_data = response_form.cleaned_data
-    options_username: str = form_data["username"]
+    options_username: str | None = form_data["username"]
     options_webauthn_response: dict = form_data["response"]
 
     authentication_service = AuthenticationService()
     credential_service = CredentialService()
+    session_service = SessionService()
 
     try:
         existing_credential = credential_service.retrieve_credential_by_id(
@@ -35,7 +36,7 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
         )
 
         verification = authentication_service.verify_authentication_response(
-            username=options_username,
+            cache_key=session_service.get_session_key(request=request),
             existing_credential=existing_credential,
             response=options_webauthn_response,
         )
@@ -45,7 +46,6 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
     except Exception as err:
         return JsonResponseBadRequest({"error": str(err)})
 
-    session_service = SessionService()
     session_service.log_in_user(request=request, username=verification.username)
 
     return JsonResponse({"verified": True})
