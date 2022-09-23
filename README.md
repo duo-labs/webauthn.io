@@ -27,7 +27,7 @@ Run the following command to get started:
 $> ./start-dev.sh
 ```
 
-The site will be available at http://localhost:8000
+The site will be available at https://localhost
 
 ## Production
 
@@ -37,4 +37,15 @@ Run the following command to start up the website with production-ready settings
 $> ./start-prod.sh
 ```
 
-The site will be available for viewing at http://{PROD_HOST_NAME}. SSL should be handled in a way that's appropriate for your server.
+The site will be available for viewing at https://{PROD_HOST_NAME}. The included [Caddy server](https://caddyserver.com/) (as the `caddy` service in **docker-compose.yml**) will handle SSL certificate management.
+
+## Updating Production
+
+Run the following commands to rebuild and restart the `django` service with any new updates:
+
+```sh
+$> git pull
+$> ./update-prod-django.sh
+```
+
+The `django` and `caddy` services will be temporarily stopped during the build, and will restart once the `django` has been rebuilt.
