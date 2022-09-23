@@ -45,7 +45,7 @@ services:
     command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py
     volumes:
       - ./_app:/usr/src/app
-      # Django static files will go here so Nginx can access them
+      # Django static files will go here so Caddy can access them
       - static_files_volume:/usr/src/app/static
     networks:
       - caddy_network
