@@ -47,11 +47,11 @@ class RegistrationService:
             resident_key=ResidentKeyRequirement.PREFERRED,
         )
         if attachment != "all":
-            attachment = AuthenticatorAttachment.CROSS_PLATFORM
+            authenticator_attachment = AuthenticatorAttachment.CROSS_PLATFORM
             if attachment == "platform":
-                attachment = AuthenticatorAttachment.PLATFORM
+                authenticator_attachment = AuthenticatorAttachment.PLATFORM
 
-            authenticator_selection.authenticator_attachment = attachment
+            authenticator_selection.authenticator_attachment = authenticator_attachment
 
         if require_user_verification:
             authenticator_selection.user_verification = UserVerificationRequirement.REQUIRED
