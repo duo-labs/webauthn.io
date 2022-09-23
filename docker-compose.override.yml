@@ -7,10 +7,10 @@ services:
       # Allow us to directly access the database during development
       - "5432:5432"
 
-  nginx:
-    ports:
-      # Will be available @ localhost:8000
-      - "8000:80"
+  caddy:
+    environment:
+      # Site will be available at https://localhost
+      - PROD_HOST_NAME=localhost
 
   redis:
     ports:
@@ -23,4 +23,4 @@ services:
       - DEBUG=true
       - RP_ID=localhost
       - RP_NAME=WebAuthn.io (Dev)
-      - RP_EXPECTED_ORIGIN=http://localhost:8000
+      - RP_EXPECTED_ORIGIN=https://localhost

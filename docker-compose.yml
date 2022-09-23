@@ -16,25 +16,20 @@ services:
     networks:
       - redis_network
 
-  nginx:
-    image: nginx:1.21.4-alpine
+  caddy:
+    image: caddy:2.6.1-alpine
+    restart: unless-stopped
     ports:
-      # Will be available @ localhost:80
       - "80:80"
-    depends_on:
-      # Make sure Django's built so Nginx can serve its static content
-      - django
+      - "443:443"
+      - "443:443/udp"
     volumes:
-      # Django's static files
-      - static_files_volume:/usr/share/nginx/html/static
-      # Nginx config
-      - ./_nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./_nginx/templates:/etc/nginx/templates
+      - $PWD/_caddy/Caddyfile:/etc/caddy/Caddyfile
+      - static_files_volume:/usr/share/caddy/static
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
-      - nginx_network
-    environment:
-      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.conf
-      - PROD_HOST_NAME
+      - caddy_network
 
   django:
     build:
@@ -51,7 +46,7 @@ services:
       # Django static files will go here so Nginx can access them
       - static_files_volume:/usr/src/app/static
     networks:
-      - nginx_network
+      - caddy_network
       - database_network
       - redis_network
     environment:
@@ -64,17 +59,13 @@ services:
       - RP_NAME
       - RP_EXPECTED_ORIGIN
 
-  # cloudflaretunnel:
-  #   image: cloudflare/cloudflared:2022.3.4
-  #   entrypoint: ["cloudflared", "tunnel", "--no-autoupdate", "run", "--token", "$CLOUDFLARE_TUNNEL_TOKEN"]
-  #   networks:
-  #     - nginx_network
-
 volumes:
   static_files_volume:
   database_volume:
+  caddy_data:
+  caddy_config:
 
 networks:
-  nginx_network:
+  caddy_network:
   database_network:
   redis_network:
