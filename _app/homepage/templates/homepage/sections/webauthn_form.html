@@ -171,20 +171,6 @@
                     Require User Verification
                   </label>
                 </div>
-
-                <!-- Only allow registered authenticators -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAuthOnlyRegisteredAuthenticators"
-                    id="optAuthOnlyRegisteredAuthenticators"
-                    class="custom-control-input"
-                    x-model="options.authOnlyRegisteredAuthenticators"
-                  />
-                  <label for="optAuthOnlyRegisteredAuthenticators" class="custom-control-label">
-                    Only Registered Authenticators
-                  </label>
-                </div>
               </section>
             </div>
 
@@ -265,8 +251,6 @@
            */
            this.options.authRequireUserVerification =
             currentParams.get('authRequireUserVerification') === 'true';
-           this.options.authOnlyRegisteredAuthenticators =
-            currentParams.get('authOnlyRegisteredAuthenticators') === 'true';
         }
 
         // Update query parameters when options change
@@ -305,7 +289,6 @@
         algRS256: true,
         // Authentication
         authRequireUserVerification: true,
-        authOnlyRegisteredAuthenticators: false,
       },
       username: '',
       alert: {
@@ -434,7 +417,6 @@
       async _startAuthentication(startConditionalUI = false) {
         const {
           authRequireUserVerification,
-          authOnlyRegisteredAuthenticators,
         } = this.options;
 
         // Submit options
@@ -444,10 +426,14 @@
           body: JSON.stringify({
             username: this.username,
             require_user_verification: authRequireUserVerification,
-            only_registered_authenticators: authOnlyRegisteredAuthenticators,
           }),
         });
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
+
+        if (authenticationOptionsJSON.error) {
+          this.showErrorAlert(authenticationOptionsJSON.error);
+          return;
+        }
 
         // Start WebAuthn authentication
         const authResp = await startAuthentication(authenticationOptionsJSON, startConditionalUI);
