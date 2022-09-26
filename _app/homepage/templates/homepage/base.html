@@ -1,0 +1,40 @@
+{% load static %}
+{% load sass_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebAuthn.io</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+
+    <meta name="Description" content="Demonstration of the WebAuthn specification.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WebAuthn.io">
+    <meta property="og:url" content="https://webauthn.io">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@duo_labs">
+    <meta property="og:title" content="A demonstration of the WebAuthn specification">
+    <meta name="twitter:title" content="A demonstration of the WebAuthn specification">
+
+    <meta name="twitter:image" content="{% static 'images/header-illi.png' %}">
+    <meta property="og:image" content="{% static 'images/header-illi.png' %}">
+    <meta property="og:image:width" content="1066">
+    <meta property="og:image:height" content="849">
+
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'styles/index.scss' %}">
+  </head>
+  <body>
+    {% block header %}{% endblock %}
+    <main class="container">
+      {% block content %}{% endblock %}
+      {% include 'homepage/sections/intro.html' %}
+      {% include 'homepage/sections/libraries.html' %}
+      {% include 'homepage/sections/demos.html' %}
+      {% include 'homepage/sections/bio.html' %}
+    </main>
+    {% include 'homepage/sections/footer.html' %}
+  </body>
+</html>

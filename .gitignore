@@ -1,17 +1,9 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-webauthn.io
-webauthn.db
-
-node_modules/
+*.pyc
+*.sqlite3
+_psql
+*.log
+*.env
+.DS_Store
+_app/**/css/*.css
+_app/**/css/*.css.map
+_app/**/styles/*.css

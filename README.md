@@ -1,84 +1,51 @@
-<p align="center">
-<img src="https://github.com/duo-labs/webauthn.io/blob/master/static/dist/images/header-illi.png?raw=true" height="400"/>
-</p>
+# webauthn.io
 
-## About
+Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](https://github.com/duo-labs/py_webauthn).
 
-This is the source code for [webauthn.io](https://webauthn.io), a demonstration of the Web Authentication specification, or WebAuthn.
+## Prerequisites
 
-This server provides a simple reference implementation of how to add WebAuthn to an application using the [`duo-labs/webauthn`](https://github.com/duo-labs/webauthn) Go library.
+- Docker
+- Pipenv
+  - Make sure Python3 is available
+  - Enables `pipenv install` to set up libraries locally for the editor to crawl. The Django container also uses Pipenv to install dependencies to encourage use of this new Python package management tool.
 
-## Installation
+## Environmental Variable
 
-### Using Docker
+- `DJANGO_SECRET_KEY`: A sufficiently random string
+- `POSTGRES_USER`: Database username
+- `POSTGRES_PASSWORD`: Database password
+- `PROD_HOST_NAME`: The domain name the site will be hosted at
+- `RP_ID`: The Relying Party ID, typically the same as `PROD_HOST_NAME`
+- `RP_NAME`: A representation of the site's name to be shown to users
+- `RP_EXPECTED_ORIGIN`: The domain name plus protocol at which WebAuthn will be invoked (e.g. `https://webauthn.io`)
 
-The easiest way to start a local instance of webauthn.io is to use the image on Docker Hub:
+## Development
 
-```
-docker run --rm -p 9005:9005 duolabs/webauthn.io
-```
+Run the following command to get started:
 
-To run a local instance of webauthn.io in a Docker container, start by building the container image:
-
-```
-docker build -t webauthn.io .
-```
-
-Then, run the container, exposing port 9005:
-
-```
-docker run --rm -p 9005:9005 webauthn.io
+```sh
+$> ./start-dev.sh
 ```
 
-After the container launches, you can navigate to localhost:9005 to see the application.
+The site will be available at https://localhost
 
-### Building from Source
+## Production
 
-To get started using a local instance of webauthn.io, first download the source code using:
+Run the following command to start up the website with production-ready settings:
 
+```sh
+$> ./start-prod.sh
 ```
-go get github.com/duo-labs/webauthn.io
+
+The site will be available for viewing at https://{PROD_HOST_NAME}. The included [Caddy server](https://caddyserver.com/) (as the `caddy` service in **docker-compose.yml**) will handle SSL certificate management.
+
+## Updating Production
+
+Run the following commands to rebuild and restart the `django` service with any new updates:
+
+```sh
+$> git pull
+$> ./update-prod-django.sh
 ```
 
-Then, edit `config.json` as needed.
-
-Finally, build and run the application with `go build; ./webauthn.io`)
-
-
-## More Information
-
-For more information on how WebAuthn works, we recommend checking out [webauthn.guide](https://webauthn.guide).
-
-### License
-
-```
-BSD 3-Clause License
-
-Copyright (c) 2019, Duo Labs
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-```
+The `django` and `caddy` services will be temporarily stopped during the build, and will restart once the `django` has been rebuilt.

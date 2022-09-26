@@ -1,0 +1,26 @@
+version: '3.5'
+
+# THESE OVERRIDES ARE FOR DEVELOPMENT! DON'T USE THIS IN PRODUCTION!
+services:
+  db:
+    ports:
+      # Allow us to directly access the database during development
+      - "5432:5432"
+
+  caddy:
+    environment:
+      # Site will be available at https://localhost
+      - PROD_HOST_NAME=localhost
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  django:
+    # Automatically reload Gunicorn when a file changes
+    command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py --reload
+    environment:
+      - DEBUG=true
+      - RP_ID=localhost
+      - RP_NAME=WebAuthn.io (Dev)
+      - RP_EXPECTED_ORIGIN=https://localhost

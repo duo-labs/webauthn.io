@@ -1,0 +1,28 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block header %}
+<header class="hero">
+  <div class="container">
+    <div class="row">
+      <div class="main-content col-md-12">
+        <div class="row">
+          <div class="hero-left order-2 col-lg-6 order-lg-1">
+            <h2>WebAuthn.io</h2>
+            <h5>A demo of the WebAuthn specification</h5>
+            {% include 'homepage/sections/webauthn_form.html' %}
+          </div>
+          <div class="hero-right order-1 col-lg-6 order-lg-2">
+            <img
+              role="presentation"
+              class="main"
+              alt=""
+              src="{% static 'images/header-illi.svg' %}"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+{% endblock %}

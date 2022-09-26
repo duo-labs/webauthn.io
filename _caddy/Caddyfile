@@ -1,0 +1,10 @@
+{$PROD_HOST_NAME}
+
+route {
+  file_server /static/* {
+    # Requests for static files will look in whatever is mounted to /usr/share/caddy/static
+    root /usr/share/caddy
+  }
+
+  reverse_proxy django:8000
+}

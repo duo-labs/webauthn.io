@@ -1,0 +1,462 @@
+{% load static %}
+
+<div class="mt-5 hero-form" x-data="global">
+  <template x-if="webauthnSupported">
+    <section class="form-group">
+      <form @submit.prevent="handleSubmit()">
+        <div class="form-row">
+          <div class="col-sm-12 mb-3">
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              id="input-email"
+              placeholder="example_username"
+              x-model="username"
+              autocomplete="username webauthn"
+            />
+          </div>
+          <template x-if="alert.show">
+            <div class="col-sm-12">
+              <div
+                :class="alert.alertClass"
+                x-text="alert.text"
+              ></div>
+            </div>
+          </template>
+        </div>
+        <div class="form-row">
+          <div class="col-sm-6 mb-3">
+            <button
+              class="btn btn-block btn-primary"
+              type="submit"
+              id="register-button"
+              @click="handleClickRegister()"
+            >
+              Register
+            </button>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <button
+              class="btn btn-block btn-primary"
+              id="login-button"
+              @click="handleClickAuthenticate()"
+            >
+              Authenticate
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="advanced-settings" class="mb-3">
+        <button
+          class="btn btn-secondary mb-3"
+          @click="toggleDrawer()"
+          :class="{
+            'btn-light': showAdvancedSettings,
+          }"
+        >
+          Advanced Settings
+        </button>
+
+        <div class="card container settings-drawer" x-cloak x-show="showAdvancedSettings">
+          <div class="card-body">
+            <div class="row">
+              <p class="col-12 px-0 mb-1">
+                <ins>Registration Settings</ins>
+              </p>
+
+              <section class="col-12 mb-2">
+                <!-- User Verification -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optRegRequireUV"
+                    id="optRegRequireUV"
+                    class="custom-control-input"
+                    x-model="options.regRequireUserVerification"
+                  />
+                  <label for="optRegRequireUV" class="custom-control-label">
+                    Require User Verification
+                  </label>
+                </div>
+
+                <br>
+
+                <!-- Algorithm - ES256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgES256"
+                    id="optAlgES256"
+                    class="custom-control-input"
+                    x-model="options.algES256"
+                  />
+                  <label for="optAlgES256" class="custom-control-label">
+                    Support ES256
+                  </label>
+                </div>
+
+                <!-- Algorithm - RS256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgRS256"
+                    id="optAlgRS256"
+                    class="custom-control-input"
+                    x-model="options.algRS256"
+                  />
+                  <label for="optAlgRS256" class="custom-control-label">
+                    Support RS256
+                  </label>
+                </div>
+              </section>
+
+              <!-- Attachment -->
+              <label for="attachment" class="col-7 mb-2">
+                Authenticator Attachment
+                <br>
+                <select
+                  name="attachment"
+                  id="attachment"
+                  class="custom-select"
+                  x-model="options.attachment"
+                >
+                  <template x-for="attachment in attachments" :key="attachment.value">
+                    <option
+                      :value="attachment.value"
+                      :selected="options.attachment === attachment.value"
+                      x-text="attachment.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <!-- Attestation dropdown -->
+              <label for="attestation" class="col-5 mb-2">
+                Attestation
+                <br />
+                <select
+                  name="attestation"
+                  id="attestation"
+                  class="custom-select"
+                  x-model="options.attestation"
+                >
+                  <template x-for="attestation in attestations" :key="attestation.value">
+                    <option
+                      :value="attestation.value"
+                      :selected="options.attestation === attestation.value"
+                      x-text="attestation.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+            </div>
+
+            <div class="row">
+              <p class="col-12 px-0 mb-1">
+                <ins>Authentication Settings</ins>
+              </p>
+
+              <section class="col-12 mb-2">
+                <!-- User Verification -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAuthRequireUV"
+                    id="optAuthRequireUV"
+                    class="custom-control-input"
+                    x-model="options.authRequireUserVerification"
+                  />
+                  <label for="optAuthRequireUV" class="custom-control-label">
+                    Require User Verification
+                  </label>
+                </div>
+              </section>
+            </div>
+
+            <div class="row">
+              <section class="col-12 px-0 mb-0">
+                <button class="btn btn-warning" @click="resetSettings()">
+                  Reset Settings
+                </button>
+              </section>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template x-if="!webauthnSupported">
+    <h2>WebAuthn isn't supported. Please consider switching to a modern browser.</h2>
+  </template>
+</div>
+
+<script src="{% static "js/simplewebauthn-browser.6.0.0.umd.min.js" %}"></script>
+<script>
+  const {
+    browserSupportsWebAuthn,
+    startRegistration,
+    startAuthentication,
+    browserSupportsWebAuthnAutofill,
+  } = SimpleWebAuthnBrowser;
+
+  // Initialize advanced options
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('global', () => ({
+      init() {
+        // Make sure WebAuthn is available in the browser
+        this.webauthnSupported = browserSupportsWebAuthn();
+        if (!this.webauthnSupported) {
+          return;
+        }
+
+        // Read options from query params if set
+        if (location.search) {
+          console.log('initializing options from query params');
+          this.showAdvancedSettings = true;
+
+          // Read query params
+          const currentParams = new URLSearchParams(location.search);
+
+          // Initialize data from query params
+
+          /**
+           * Registration Settings
+           */
+          this.options.regRequireUserVerification =
+            currentParams.get('regRequireUserVerification') === 'true';
+          this.options.algES256 = currentParams.get('algES256') === 'true';
+          this.options.algRS256 = currentParams.get('algRS256') === 'true';
+
+          const _attestation = currentParams.get('attestation');
+          for (const attestation of this.attestations) {
+            if (attestation.value === _attestation) {
+              this.options.attestation = _attestation;
+              break;
+            }
+          }
+
+          const _attachment = currentParams.get('attachment');
+          for (const attachment of this.attachments) {
+            if (attachment.value === _attachment) {
+              this.options.attachment = _attachment;
+              break;
+            }
+          }
+
+          /**
+           * Authentication Settings
+           */
+           this.options.authRequireUserVerification =
+            currentParams.get('authRequireUserVerification') === 'true';
+        }
+
+        // Update query parameters when options change
+        this.$watch('options', () => {
+          const newParams = new URLSearchParams(this.options);
+          window.history.replaceState(
+            {},
+            "",
+            `${location.pathname}?${newParams}`
+          );
+        });
+
+        // Set up Conditional UI if supported
+        browserSupportsWebAuthnAutofill().then(async (supported) => {
+          if (supported) {
+            console.log('Setting up Conditional UI');
+            try {
+              await this._startAuthentication(true);
+            } catch (err) {
+              console.error('Conditional UI error:', err);
+            }
+          }
+        });
+      },
+
+      // Default state
+      webauthnSupported: true,
+      showAdvancedSettings: false,
+      formAction: 'registration',
+      options: {
+        // Registration
+        regRequireUserVerification: true,
+        attestation: 'none',
+        attachment: 'all',
+        algES256: true,
+        algRS256: true,
+        // Authentication
+        authRequireUserVerification: true,
+      },
+      username: '',
+      alert: {
+        show: false,
+        alertClass: 'alert alert-success',
+        text: '',
+      },
+      // Possible values for options.attestation
+      attestations: [
+        { label: 'None', value: 'none' },
+        { label: 'Direct', value: 'direct' },
+      ],
+      // Possible values for options.attachment
+      attachments: [
+        { label: 'All Supported', value: 'all' },
+        { label: 'Cross-Platform', value: 'cross_platform' },
+        { label: 'Platform', value: 'platform' },
+      ],
+
+      // Event handlers
+      toggleDrawer() {
+        this.showAdvancedSettings = !this.showAdvancedSettings;
+      },
+      hideAlert() {
+        this.alert.show = false;
+      },
+      showSuccessAlert(text) {
+        this.alert.alertClass = 'alert alert-success';
+        this.alert.text = text;
+        this.alert.show = true;
+      },
+      showErrorAlert(text) {
+        this.alert.alertClass = 'alert alert-danger';
+        this.alert.text = text;
+        this.alert.show = true;
+      },
+      handleClickRegister() {
+        this.formAction = 'register';
+      },
+      handleClickAuthenticate() {
+        this.formAction = 'authenticate';
+      },
+      async handleSubmit() {
+        this.hideAlert();
+
+        // Perform action
+        try {
+          if (this.formAction === 'register') {
+            await this._startRegistration();
+          } else {
+            await this._startAuthentication(false);
+          }
+        } catch (err) {
+          this.showErrorAlert(err.message);
+        }
+      },
+      resetSettings() {
+        // Reload the page sans query params
+        window.location.href = '{% url "index" %}';
+      },
+
+      // Internal Methods
+      async _startRegistration() {
+        // Submit options
+        const {
+          regRequireUserVerification,
+          algES256,
+          algRS256,
+          attestation,
+          attachment,
+        } = this.options;
+
+        const algorithms = [];
+
+        if (algES256) {
+          algorithms.push('es256');
+        }
+
+        if (algRS256) {
+          algorithms.push('rs256');
+        }
+
+        if (!this.username) {
+          this.showErrorAlert('Please enter a username to register');
+          return;
+        }
+
+        const apiRegOptsResp = await fetch('{% url "registration-options" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            // e.g. true
+            require_user_verification: regRequireUserVerification,
+            // e.g. 'direct'
+            attestation,
+            // e.g. 'platform'
+            attachment,
+            // e.g. ['es256', 'rs256']
+            algorithms,
+          }),
+        });
+        const registrationOptionsJSON = await apiRegOptsResp.json();
+
+        // Start WebAuthn registration
+        const regResp = await startRegistration(registrationOptionsJSON);
+
+        // Submit response
+        const apiRegVerResp = await fetch('{% url "registration-verification" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            response: regResp,
+          }),
+        });
+        const verificationJSON = await apiRegVerResp.json()
+
+        // Display outcome
+        if (verificationJSON.verified === true) {
+          this.showSuccessAlert('Success! Now try to authenticate...');
+        } else {
+          this.showErrorAlert(`Registration failed: ${verificationJSON.error}`);
+        }
+      },
+      async _startAuthentication(startConditionalUI = false) {
+        const {
+          authRequireUserVerification,
+        } = this.options;
+
+        // Submit options
+        const apiAuthOptsResp = await fetch('{% url "authentication-options" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            require_user_verification: authRequireUserVerification,
+          }),
+        });
+        const authenticationOptionsJSON = await apiAuthOptsResp.json();
+
+        if (authenticationOptionsJSON.error) {
+          this.showErrorAlert(authenticationOptionsJSON.error);
+          return;
+        }
+
+        // Start WebAuthn authentication
+        const authResp = await startAuthentication(authenticationOptionsJSON, startConditionalUI);
+
+        // Submit response
+        const apiAuthVerResp = await fetch('{% url "authentication-verification" %}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            response: authResp,
+          }),
+        });
+        const verificationJSON = await apiAuthVerResp.json()
+
+        if (verificationJSON.verified === true) {
+          // Reload page to display profile
+          window.location.href = '{% url "index" %}';
+        } else {
+          this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
+        }
+      },
+    }));
+  });
+</script>
+<script defer src="{% static "js/alpinejs-3.10.2.min.js" %}"></script>

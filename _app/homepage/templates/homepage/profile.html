@@ -1,0 +1,92 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block header %}
+<header>
+  <div class="hero confetti">
+    <div class="pt-5 container">
+      <div class="row">
+        <div class="main-content col-md-12">
+          <h5><a href="/">WebAuthn.io</a></h5>
+          <div class="row mt-3">
+            <div class="hero-left order-2 col-lg-9 order-lg-1">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h3>You're logged in!</h3>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-8">
+                  <p>
+                    You just logged in using Web Authentication. Instead of
+                    using a traditional, shared-key password, you used a piece
+                    of secure hardware to create a strong, attested, and scoped
+                    credential that is virtually unphishable! To keep learning
+                    about Web Authentication and the FIDO2 framework, check out
+                    <a href="https://webauthn.guide">webauthn.guide</a>.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <a href="{% url 'logout' %}" class="btn w-100 btn-primary btn-lg"
+                    >Try it again?</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="hero-right order-1 col-lg-3 order-lg-2">
+              <img
+                role="presentation"
+                alt=""
+                class="party-cat"
+                src="{% static 'images/cat.svg' %}"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Credentials for <strong>{{ request.session.username }}</strong></h3>
+        <p class="text-muted">*Credentials are stored for 24 hours.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-borderless credentials-table">
+          <thead>
+            <tr>
+              <th scope="col">Raw ID</th>
+              <th scope="col">Sign Count</th>
+              <th scope="col">Transports</th>
+              <th scope="col">Discoverable Credential?</th>
+              <th scope="col">Credential Type</th>
+              <th scope="col">Backed Up</th>
+            </tr>
+            {% for cred in credentials %}
+            <tr>
+              <td>{{ cred.id }}</td>
+              <td>{{ cred.sign_count }}</td>
+              <td>{{ cred.transports }}</td>
+              <td>{{ cred.is_disc_cred }}</td>
+              <td>{{ cred.device_type }}</td>
+              <td>{{ cred.backed_up }}</td>
+            </tr>
+            {% endfor %}
+          </thead>
+
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
