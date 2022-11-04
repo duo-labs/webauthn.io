@@ -12,11 +12,14 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", False) == "true"
 
-ALLOWED_HOSTS = [
-    os.getenv("PROD_HOST_NAME", ""),
-    "localhost",
-]
+ALLOWED_HOSTS = ["localhost"]
+CSRF_TRUSTED_ORIGINS = ["https://localhost"]
 
+PROD_HOST_NAME = os.getenv("PROD_HOST_NAME", None)
+
+if PROD_HOST_NAME:
+    ALLOWED_HOSTS.append(PROD_HOST_NAME)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{PROD_HOST_NAME}")
 
 # Application definition
 

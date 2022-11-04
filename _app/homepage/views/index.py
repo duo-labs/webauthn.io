@@ -26,16 +26,28 @@ def index(request):
 
         user_credentials = credential_service.retrieve_credentials_by_username(username=username)
 
-        context["credentials"] = [
-            {
-                "id": truncate_credential_id_to_ui_string(cred.id),
-                "sign_count": cred.sign_count,
-                "is_disc_cred": cred.is_discoverable_credential,
-                "transports": transports_to_ui_string(cred.transports or []),
-                "device_type": cred.device_type.lower().replace("_", "-"),
-                "backed_up": cred.backed_up,
-            }
-            for cred in user_credentials
-        ]
+        parsed_credentials = []
+
+        for cred in user_credentials:
+            description = ""
+
+            if cred.device_type == "single_device":
+                description += "single-device "
+
+            if not cred.is_discoverable_credential:
+                description += "non-discoverable "
+
+            description += "passkey"
+
+            parsed_credentials.append(
+                {
+                    "id": truncate_credential_id_to_ui_string(cred.id),
+                    "raw_id": cred.id,
+                    "transports": transports_to_ui_string(cred.transports or []),
+                    "description": description,
+                }
+            )
+
+        context["credentials"] = parsed_credentials
 
     return render(request, template, context)
