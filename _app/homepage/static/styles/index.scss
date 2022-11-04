@@ -416,7 +416,6 @@ footer {
 }
 
 .btn {
-    border: none;
     border-radius: 6px;
 }
 
@@ -508,4 +507,27 @@ footer {
 
 .card.container.settings-drawer {
     min-height: initial;
+}
+
+.credentials-list {
+    .credential {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .credential-title {
+            text-align: center;
+        }
+
+        .credential-delete {
+            margin-bottom: 0;
+            button {
+                width: 100%;
+            }
+        }
+    }
 }
