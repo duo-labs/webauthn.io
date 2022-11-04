@@ -42,6 +42,7 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         existing_credentials=credential_service.retrieve_credentials_by_username(
             username=options_username
         ),
+        discoverable_credential=options_discoverable_credential,
     )
 
     options_json = json.loads(options_to_json(registration_options))
