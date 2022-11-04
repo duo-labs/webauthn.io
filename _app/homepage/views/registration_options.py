@@ -28,6 +28,7 @@ def registration_options(request: HttpRequest) -> JsonResponse:
     options_require_user_verification = form_data["require_user_verification"]
     options_algorithms = form_data["algorithms"]
     options_username = form_data["username"]
+    options_discoverable_credential = form_data["discoverable_credential"]
 
     registration_service = RegistrationService()
     credential_service = CredentialService()
