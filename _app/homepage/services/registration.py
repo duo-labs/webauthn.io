@@ -36,6 +36,7 @@ class RegistrationService:
         require_user_verification: bool,
         algorithms: List[str],
         existing_credentials: List[WebAuthnCredential],
+        discoverable_credential: str,
     ):
         _attestation = AttestationConveyancePreference.NONE
 
@@ -55,6 +56,13 @@ class RegistrationService:
 
         if require_user_verification:
             authenticator_selection.user_verification = UserVerificationRequirement.REQUIRED
+
+        if discoverable_credential == "discouraged":
+            authenticator_selection.resident_key = ResidentKeyRequirement.DISCOURAGED
+        elif discoverable_credential == "preferred":
+            authenticator_selection.resident_key = ResidentKeyRequirement.PREFERRED
+        elif discoverable_credential == "required":
+            authenticator_selection.resident_key = ResidentKeyRequirement.REQUIRED
 
         supported_pub_key_algs: Optional[List[COSEAlgorithmIdentifier]] = None
         if len(algorithms) > 0:
