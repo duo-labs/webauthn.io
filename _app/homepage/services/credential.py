@@ -105,6 +105,9 @@ class CredentialService:
 
         self._temporarily_store_in_redis(credential)
 
+    def delete_credential_by_id(self, *, credential_id: str) -> None:
+        self.redis.delete(key=credential_id)
+
     def _temporarily_store_in_redis(self, credential: WebAuthnCredential) -> None:
         """
         We only ever want to save credentials for a finite period of time

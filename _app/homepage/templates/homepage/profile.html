@@ -77,6 +77,12 @@
             <br>
             {{ cred.transports }}
           </li>
+          <li class="credential-delete">
+            <form action="{% url 'credential-delete' cred.raw_id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
+          </li>
         </ul>
       </div>
       {% endfor %}

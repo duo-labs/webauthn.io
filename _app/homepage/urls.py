@@ -17,4 +17,5 @@ urlpatterns = [
         views.authentication_verification,
         name="authentication-verification",
     ),
+    path("credential/<credential_id>/delete", views.credential_delete, name="credential-delete"),
 ]
