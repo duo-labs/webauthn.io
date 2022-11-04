@@ -61,7 +61,7 @@ class AuthenticationService:
                 PublicKeyCredentialDescriptor(
                     id=base64url_to_bytes(cred.id), transports=cred.transports
                 )
-                for cred in existing_credentials
+                for cred in existing_credentials[-64:]
             ],
         )
 
