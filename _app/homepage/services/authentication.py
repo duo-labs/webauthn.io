@@ -100,10 +100,7 @@ class AuthenticationService:
             credential_current_sign_count=existing_credential.sign_count,
         )
 
-        confirmed_username = cache_key
-        if credential.response.user_handle:
-            # Use the username provided by the authenticator if present
-            confirmed_username = credential.response.user_handle.decode("utf-8")
+        confirmed_username = existing_credential.username
 
         return VerifiedAuthentication(
             credential_id=verification.credential_id,
