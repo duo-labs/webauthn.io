@@ -20,7 +20,7 @@ def truncate_credential_id_to_ui_string(id: str) -> str:
     output: "ENBgSinv...Eki5ShWg"
     """
     divider = "..."
-    truncation_length = 8
+    truncation_length = 12
 
     if len(id) <= (len(divider) + (truncation_length * 2)):
         # Return the entire ID if there's nothing to truncate
