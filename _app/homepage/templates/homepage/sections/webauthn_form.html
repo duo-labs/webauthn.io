@@ -266,6 +266,14 @@
             }
           }
 
+          const _discCred = currentParams.get('discoverableCredential');
+          for (const opt of this.discoverableCredentialOpts) {
+            if (opt.value === _discCred) {
+              this.options.discoverableCredential = _discCred;
+              break;
+            }
+          }
+
           /**
            * Authentication Settings
            */
