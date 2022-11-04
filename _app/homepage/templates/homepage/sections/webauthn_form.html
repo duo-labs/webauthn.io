@@ -150,6 +150,26 @@
                   </template>
                 </select>
               </label>
+
+              <!-- Discoverable Credential -->
+              <label for="discoverableCredential" class="col-7 mb-2">
+                Discoverable Credential
+                <br>
+                <select
+                  name="discoverableCredential"
+                  id="discoverableCredential"
+                  class="custom-select"
+                  x-model="options.discoverableCredential"
+                >
+                  <template x-for="option in discoverableCredentialOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.discoverableCredential === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
             </div>
 
             <div class="row">
@@ -287,6 +307,7 @@
         attachment: 'all',
         algES256: true,
         algRS256: true,
+        discoverableCredential: 'preferred',
         // Authentication
         authRequireUserVerification: true,
       },
@@ -306,6 +327,11 @@
         { label: 'All Supported', value: 'all' },
         { label: 'Cross-Platform', value: 'cross_platform' },
         { label: 'Platform', value: 'platform' },
+      ],
+      discoverableCredentialOpts: [
+        { label: 'Discouraged', value: 'discouraged' },
+        { label: 'Preferred', value: 'preferred' },
+        { label: 'Required', value: 'required' },
       ],
 
       // Event handlers
@@ -359,6 +385,7 @@
           algRS256,
           attestation,
           attachment,
+          discoverableCredential,
         } = this.options;
 
         const algorithms = [];
@@ -389,6 +416,8 @@
             attachment,
             // e.g. ['es256', 'rs256']
             algorithms,
+            // e.g. 'preferred'
+            discoverable_credential: discoverableCredential,
           }),
         });
         const registrationOptionsJSON = await apiRegOptsResp.json();
