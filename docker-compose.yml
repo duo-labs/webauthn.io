@@ -60,6 +60,8 @@ services:
       - RP_ID
       - RP_NAME
       - RP_EXPECTED_ORIGIN
+      - AASA_APP_ID_PREFIX
+      - AASA_BUNDLE_ID
 
 volumes:
   static_files_volume:

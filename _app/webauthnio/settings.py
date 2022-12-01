@@ -197,3 +197,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 RP_ID = os.getenv("RP_ID")
 RP_NAME = os.getenv("RP_NAME")
 RP_EXPECTED_ORIGIN = os.getenv("RP_EXPECTED_ORIGIN")
+
+
+# .well_known/apple-app-site-association
+# https://developer.apple.com/documentation/xcode/supporting-associated-domains
+
+AASA_APP_ID_PREFIX = os.getenv("AASA_APP_ID_PREFIX")
+AASA_BUNDLE_ID = os.getenv("AASA_BUNDLE_ID")

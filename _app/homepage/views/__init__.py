@@ -5,3 +5,4 @@ from .authentication_options import authentication_options  # noqa: F401
 from .authentication_verification import authentication_verification  # noqa: F401
 from .logout import logout  # noqa: F401
 from .credential_delete import credential_delete  # noqa: F401
+from .well_known import apple_app_site_association  # noqa: F401

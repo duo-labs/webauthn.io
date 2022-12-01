@@ -18,4 +18,9 @@ urlpatterns = [
         name="authentication-verification",
     ),
     path("credential/<credential_id>/delete", views.credential_delete, name="credential-delete"),
+    path(
+        ".well-known/apple-app-site-association",
+        views.apple_app_site_association,
+        name="apple-app-site-association",
+    ),
 ]
