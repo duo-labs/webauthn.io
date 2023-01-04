@@ -35,6 +35,13 @@ libraries = [
         type="Library",
     ),
     WebAuthnExample(
+        language="TypeScript",
+        url="https://github.com/passwordless-id/webauthn",
+        title="passwordless-id/webauthn",
+        author="Arnaud Dagnelies",
+        type="Library",
+    ),
+    WebAuthnExample(
         language="Ruby",
         url="https://github.com/cedarcode/webauthn-ruby",
         title="cedarcode/webauthn-ruby",
