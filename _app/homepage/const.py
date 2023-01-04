@@ -56,6 +56,13 @@ libraries = [
         type="Library",
     ),
     WebAuthnExample(
+        language="Java",
+        url="https://github.com/vert-x3/vertx-auth",
+        title="vertx-auth/webauthn",
+        author="Eclipse Vert.x",
+        type="Library",
+    ),
+    WebAuthnExample(
         language=".NET",
         url="https://github.com/abergs/fido2-net-lib",
         title="abergs/fido2-net-lib",
@@ -84,6 +91,13 @@ demos = [
         url="https://github.com/fido-alliance/webauthn-demo",
         title="webauthn-demo",
         author="FIDO Alliance",
+        type="Demo",
+    ),
+    WebAuthnExample(
+        language="Java",
+        url="https://github.com/vertx-howtos/fido2-webauthn-howto",
+        title="vertx/webauthn-howto",
+        author="Eclipse Vert.x",
         type="Demo",
     ),
 ]
