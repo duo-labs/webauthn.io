@@ -112,8 +112,8 @@
               </section>
 
               <!-- Attachment -->
-              <label for="attachment" class="col-7 mb-2">
-                Authenticator Attachment
+              <label for="attachment" class="col-6 mb-2">
+                Attachment
                 <br>
                 <select
                   name="attachment"
@@ -131,21 +131,21 @@
                 </select>
               </label>
 
-              <!-- Attestation dropdown -->
-              <label for="attestation" class="col-5 mb-2">
-                Attestation
-                <br />
+              <!-- Discoverable Credential -->
+              <label for="optRegUserVerification" class="col-6 mb-2">
+                User Verification
+                <br>
                 <select
-                  name="attestation"
-                  id="attestation"
+                  name="optRegUserVerification"
+                  id="optRegUserVerification"
                   class="custom-select"
-                  x-model="options.attestation"
+                  x-model="options.regUserVerification"
                 >
-                  <template x-for="attestation in attestations" :key="attestation.value">
+                  <template x-for="option in userVerificationOpts" :key="option.value">
                     <option
-                      :value="attestation.value"
-                      :selected="options.attestation === attestation.value"
-                      x-text="attestation.label"
+                      :value="option.value"
+                      :selected="options.regUserVerification === option.value"
+                      x-text="option.label"
                     ></option>
                   </template>
                 </select>
@@ -166,6 +166,26 @@
                       :value="option.value"
                       :selected="options.discoverableCredential === option.value"
                       x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <!-- Attestation dropdown -->
+              <label for="attestation" class="col-5 mb-2">
+                Attestation
+                <br />
+                <select
+                  name="attestation"
+                  id="attestation"
+                  class="custom-select"
+                  x-model="options.attestation"
+                >
+                  <template x-for="attestation in attestations" :key="attestation.value">
+                    <option
+                      :value="attestation.value"
+                      :selected="options.attestation === attestation.value"
+                      x-text="attestation.label"
                     ></option>
                   </template>
                 </select>
