@@ -200,22 +200,6 @@
                   </template>
                 </select>
               </label>
-
-              <section class="col-12 mb-2">
-                <!-- User Verification -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAuthRequireUV"
-                    id="optAuthRequireUV"
-                    class="custom-control-input"
-                    x-model="options.authRequireUserVerification"
-                  />
-                  <label for="optAuthRequireUV" class="custom-control-label">
-                    Require User Verification
-                  </label>
-                </div>
-              </section>
             </div>
 
             <div class="row">
@@ -307,9 +291,6 @@
           /**
            * Authentication Settings
            */
-           this.options.authRequireUserVerification =
-            currentParams.get('authRequireUserVerification') === 'true';
-
           const _authUserVerification = currentParams.get('authUserVerification');
           for (const uv of this.userVerificationOpts) {
             if (uv.value === _authUserVerification) {
@@ -355,7 +336,6 @@
         algRS256: true,
         discoverableCredential: 'preferred',
         // Authentication
-        authRequireUserVerification: true,
         authUserVerification: 'preferred',
       },
       username: '',
@@ -498,7 +478,6 @@
       },
       async _startAuthentication(startConditionalUI = false) {
         const {
-          authRequireUserVerification,
           authUserVerification,
         } = this.options;
 
@@ -508,7 +487,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.username,
-            require_user_verification: authRequireUserVerification,
             user_verification: authUserVerification,
           }),
         });

@@ -46,7 +46,6 @@ class RegistrationResponseForm(forms.Form):
 
 class AuthenticationOptionsRequestForm(forms.Form):
     username = forms.CharField(required=False, max_length=64)
-    require_user_verification = forms.BooleanField(required=False, initial=False)
     user_verification = forms.ChoiceField(
         required=True,
         choices=[

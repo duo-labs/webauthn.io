@@ -20,7 +20,6 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
 
     form_data = options_form.cleaned_data
     options_username: str | None = form_data["username"]
-    options_require_user_verification = form_data["require_user_verification"]
     options_user_verification = form_data["user_verification"]
 
     authentication_service = AuthenticationService()
@@ -38,7 +37,6 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
 
     authentication_options = authentication_service.generate_authentication_options(
         cache_key=session_service.get_session_key(request=request),
-        require_user_verification=options_require_user_verification,
         user_verification=options_user_verification,
         existing_credentials=existing_credentials,
     )

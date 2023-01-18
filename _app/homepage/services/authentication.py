@@ -43,17 +43,12 @@ class AuthenticationService:
         self,
         *,
         cache_key: str,
-        require_user_verification: bool,
         user_verification: str,
         existing_credentials: List[WebAuthnCredential],
     ) -> PublicKeyCredentialRequestOptions:
         """
         Generate and store authentication options
         """
-
-        _user_verification = UserVerificationRequirement.DISCOURAGED
-        if require_user_verification:
-            _user_verification = UserVerificationRequirement.REQUIRED
 
         if user_verification == "discouraged":
             _user_verification = UserVerificationRequirement.DISCOURAGED
