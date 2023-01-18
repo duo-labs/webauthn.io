@@ -249,8 +249,6 @@
           /**
            * Registration Settings
            */
-          this.options.regRequireUserVerification =
-            currentParams.get('regRequireUserVerification') === 'true';
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
 
@@ -322,7 +320,6 @@
       formAction: 'registration',
       options: {
         // Registration
-        regRequireUserVerification: true,
         regUserVerification: 'preferred',
         attestation: 'none',
         attachment: 'all',
@@ -407,7 +404,6 @@
       async _startRegistration() {
         // Submit options
         const {
-          regRequireUserVerification,
           regUserVerification,
           algES256,
           algRS256,
@@ -436,8 +432,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.username,
-            // e.g. true
-            require_user_verification: regRequireUserVerification,
             // e.g. 'preferred'
             user_verification: regUserVerification,
             // e.g. 'direct'

@@ -33,7 +33,6 @@ class RegistrationService:
         username: str,
         attestation: str,
         attachment: str,
-        require_user_verification: bool,
         user_verification: str,
         algorithms: List[str],
         existing_credentials: List[WebAuthnCredential],
@@ -54,9 +53,6 @@ class RegistrationService:
                 authenticator_attachment = AuthenticatorAttachment.PLATFORM
 
             authenticator_selection.authenticator_attachment = authenticator_attachment
-
-        if require_user_verification:
-            authenticator_selection.user_verification = UserVerificationRequirement.REQUIRED
 
         if user_verification == "discouraged":
             authenticator_selection.user_verification = UserVerificationRequirement.DISCOURAGED

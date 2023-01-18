@@ -25,7 +25,6 @@ def registration_options(request: HttpRequest) -> JsonResponse:
     form_data = options_form.cleaned_data
     options_attestation = form_data["attestation"]
     options_attachment = form_data["attachment"]
-    options_require_user_verification = form_data["require_user_verification"]
     options_user_verification = form_data["user_verification"]
     options_algorithms = form_data["algorithms"]
     options_username = form_data["username"]
@@ -39,7 +38,6 @@ def registration_options(request: HttpRequest) -> JsonResponse:
         attachment=options_attachment,
         attestation=options_attestation,
         algorithms=options_algorithms,
-        require_user_verification=options_require_user_verification,
         user_verification=options_user_verification,
         existing_credentials=credential_service.retrieve_credentials_by_username(
             username=options_username
