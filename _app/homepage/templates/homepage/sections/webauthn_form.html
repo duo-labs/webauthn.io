@@ -65,23 +65,87 @@
                 <ins>Registration Settings</ins>
               </p>
 
-              <section class="col-12 mb-2">
-                <!-- User Verification -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optRegRequireUV"
-                    id="optRegRequireUV"
-                    class="custom-control-input"
-                    x-model="options.regRequireUserVerification"
-                  />
-                  <label for="optRegRequireUV" class="custom-control-label">
-                    Require User Verification
-                  </label>
-                </div>
-
+              <!-- User Verification -->
+              <label for="optRegUserVerification" class="col-md-6 col-sm-12 mb-2">
+                User Verification
                 <br>
+                <select
+                  name="optRegUserVerification"
+                  id="optRegUserVerification"
+                  class="custom-select"
+                  x-model="options.regUserVerification"
+                >
+                  <template x-for="option in userVerificationOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.regUserVerification === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
 
+              <!-- Attachment -->
+              <label for="attachment" class="col-md-6 col-sm-12 mb-2">
+                Attachment
+                <br>
+                <select
+                  name="attachment"
+                  id="attachment"
+                  class="custom-select"
+                  x-model="options.attachment"
+                >
+                  <template x-for="attachment in attachments" :key="attachment.value">
+                    <option
+                      :value="attachment.value"
+                      :selected="options.attachment === attachment.value"
+                      x-text="attachment.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <!-- Discoverable Credential -->
+              <label for="discoverableCredential" class="col-md-7 col-sm-12 mb-2">
+                Discoverable Credential
+                <br>
+                <select
+                  name="discoverableCredential"
+                  id="discoverableCredential"
+                  class="custom-select"
+                  x-model="options.discoverableCredential"
+                >
+                  <template x-for="option in discoverableCredentialOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.discoverableCredential === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <!-- Attestation dropdown -->
+              <label for="attestation" class="col-md-5 col-sm-12 mb-2">
+                Attestation
+                <br />
+                <select
+                  name="attestation"
+                  id="attestation"
+                  class="custom-select"
+                  x-model="options.attestation"
+                >
+                  <template x-for="attestation in attestations" :key="attestation.value">
+                    <option
+                      :value="attestation.value"
+                      :selected="options.attestation === attestation.value"
+                      x-text="attestation.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
+              <section class="col-12 mb-2">
                 <!-- Algorithm - ES256 -->
                 <div class="custom-control custom-checkbox custom-control-inline">
                   <input
@@ -110,66 +174,6 @@
                   </label>
                 </div>
               </section>
-
-              <!-- Attachment -->
-              <label for="attachment" class="col-7 mb-2">
-                Authenticator Attachment
-                <br>
-                <select
-                  name="attachment"
-                  id="attachment"
-                  class="custom-select"
-                  x-model="options.attachment"
-                >
-                  <template x-for="attachment in attachments" :key="attachment.value">
-                    <option
-                      :value="attachment.value"
-                      :selected="options.attachment === attachment.value"
-                      x-text="attachment.label"
-                    ></option>
-                  </template>
-                </select>
-              </label>
-
-              <!-- Attestation dropdown -->
-              <label for="attestation" class="col-5 mb-2">
-                Attestation
-                <br />
-                <select
-                  name="attestation"
-                  id="attestation"
-                  class="custom-select"
-                  x-model="options.attestation"
-                >
-                  <template x-for="attestation in attestations" :key="attestation.value">
-                    <option
-                      :value="attestation.value"
-                      :selected="options.attestation === attestation.value"
-                      x-text="attestation.label"
-                    ></option>
-                  </template>
-                </select>
-              </label>
-
-              <!-- Discoverable Credential -->
-              <label for="discoverableCredential" class="col-7 mb-2">
-                Discoverable Credential
-                <br>
-                <select
-                  name="discoverableCredential"
-                  id="discoverableCredential"
-                  class="custom-select"
-                  x-model="options.discoverableCredential"
-                >
-                  <template x-for="option in discoverableCredentialOpts" :key="option.value">
-                    <option
-                      :value="option.value"
-                      :selected="options.discoverableCredential === option.value"
-                      x-text="option.label"
-                    ></option>
-                  </template>
-                </select>
-              </label>
             </div>
 
             <div class="row">
@@ -177,21 +181,25 @@
                 <ins>Authentication Settings</ins>
               </p>
 
-              <section class="col-12 mb-2">
-                <!-- User Verification -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAuthRequireUV"
-                    id="optAuthRequireUV"
-                    class="custom-control-input"
-                    x-model="options.authRequireUserVerification"
-                  />
-                  <label for="optAuthRequireUV" class="custom-control-label">
-                    Require User Verification
-                  </label>
-                </div>
-              </section>
+              <!-- User Verification -->
+              <label for="optAuthUserVerification" class="col-md-6 col-sm-12 mb-2">
+                User Verification
+                <br>
+                <select
+                  name="optAuthUserVerification"
+                  id="optAuthUserVerification"
+                  class="custom-select"
+                  x-model="options.authUserVerification"
+                >
+                  <template x-for="option in userVerificationOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.authUserVerification === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
             </div>
 
             <div class="row">
@@ -245,10 +253,16 @@
           /**
            * Registration Settings
            */
-          this.options.regRequireUserVerification =
-            currentParams.get('regRequireUserVerification') === 'true';
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
+
+          const _regUserVerification = currentParams.get('regUserVerification');
+          for (const uv of this.userVerificationOpts) {
+            if (uv.value === _regUserVerification) {
+              this.options.regUserVerification = _regUserVerification;
+              break;
+            }
+          }
 
           const _attestation = currentParams.get('attestation');
           for (const attestation of this.attestations) {
@@ -277,8 +291,13 @@
           /**
            * Authentication Settings
            */
-           this.options.authRequireUserVerification =
-            currentParams.get('authRequireUserVerification') === 'true';
+          const _authUserVerification = currentParams.get('authUserVerification');
+          for (const uv of this.userVerificationOpts) {
+            if (uv.value === _authUserVerification) {
+              this.options.authUserVerification = _authUserVerification;
+              break;
+            }
+          }
         }
 
         // Update query parameters when options change
@@ -310,14 +329,14 @@
       formAction: 'registration',
       options: {
         // Registration
-        regRequireUserVerification: true,
+        regUserVerification: 'preferred',
         attestation: 'none',
         attachment: 'all',
         algES256: true,
         algRS256: true,
         discoverableCredential: 'preferred',
         // Authentication
-        authRequireUserVerification: true,
+        authUserVerification: 'preferred',
       },
       username: '',
       alert: {
@@ -325,6 +344,12 @@
         alertClass: 'alert alert-success',
         text: '',
       },
+      // Possible values for options.regUserVerification and options.authUserVerification
+      userVerificationOpts: [
+        { label: 'Discouraged', value: 'discouraged' },
+        { label: 'Preferred', value: 'preferred' },
+        { label: 'Required', value: 'required' },
+      ],
       // Possible values for options.attestation
       attestations: [
         { label: 'None', value: 'none' },
@@ -388,7 +413,7 @@
       async _startRegistration() {
         // Submit options
         const {
-          regRequireUserVerification,
+          regUserVerification,
           algES256,
           algRS256,
           attestation,
@@ -416,8 +441,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.username,
-            // e.g. true
-            require_user_verification: regRequireUserVerification,
+            // e.g. 'preferred'
+            user_verification: regUserVerification,
             // e.g. 'direct'
             attestation,
             // e.g. 'platform'
@@ -453,7 +478,7 @@
       },
       async _startAuthentication(startConditionalUI = false) {
         const {
-          authRequireUserVerification,
+          authUserVerification,
         } = this.options;
 
         // Submit options
@@ -462,7 +487,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.username,
-            require_user_verification: authRequireUserVerification,
+            user_verification: authUserVerification,
           }),
         });
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
