@@ -4,6 +4,14 @@ from django import forms
 class RegistrationOptionsRequestForm(forms.Form):
     username = forms.CharField(required=True, max_length=64)
     require_user_verification = forms.BooleanField(required=False, initial=False)
+    user_verification = forms.ChoiceField(
+        required=True,
+        choices=[
+            ("discouraged", "Discouraged"),
+            ("preferred", "Preferred"),
+            ("required", "Required"),
+        ],
+    )
     attestation = forms.ChoiceField(
         required=True,
         choices=[
