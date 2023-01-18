@@ -270,6 +270,14 @@
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
 
+          const _regUserVerification = currentParams.get('regUserVerification');
+          for (const uv of this.userVerificationOpts) {
+            if (uv.value === _regUserVerification) {
+              this.options.regUserVerification = _regUserVerification;
+              break;
+            }
+          }
+
           const _attestation = currentParams.get('attestation');
           for (const attestation of this.attestations) {
             if (attestation.value === _attestation) {
@@ -416,6 +424,7 @@
         // Submit options
         const {
           regRequireUserVerification,
+          regUserVerification,
           algES256,
           algRS256,
           attestation,
@@ -445,6 +454,8 @@
             username: this.username,
             // e.g. true
             require_user_verification: regRequireUserVerification,
+            // e.g. 'preferred'
+            user_verification: regUserVerification,
             // e.g. 'direct'
             attestation,
             // e.g. 'platform'
