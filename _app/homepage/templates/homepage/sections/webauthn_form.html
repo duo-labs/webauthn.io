@@ -65,52 +65,6 @@
                 <ins>Registration Settings</ins>
               </p>
 
-              <section class="col-12 mb-2">
-                <!-- User Verification -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optRegRequireUV"
-                    id="optRegRequireUV"
-                    class="custom-control-input"
-                    x-model="options.regRequireUserVerification"
-                  />
-                  <label for="optRegRequireUV" class="custom-control-label">
-                    Require User Verification
-                  </label>
-                </div>
-
-                <br>
-
-                <!-- Algorithm - ES256 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgES256"
-                    id="optAlgES256"
-                    class="custom-control-input"
-                    x-model="options.algES256"
-                  />
-                  <label for="optAlgES256" class="custom-control-label">
-                    Support ES256
-                  </label>
-                </div>
-
-                <!-- Algorithm - RS256 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgRS256"
-                    id="optAlgRS256"
-                    class="custom-control-input"
-                    x-model="options.algRS256"
-                  />
-                  <label for="optAlgRS256" class="custom-control-label">
-                    Support RS256
-                  </label>
-                </div>
-              </section>
-
               <!-- Attachment -->
               <label for="attachment" class="col-6 mb-2">
                 Attachment
@@ -190,6 +144,36 @@
                   </template>
                 </select>
               </label>
+
+              <section class="col-12 mb-2">
+                <!-- Algorithm - ES256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgES256"
+                    id="optAlgES256"
+                    class="custom-control-input"
+                    x-model="options.algES256"
+                  />
+                  <label for="optAlgES256" class="custom-control-label">
+                    Support ES256
+                  </label>
+                </div>
+
+                <!-- Algorithm - RS256 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgRS256"
+                    id="optAlgRS256"
+                    class="custom-control-input"
+                    x-model="options.algRS256"
+                  />
+                  <label for="optAlgRS256" class="custom-control-label">
+                    Support RS256
+                  </label>
+                </div>
+              </section>
             </div>
 
             <div class="row">
