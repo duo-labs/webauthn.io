@@ -65,6 +65,26 @@
                 <ins>Registration Settings</ins>
               </p>
 
+              <!-- User Verification -->
+              <label for="optRegUserVerification" class="col-6 mb-2">
+                User Verification
+                <br>
+                <select
+                  name="optRegUserVerification"
+                  id="optRegUserVerification"
+                  class="custom-select"
+                  x-model="options.regUserVerification"
+                >
+                  <template x-for="option in userVerificationOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.regUserVerification === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
               <!-- Attachment -->
               <label for="attachment" class="col-6 mb-2">
                 Attachment
@@ -80,26 +100,6 @@
                       :value="attachment.value"
                       :selected="options.attachment === attachment.value"
                       x-text="attachment.label"
-                    ></option>
-                  </template>
-                </select>
-              </label>
-
-              <!-- Discoverable Credential -->
-              <label for="optRegUserVerification" class="col-6 mb-2">
-                User Verification
-                <br>
-                <select
-                  name="optRegUserVerification"
-                  id="optRegUserVerification"
-                  class="custom-select"
-                  x-model="options.regUserVerification"
-                >
-                  <template x-for="option in userVerificationOpts" :key="option.value">
-                    <option
-                      :value="option.value"
-                      :selected="options.regUserVerification === option.value"
-                      x-text="option.label"
                     ></option>
                   </template>
                 </select>
