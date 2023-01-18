@@ -51,20 +51,20 @@ class AuthenticationService:
         Generate and store authentication options
         """
 
-        user_verification = UserVerificationRequirement.DISCOURAGED
+        _user_verification = UserVerificationRequirement.DISCOURAGED
         if require_user_verification:
-            user_verification = UserVerificationRequirement.REQUIRED
+            _user_verification = UserVerificationRequirement.REQUIRED
 
         if user_verification == "discouraged":
-            user_verification = UserVerificationRequirement.DISCOURAGED
+            _user_verification = UserVerificationRequirement.DISCOURAGED
         elif user_verification == "preferred":
-            user_verification = UserVerificationRequirement.PREFERRED
+            _user_verification = UserVerificationRequirement.PREFERRED
         elif user_verification == "required":
-            user_verification = UserVerificationRequirement.REQUIRED
+            _user_verification = UserVerificationRequirement.REQUIRED
 
         authentication_options = generate_authentication_options(
             rp_id=settings.RP_ID,
-            user_verification=user_verification,
+            user_verification=_user_verification,
             allow_credentials=[
                 PublicKeyCredentialDescriptor(
                     id=base64url_to_bytes(cred.id), transports=cred.transports
