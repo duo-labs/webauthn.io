@@ -181,6 +181,26 @@
                 <ins>Authentication Settings</ins>
               </p>
 
+              <!-- User Verification -->
+              <label for="optAuthUserVerification" class="col-6 mb-2">
+                User Verification
+                <br>
+                <select
+                  name="optAuthUserVerification"
+                  id="optAuthUserVerification"
+                  class="custom-select"
+                  x-model="options.authUserVerification"
+                >
+                  <template x-for="option in userVerificationOpts" :key="option.value">
+                    <option
+                      :value="option.value"
+                      :selected="options.authUserVerification === option.value"
+                      x-text="option.label"
+                    ></option>
+                  </template>
+                </select>
+              </label>
+
               <section class="col-12 mb-2">
                 <!-- User Verification -->
                 <div class="custom-control custom-checkbox custom-control-inline">
@@ -289,6 +309,14 @@
            */
            this.options.authRequireUserVerification =
             currentParams.get('authRequireUserVerification') === 'true';
+
+          const _authUserVerification = currentParams.get('authUserVerification');
+          for (const uv of this.userVerificationOpts) {
+            if (uv.value === _authUserVerification) {
+              this.options.authUserVerification = _authUserVerification;
+              break;
+            }
+          }
         }
 
         // Update query parameters when options change
@@ -328,6 +356,7 @@
         discoverableCredential: 'preferred',
         // Authentication
         authRequireUserVerification: true,
+        authUserVerification: 'preferred',
       },
       username: '',
       alert: {
@@ -335,7 +364,7 @@
         alertClass: 'alert alert-success',
         text: '',
       },
-      // Possible values for options.userVerification
+      // Possible values for options.regUserVerification and options.authUserVerification
       userVerificationOpts: [
         { label: 'Discouraged', value: 'discouraged' },
         { label: 'Preferred', value: 'preferred' },
@@ -470,6 +499,7 @@
       async _startAuthentication(startConditionalUI = false) {
         const {
           authRequireUserVerification,
+          authUserVerification,
         } = this.options;
 
         // Submit options
@@ -479,6 +509,7 @@
           body: JSON.stringify({
             username: this.username,
             require_user_verification: authRequireUserVerification,
+            user_verification: authUserVerification,
           }),
         });
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
