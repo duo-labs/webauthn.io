@@ -34,10 +34,10 @@ def index(request):
             if cred.device_type == "single_device":
                 description += "single-device "
 
-            if not cred.is_discoverable_credential:
-                description += "non-discoverable "
-
-            description += "passkey"
+            if cred.is_discoverable_credential:
+                description += "passkey"
+            else:
+                description += "non-discoverable credential"
 
             parsed_credentials.append(
                 {
