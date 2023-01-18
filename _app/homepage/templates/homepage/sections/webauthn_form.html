@@ -311,6 +311,7 @@
       options: {
         // Registration
         regRequireUserVerification: true,
+        regUserVerification: 'preferred',
         attestation: 'none',
         attachment: 'all',
         algES256: true,
@@ -325,6 +326,12 @@
         alertClass: 'alert alert-success',
         text: '',
       },
+      // Possible values for options.userVerification
+      userVerificationOpts: [
+        { label: 'Discouraged', value: 'discouraged' },
+        { label: 'Preferred', value: 'preferred' },
+        { label: 'Required', value: 'required' },
+      ],
       // Possible values for options.attestation
       attestations: [
         { label: 'None', value: 'none' },
