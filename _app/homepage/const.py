@@ -71,7 +71,7 @@ libraries = [
     ),
     WebAuthnExample(
         language=".NET",
-        url="https://github.com/abergs/fido2-net-lib",
+        url="https://github.com/passwordless-lib/fido2-net-lib",
         title="abergs/fido2-net-lib",
         author="Anders Åberg",
         type="Library",
@@ -105,6 +105,13 @@ demos = [
         url="https://github.com/vertx-howtos/fido2-webauthn-howto",
         title="vertx/webauthn-howto",
         author="Eclipse Vert.x",
+        type="Demo",
+    ),
+    WebAuthnExample(
+        language=".NET",
+        url="https://github.com/passwordless-lib/fido2-net-lib/tree/master/Demo",
+        title="passwordless-lib/fido2-net-lib/Demo",
+        author="Anders Åberg",
         type="Demo",
     ),
 ]
