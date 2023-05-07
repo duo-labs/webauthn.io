@@ -49,6 +49,20 @@ libraries = [
         type="Library",
     ),
     WebAuthnExample(
+        language="Ruby",
+        url="https://github.com/ruby-passkeys/devise-passkeys",
+        title="ruby-passkeys/devise-passkeys",
+        author="Ruby passkeys",
+        type="Library",
+    ),
+    WebAuthnExample(
+        language="Ruby",
+        url="https://github.com/ruby-passkeys/warden-webauthn",
+        title="ruby-passkeys/warden-webauthn",
+        author="Ruby passkeys",
+        type="Library",
+    ),
+    WebAuthnExample(
         language="Java",
         url="https://github.com/webauthn4j/webauthn4j",
         title="webauthn4j/webauthn4j",
