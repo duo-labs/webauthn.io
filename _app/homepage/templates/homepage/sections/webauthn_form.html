@@ -318,7 +318,11 @@
             try {
               await this._startAuthentication(true);
             } catch (err) {
-              console.error('Conditional UI error:', err);
+              if (err.name === 'AbortError') {
+                console.log('Conditional UI request was aborted');
+              } else {
+                console.error('Conditional UI error:', err);
+              }
             }
           }
         });
