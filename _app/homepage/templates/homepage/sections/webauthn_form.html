@@ -222,7 +222,7 @@
   </template>
 </div>
 
-<script src="{% static "js/simplewebauthn-browser.6.2.1.umd.min.js" %}"></script>
+<script src="{% static "js/simplewebauthn-browser.7.2.0.umd.min.js" %}"></script>
 <script>
   const {
     browserSupportsWebAuthn,
@@ -318,7 +318,11 @@
             try {
               await this._startAuthentication(true);
             } catch (err) {
-              console.error('Conditional UI error:', err);
+              if (err.name === 'AbortError') {
+                console.log('Conditional UI request was aborted');
+              } else {
+                console.error('Conditional UI error:', err);
+              }
             }
           }
         });
@@ -456,8 +460,14 @@
         });
         const registrationOptionsJSON = await apiRegOptsResp.json();
 
+        console.log('REGISTRATION OPTIONS');
+        console.log(JSON.stringify(registrationOptionsJSON, null, 2));
+
         // Start WebAuthn registration
         const regResp = await startRegistration(registrationOptionsJSON);
+
+        console.log('REGISTRATION RESPONSE');
+        console.log(JSON.stringify(regResp, null, 2));
 
         // Submit response
         const apiRegVerResp = await fetch('{% url "registration-verification" %}', {
@@ -493,6 +503,9 @@
         });
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
 
+        console.log('AUTHENTICATION OPTIONS');
+        console.log(JSON.stringify(authenticationOptionsJSON, null, 2));
+
         if (authenticationOptionsJSON.error) {
           this.showErrorAlert(authenticationOptionsJSON.error);
           return;
@@ -500,6 +513,9 @@
 
         // Start WebAuthn authentication
         const authResp = await startAuthentication(authenticationOptionsJSON, startConditionalUI);
+
+        console.log('AUTHENTICATION RESPONSE');
+        console.log(JSON.stringify(authResp, null, 2));
 
         // Submit response
         const apiAuthVerResp = await fetch('{% url "authentication-verification" %}', {
