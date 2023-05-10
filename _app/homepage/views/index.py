@@ -32,7 +32,7 @@ def index(request):
             description = ""
 
             if cred.device_type == "single_device":
-                description += "single-device "
+                description += "device-bound "
 
             if cred.is_discoverable_credential:
                 description += "passkey"
