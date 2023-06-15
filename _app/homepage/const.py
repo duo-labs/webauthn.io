@@ -21,13 +21,6 @@ libraries = [
         type="Library",
     ),
     WebAuthnExample(
-        language="Go",
-        url="https://github.com/duo-labs/webauthn",
-        title="duo-labs/webauthn",
-        author="Duo Labs",
-        type="Library",
-    ),
-    WebAuthnExample(
         language="TypeScript",
         url="https://github.com/MasterKale/SimpleWebAuthn",
         title="SimpleWebAuthn",
@@ -88,6 +81,13 @@ libraries = [
         url="https://github.com/passwordless-lib/fido2-net-lib",
         title="abergs/fido2-net-lib",
         author="Anders Åberg",
+        type="Library",
+    ),
+    WebAuthnExample(
+        language="Go",
+        url="https://github.com/go-webauthn/webauthn",
+        title="go-webauthn/webauthn",
+        author="go-webauthn",
         type="Library",
     ),
 ]
