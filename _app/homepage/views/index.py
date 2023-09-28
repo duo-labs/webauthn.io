@@ -40,7 +40,7 @@ def index(request):
             if cred.is_discoverable_credential is None:
                 # We can't really describe it if we didn't get a signal back
                 description += "credential of unknown discoverability"
-            if cred.is_discoverable_credential:
+            elif cred.is_discoverable_credential:
                 description += "passkey"
             else:
                 description += "non-discoverable credential"
