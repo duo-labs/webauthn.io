@@ -2,6 +2,7 @@ import json
 
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
+from webauthn.helpers.structs import ResidentKeyRequirement
 
 from homepage.services.credential import CredentialService
 from homepage.services.registration import RegistrationService
@@ -29,7 +30,7 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     registration_service = RegistrationService()
 
     try:
-        verification = registration_service.verify_registration_response(
+        (verification, options) = registration_service.verify_registration_response(
             username=username,
             response=webauthn_response,
         )
@@ -47,6 +48,11 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
             ext_cred_props_rk: bool | None = ext_cred_props.get("rk", None)
             if ext_cred_props_rk is not None:
                 is_discoverable_credential = bool(ext_cred_props_rk)
+
+        # If we can't determine this using credProps then let's look at the registration options
+        if is_discoverable_credential is None:
+            if options.authenticator_selection.resident_key == ResidentKeyRequirement.REQUIRED:
+                is_discoverable_credential = True
 
         # Store credential for later
         credential_service = CredentialService()

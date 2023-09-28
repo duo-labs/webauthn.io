@@ -127,7 +127,10 @@ class RegistrationService:
             require_user_verification=require_user_verification,
         )
 
-        return verification
+        return (
+            verification,
+            options,
+        )
 
     def _save_options(self, username: str, options: PublicKeyCredentialCreationOptions):
         """
