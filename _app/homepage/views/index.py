@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from webauthn.helpers.structs import CredentialDeviceType
 
 from homepage.const import libraries, demos
 from homepage.services import SessionService, CredentialService
@@ -31,9 +32,14 @@ def index(request):
         for cred in user_credentials:
             description = ""
 
-            if cred.device_type == "single_device":
+            if cred.device_type == CredentialDeviceType.SINGLE_DEVICE:
                 description += "device-bound "
+            else:
+                description += "synced "
 
+            if cred.is_discoverable_credential is None:
+                # We can't really describe it if we didn't get a signal back
+                description += "credential of unknown discoverability"
             if cred.is_discoverable_credential:
                 description += "passkey"
             else:
