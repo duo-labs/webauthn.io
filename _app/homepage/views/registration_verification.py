@@ -2,8 +2,8 @@ import json
 
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
-from homepage.services.credential import CredentialService
 
+from homepage.services.credential import CredentialService
 from homepage.services.registration import RegistrationService
 from homepage.forms import RegistrationResponseForm
 from homepage.response import JsonResponseBadRequest
@@ -36,9 +36,17 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
 
         _response: dict = webauthn_response.get("response", {})
         transports: list = _response.get("transports", [])
+
+        # Try to determine if the credential we got is a discoverable credential
+        is_discoverable_credential = None
+
+        # If credProps.rk is defined then use that as the most definitive signal
         extensions: dict = webauthn_response.get("clientExtensionResults", {})
-        ext_cred_props: dict = extensions.get("credProps", {})
-        is_discoverable_credential: bool = ext_cred_props.get("rk", False)
+        ext_cred_props: dict | None = extensions.get("credProps", None)
+        if ext_cred_props is not None:
+            ext_cred_props_rk: bool | None = ext_cred_props.get("rk", None)
+            if ext_cred_props_rk is not None:
+                is_discoverable_credential = bool(ext_cred_props_rk)
 
         # Store credential for later
         credential_service = CredentialService()
