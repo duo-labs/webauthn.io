@@ -47,8 +47,9 @@ def index(request):
             else:
                 description += "non-discoverable credential"
 
+            aaguid = str(cred.aaguid)
             provider_name = metadata_service.get_provider_name(
-                aaguid=str(cred.aaguid),
+                aaguid=aaguid,
                 device_type=cred.device_type,
             )
 
@@ -59,7 +60,7 @@ def index(request):
                     "transports": transports_to_ui_string(cred.transports or []),
                     "description": description,
                     "provider_name": provider_name,
-                    "aaguid": str(cred.aaguid),
+                    "aaguid": aaguid,
                 }
             )
 
