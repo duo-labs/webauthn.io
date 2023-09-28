@@ -2,7 +2,8 @@ from django.shortcuts import render
 from webauthn.helpers.structs import CredentialDeviceType
 
 from homepage.const import libraries, demos
-from homepage.services import SessionService, CredentialService
+from homepage.logging import logger
+from homepage.services import SessionService, CredentialService, MetadataService
 from homepage.helpers import transports_to_ui_string, truncate_credential_id_to_ui_string
 
 
@@ -24,6 +25,7 @@ def index(request):
 
         username = request.session["username"]
         credential_service = CredentialService()
+        metadata_service = MetadataService()
 
         user_credentials = credential_service.retrieve_credentials_by_username(username=username)
 
@@ -45,12 +47,20 @@ def index(request):
             else:
                 description += "non-discoverable credential"
 
+            aaguid = str(cred.aaguid)
+            provider_name = metadata_service.get_provider_name(
+                aaguid=aaguid,
+                device_type=cred.device_type,
+            )
+
             parsed_credentials.append(
                 {
                     "id": truncate_credential_id_to_ui_string(cred.id),
                     "raw_id": cred.id,
                     "transports": transports_to_ui_string(cred.transports or []),
                     "description": description,
+                    "provider_name": provider_name,
+                    "aaguid": aaguid,
                 }
             )
 

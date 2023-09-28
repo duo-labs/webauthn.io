@@ -45,6 +45,7 @@ class CredentialService:
             is_discoverable_credential=is_discoverable_credential,
             device_type=verification.credential_device_type,
             backed_up=verification.credential_backed_up,
+            aaguid=verification.aaguid,
         )
 
         self._temporarily_store_in_redis(new_credential)
