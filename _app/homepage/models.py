@@ -34,3 +34,5 @@ class WebAuthnCredential(BaseModel):
     device_type: CredentialDeviceType
     backed_up: bool
     transports: Optional[List[AuthenticatorTransport]]
+    # TODO: Clear this at some point point in the future when we know we're setting it
+    aaguid: str = ""
