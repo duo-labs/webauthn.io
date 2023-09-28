@@ -9,5 +9,5 @@ docker volume prune -f
 echo "---rebuilding django---"
 docker-compose build django
 echo "---restarting django and caddy---"
-docker compose -f docker-compose.yml up -d --no-deps django caddy
+docker-compose -f docker-compose.yml up -d --no-deps django caddy
 echo "[END]"
