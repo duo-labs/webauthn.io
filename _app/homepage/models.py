@@ -30,7 +30,7 @@ class WebAuthnCredential(BaseModel):
     public_key: str
     username: str
     sign_count: int
-    is_discoverable_credential: bool
+    is_discoverable_credential: Optional[bool]
     device_type: CredentialDeviceType
     backed_up: bool
     transports: Optional[List[AuthenticatorTransport]]

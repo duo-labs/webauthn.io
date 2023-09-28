@@ -27,7 +27,7 @@ class CredentialService:
         *,
         username: str,
         verification: VerifiedRegistration,
-        is_discoverable_credential: bool,
+        is_discoverable_credential: Optional[bool] = None,
         transports: Optional[List[str]] = None,
     ) -> WebAuthnCredential:
         """
