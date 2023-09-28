@@ -71,6 +71,7 @@
             <strong>Description:</strong>
             <br>
             {{ cred.description }}
+            {% if cred.provider_name %}({{ cred.provider_name }}){% endif %}
           </li>
           <li>
             <strong>Transports:</strong>
