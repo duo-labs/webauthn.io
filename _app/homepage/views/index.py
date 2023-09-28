@@ -53,6 +53,12 @@ def index(request):
                 device_type=cred.device_type,
             )
 
+            if not provider_name:
+                provider_name = "(Unavailable)"
+
+            if not aaguid:
+                aaguid = "(Unavailable)"
+
             parsed_credentials.append(
                 {
                     "id": truncate_credential_id_to_ui_string(cred.id),

@@ -71,7 +71,6 @@
             <strong>Description:</strong>
             <br>
             {{ cred.description }}
-            {% if cred.provider_name %}({{ cred.provider_name }}){% endif %}
           </li>
           <li>
             <strong>Transports:</strong>
@@ -79,9 +78,11 @@
             {{ cred.transports }}
           </li>
           <li>
-            <strong>AAGUID:</strong>
+            <strong>Provider Information:</strong>
             <br>
-            {{ cred.aaguid }}
+            <strong>Name:</strong> {{ cred.provider_name }}
+            <br>
+            <strong>AAGUID:</strong> {{ cred.aaguid }}
           </li>
           <li class="credential-delete">
             <form action="{% url 'credential-delete' cred.raw_id %}" method="post">
