@@ -59,6 +59,7 @@ def index(request):
                     "transports": transports_to_ui_string(cred.transports or []),
                     "description": description,
                     "provider_name": provider_name,
+                    "aaguid": str(cred.aaguid),
                 }
             )
 

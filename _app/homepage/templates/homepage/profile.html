@@ -78,6 +78,11 @@
             <br>
             {{ cred.transports }}
           </li>
+          <li>
+            <strong>AAGUID:</strong>
+            <br>
+            {{ cred.aaguid }}
+          </li>
           <li class="credential-delete">
             <form action="{% url 'credential-delete' cred.raw_id %}" method="post">
               {% csrf_token %}
