@@ -90,6 +90,13 @@ libraries = [
         author="go-webauthn",
         type="Library",
     ),
+    WebAuthnExample(
+        language="Swift",
+        url="https://github.com/swift-server/webauthn-swift",
+        title="swift-server/webauthn-swift",
+        author="Swift Server Working Group",
+        type="Library",
+    ),
 ]
 
 demos = [
@@ -126,6 +133,13 @@ demos = [
         url="https://github.com/passwordless-lib/fido2-net-lib/tree/master/Demo",
         title="passwordless-lib/fido2-net-lib/Demo",
         author="Anders Åberg",
+        type="Demo",
+    ),
+    WebAuthnExample(
+        language="Swift",
+        url="https://github.com/brokenhandsio/Vapor-PasskeyDemo",
+        title="brokenhandsio/Vapor-PasskeyDemo",
+        author="Broken Hands",
         type="Demo",
     ),
 ]
