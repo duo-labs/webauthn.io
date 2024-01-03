@@ -568,12 +568,18 @@
           authUserVerification,
         } = this.options;
 
+        let username = this.username;
+        if (startConditionalUI) {
+          // We won't have a username for conditional UI
+          username = undefined;
+        }
+
         // Submit options
         const apiAuthOptsResp = await fetch('{% url "authentication-options" %}', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            username: this.username,
+            username,
             user_verification: authUserVerification,
           }),
         });
