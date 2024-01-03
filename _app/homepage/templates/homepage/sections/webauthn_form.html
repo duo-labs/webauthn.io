@@ -376,11 +376,7 @@
          * Format the list of registration hints to help confirm the order of preference
          */
         this.$watch('options.regHints', () => {
-          let formattedHints = JSON.stringify(this.options.regHints);
-          // Add a space between items
-          formattedHints = formattedHints.replace(/,/g, ", ");
-
-          this._regHints.formatted = formattedHints;
+          this._formatRegHintsForUI();
         });
 
         // Set up Conditional UI if supported
@@ -651,6 +647,16 @@
           }
         }
       },
+      /**
+       * Format registration hints so we can visualize their preference order
+       */
+      _formatRegHintsForUI() {
+        let formattedHints = JSON.stringify(this.options.regHints);
+        // Add a space between items
+        formattedHints = formattedHints.replace(/,/g, ", ");
+
+        this._regHints.formatted = formattedHints;
+      }
     }));
   });
 </script>
