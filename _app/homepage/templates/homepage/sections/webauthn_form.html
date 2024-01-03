@@ -335,6 +335,21 @@
             }
           }
 
+          const _regHintsStr = currentParams.get('regHints');
+          _regHintsStr.split(',').forEach((hint) => {
+            if (hint === 'security-key') {
+              this._regHints.securityKey = true;
+              this._toggleRegHint('security-key', true);
+            } else if (hint === 'client-device') {
+              this._regHints.clientDevice = true;
+              this._toggleRegHint('client-device', true);
+            } else if (hint === 'hybrid') {
+              this._regHints.hybrid = true;
+              this._toggleRegHint('hybrid', true);
+            }
+          });
+          this._formatRegHintsForUI();
+
           /**
            * Authentication Settings
            */
