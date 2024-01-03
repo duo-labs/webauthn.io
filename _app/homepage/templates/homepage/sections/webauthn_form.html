@@ -176,6 +176,51 @@
                   </label>
                 </div>
               </section>
+
+              <!-- Registration Hints -->
+              <section class="col-sm-12 mb-2">
+                <p class="mb-0">Registration Hints</p>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintSecurityKey"
+                    x-model="_regHints.securityKey"
+                    @change="handleSelectRegHintsSecurityKey"
+                  />
+                  <label class="custom-control-label" for="regHintSecurityKey">
+                    Security Key
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintClientDevice"
+                    x-model="_regHints.clientDevice"
+                    @change="handleSelectRegHintsClientDevice"
+                  />
+                  <label class="custom-control-label" for="regHintClientDevice">
+                    Client Device
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintHybrid"
+                    x-model="_regHints.hybrid"
+                    @change="handleSelectRegHintsHybrid"
+                  />
+                  <label class="custom-control-label" for="regHintHybrid">
+                    Hybrid
+                  </label>
+                </div>
+                <p class="mb-0 text-secondary">
+                  Order:
+                  <span x-text="_regHints.formatted"></span>
+                </p>
+              </section>
             </div>
 
             <div class="row">
