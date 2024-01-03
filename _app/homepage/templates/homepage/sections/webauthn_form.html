@@ -357,6 +357,17 @@
           );
         });
 
+        /**
+         * Format the list of registration hints to help confirm the order of preference
+         */
+        this.$watch('options.regHints', () => {
+          let formattedHints = JSON.stringify(this.options.regHints);
+          // Add a space between items
+          formattedHints = formattedHints.replace(/,/g, ", ");
+
+          this._regHints.formatted = formattedHints;
+        });
+
         // Set up Conditional UI if supported
         browserSupportsWebAuthnAutofill().then(async (supported) => {
           if (supported) {
