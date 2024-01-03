@@ -497,6 +497,7 @@
           attestation,
           attachment,
           discoverableCredential,
+          regHints,
         } = this.options;
 
         const algorithms = [];
@@ -529,6 +530,8 @@
             algorithms,
             // e.g. 'preferred'
             discoverable_credential: discoverableCredential,
+            // e.g. ['security-key', 'hybrid']
+            hints: regHints,
           }),
         });
         const registrationOptionsJSON = await apiRegOptsResp.json();
