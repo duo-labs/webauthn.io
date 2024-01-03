@@ -59,7 +59,7 @@
           Advanced Settings
         </button>
 
-        <div class="card container settings-drawer" x-cloak x-show="showAdvancedSettings">
+        <div class="card container settings-drawer pb-0" x-cloak x-show="showAdvancedSettings">
           <div class="card-body">
             <div class="row">
               <p class="col-12 px-0 mb-1">
@@ -147,6 +147,7 @@
               </label>
 
               <section class="col-12 mb-2">
+                <p class="mb-0">Public Key Algorithms</p>
                 <!-- Algorithm - ES256 -->
                 <div class="custom-control custom-checkbox custom-control-inline">
                   <input
@@ -174,6 +175,51 @@
                     Support RS256
                   </label>
                 </div>
+              </section>
+
+              <!-- Registration Hints -->
+              <section class="col-sm-12 mb-2">
+                <p class="mb-0">Registration Hints (most to least preferred)</p>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintSecurityKey"
+                    x-model="_regHints.securityKey"
+                    @change="handleSelectRegHintsSecurityKey"
+                  />
+                  <label class="custom-control-label" for="regHintSecurityKey">
+                    Security Key
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintClientDevice"
+                    x-model="_regHints.clientDevice"
+                    @change="handleSelectRegHintsClientDevice"
+                  />
+                  <label class="custom-control-label" for="regHintClientDevice">
+                    Client Device
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="regHintHybrid"
+                    x-model="_regHints.hybrid"
+                    @change="handleSelectRegHintsHybrid"
+                  />
+                  <label class="custom-control-label" for="regHintHybrid">
+                    Hybrid
+                  </label>
+                </div>
+                <p class="mb-0 text-secondary">
+                  Order:
+                  <span x-text="_regHints.formatted"></span>
+                </p>
               </section>
             </div>
 
@@ -289,6 +335,21 @@
             }
           }
 
+          const _regHintsStr = currentParams.get('regHints');
+          _regHintsStr.split(',').forEach((hint) => {
+            if (hint === 'security-key') {
+              this._regHints.securityKey = true;
+              this._toggleRegHint('security-key', true);
+            } else if (hint === 'client-device') {
+              this._regHints.clientDevice = true;
+              this._toggleRegHint('client-device', true);
+            } else if (hint === 'hybrid') {
+              this._regHints.hybrid = true;
+              this._toggleRegHint('hybrid', true);
+            }
+          });
+          this._formatRegHintsForUI();
+
           /**
            * Authentication Settings
            */
@@ -309,6 +370,13 @@
             "",
             `${location.pathname}?${newParams}`
           );
+        });
+
+        /**
+         * Format the list of registration hints to help confirm the order of preference
+         */
+        this.$watch('options.regHints', () => {
+          this._formatRegHintsForUI();
         });
 
         // Set up Conditional UI if supported
@@ -340,6 +408,7 @@
         algES256: true,
         algRS256: true,
         discoverableCredential: 'preferred',
+        regHints: [],
         // Authentication
         authUserVerification: 'preferred',
       },
@@ -348,6 +417,13 @@
         show: false,
         alertClass: 'alert alert-success',
         text: '',
+      },
+      // We need to track some state to properly support hints preference order
+      _regHints: {
+        securityKey: false,
+        clientDevice: false,
+        hybrid: false,
+        formatted: "[]",
       },
       // Possible values for options.regUserVerification and options.authUserVerification
       userVerificationOpts: [
@@ -413,6 +489,15 @@
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
       },
+      handleSelectRegHintsSecurityKey() {
+        this._toggleRegHint('security-key', this._regHints.securityKey);
+      },
+      handleSelectRegHintsClientDevice() {
+        this._toggleRegHint('client-device', this._regHints.clientDevice);
+      },
+      handleSelectRegHintsHybrid() {
+        this._toggleRegHint('hybrid', this._regHints.hybrid);
+      },
 
       // Internal Methods
       async _startRegistration() {
@@ -424,6 +509,7 @@
           attestation,
           attachment,
           discoverableCredential,
+          regHints,
         } = this.options;
 
         const algorithms = [];
@@ -456,6 +542,8 @@
             algorithms,
             // e.g. 'preferred'
             discoverable_credential: discoverableCredential,
+            // e.g. ['security-key', 'hybrid']
+            hints: regHints,
           }),
         });
         const registrationOptionsJSON = await apiRegOptsResp.json();
@@ -492,12 +580,18 @@
           authUserVerification,
         } = this.options;
 
+        let username = this.username;
+        if (startConditionalUI) {
+          // We won't have a username for conditional UI
+          username = undefined;
+        }
+
         // Submit options
         const apiAuthOptsResp = await fetch('{% url "authentication-options" %}', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            username: this.username,
+            username,
             user_verification: authUserVerification,
           }),
         });
@@ -535,6 +629,35 @@
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
       },
+      /**
+       * Registration hints can be ordered by preference, but there's no good native HTML element
+       * that allows for selection _and_ sorting.
+       *
+       * We'll handle it here by making each hint a checkbox, and the order in which a checkbox is
+       * checked will simply append that hint to the end of the list of selected hints.
+       *
+       * Unchecking a hint will remove it from its arbitrary place in the list of choices.
+       */
+      _toggleRegHint(hintName, isChecked) {
+        if (isChecked) {
+          this.options.regHints.push(hintName);
+        } else {
+          const securityKeyIndex = this.options.regHints.indexOf(hintName);
+          if (securityKeyIndex >= 0) {
+            this.options.regHints.splice(securityKeyIndex, 1);
+          }
+        }
+      },
+      /**
+       * Format registration hints so we can visualize their preference order
+       */
+      _formatRegHintsForUI() {
+        let formattedHints = JSON.stringify(this.options.regHints);
+        // Add a space between items
+        formattedHints = formattedHints.replace(/,/g, ", ");
+
+        this._regHints.formatted = formattedHints;
+      }
     }));
   });
 </script>

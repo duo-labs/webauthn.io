@@ -29,6 +29,7 @@ def registration_options(request: HttpRequest) -> JsonResponse:
     options_algorithms = form_data["algorithms"]
     options_username = form_data["username"]
     options_discoverable_credential = form_data["discoverable_credential"]
+    options_hints = form_data["hints"]
 
     registration_service = RegistrationService()
     credential_service = CredentialService()
@@ -43,9 +44,13 @@ def registration_options(request: HttpRequest) -> JsonResponse:
             username=options_username
         ),
         discoverable_credential=options_discoverable_credential,
+        hints=options_hints,
     )
 
     options_json = json.loads(options_to_json(registration_options))
+
+    # Tack on hints (till py_webauthn learns about hints and we can handle it in the service)
+    options_json["hints"] = options_hints
 
     # Add in credProps extension
     options_json["extensions"] = {

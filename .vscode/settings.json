@@ -1,14 +1,9 @@
 {
-  "python.linting.enabled": true,
-  "python.linting.lintOnSave": true,
-  "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": true,
-  "python.formatting.provider": "black",
-  "python.formatting.blackArgs": [
+  "black-formatter.args": [
     "--line-length", "99"
   ],
   "[python]": {
-    "editor.defaultFormatter": "ms-python.python",
+    "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnPaste": false,
     "editor.formatOnSaveMode": "file",
     "editor.formatOnSave": true
