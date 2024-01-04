@@ -16,5 +16,8 @@ COPY Pipfile.lock /usr/src/app/
 
 WORKDIR /usr/src/app
 
+# Install Python dependencies
 RUN pipenv install --system --deploy
+
+# Collect static files
 RUN python manage.py collectstatic --no-input --ignore=*.scss
