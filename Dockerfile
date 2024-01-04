@@ -1,5 +1,5 @@
 # Tweak the base image by installing pipenv
-FROM python:3.10 as base
+FROM python:3.10-slim as base
 RUN pip install pipenv
 
 # Begin our actual build
