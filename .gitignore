@@ -4,6 +4,4 @@ _psql
 *.log
 *.env
 .DS_Store
-_app/**/css/*.css
-_app/**/css/*.css.map
 _app/**/styles/*.css
