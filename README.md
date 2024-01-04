@@ -27,6 +27,14 @@ $> ./start-dev.sh
 
 The site will be available at https://localhost
 
+### CSS
+
+CSS leans on browsers and their [native CSS nesting support](https://blog.logrocket.com/native-css-nesting/), which allows for nicer CSS authoring without pre-processors. Unfortunately for now this means the following command will need to be run after making any changes to CSS to ensure that the changes are served by Caddy on subsequent reloads:
+
+```sh
+docker compose run django ./manage.py collectstatic --no-input
+```
+
 ## Production
 
 Run the following command to start up the website with production-ready settings:

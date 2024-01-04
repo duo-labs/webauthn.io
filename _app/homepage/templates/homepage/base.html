@@ -1,5 +1,4 @@
 {% load static %}
-{% load sass_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,7 +23,8 @@
     <meta property="og:image:width" content="1066">
     <meta property="og:image:height" content="849">
 
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'styles/index.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap-v4.6.1.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/index.css' %}">
   </head>
   <body>
     {% block header %}{% endblock %}
