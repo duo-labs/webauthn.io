@@ -2,11 +2,6 @@ version: '3.5'
 
 # THESE OVERRIDES ARE FOR DEVELOPMENT! DON'T USE THIS IN PRODUCTION!
 services:
-  db:
-    ports:
-      # Allow us to directly access the database during development
-      - "5432:5432"
-
   caddy:
     environment:
       # Site will be available at https://localhost

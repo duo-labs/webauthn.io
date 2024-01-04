@@ -1,20 +1,7 @@
 from typing import List, Optional
 
-from django.db import models
 from pydantic import BaseModel
 from webauthn.helpers.structs import AuthenticatorTransport, CredentialDeviceType
-
-
-class TimestampedModel(models.Model):
-    """
-    A simple model subclass for adding created_on and updated_on fields
-    """
-
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
 
 
 class WebAuthnCredential(BaseModel):

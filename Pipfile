@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 Django = "*"
 gunicorn = "*"
-psycopg2 = "*"
 redis = "*"
 hiredis = "*"
 webauthn = "*"

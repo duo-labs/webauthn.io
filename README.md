@@ -12,8 +12,6 @@ Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](
 ## Environmental Variable
 
 - `DJANGO_SECRET_KEY`: A sufficiently random string
-- `POSTGRES_USER`: Database username
-- `POSTGRES_PASSWORD`: Database password
 - `PROD_HOST_NAME`: The domain name the site will be hosted at
 - `RP_ID`: The Relying Party ID, typically the same as `PROD_HOST_NAME`
 - `RP_NAME`: A representation of the site's name to be shown to users

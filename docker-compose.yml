@@ -1,16 +1,6 @@
 version: '3.5'
 
 services:
-  db:
-    image: postgres:14.1
-    volumes:
-      - database_volume:/var/lib/postgresql/data
-    networks:
-      - database_network
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-
   redis:
     image: redis:6.2.6
     networks:
@@ -40,7 +30,6 @@ services:
       args:
         - DJANGO_SECRET_KEY
     depends_on:
-      - db
       - redis
     command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py
     volumes:
@@ -49,13 +38,10 @@ services:
       - static_files_volume:/usr/src/app/static
     networks:
       - caddy_network
-      - database_network
       - redis_network
     environment:
       - PYTHONUNBUFFERED=0
       - DJANGO_SECRET_KEY
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
       - PROD_HOST_NAME
       - RP_ID
       - RP_NAME
@@ -65,11 +51,9 @@ services:
 
 volumes:
   static_files_volume:
-  database_volume:
   caddy_data:
   caddy_config:
 
 networks:
   caddy_network:
-  database_network:
   redis_network:
