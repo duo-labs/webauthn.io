@@ -9,9 +9,6 @@ gunicorn = "*"
 redis = "*"
 hiredis = "*"
 webauthn = "*"
-libsass = "*"
-django-compressor = "*"
-django-sass-processor = "*"
 
 [dev-packages]
 black = "*"
