@@ -5,7 +5,7 @@ services:
   caddy:
     environment:
       # Site will be available at https://localhost
-      - PROD_HOST_NAME=localhost
+      - PROD_HOST_NAME=http://localhost
 
   redis:
     ports:
@@ -18,4 +18,4 @@ services:
       - DEBUG=true
       - RP_ID=localhost
       - RP_NAME=WebAuthn.io (Dev)
-      - RP_EXPECTED_ORIGIN=https://localhost
+      - RP_EXPECTED_ORIGIN=http://localhost
