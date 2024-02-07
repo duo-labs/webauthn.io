@@ -15,11 +15,12 @@ DEBUG = os.getenv("DEBUG", False) == "true"
 ALLOWED_HOSTS = ["localhost"]
 CSRF_TRUSTED_ORIGINS = ["https://localhost"]
 
+# Should include protocol (e.g. "https://webauthn.io", "http://localhost")
 PROD_HOST_NAME = os.getenv("PROD_HOST_NAME", None)
 
 if PROD_HOST_NAME:
     ALLOWED_HOSTS.append(PROD_HOST_NAME)
-    CSRF_TRUSTED_ORIGINS.append(f"https://{PROD_HOST_NAME}")
+    CSRF_TRUSTED_ORIGINS.append(PROD_HOST_NAME)
 
 # Application definition
 
