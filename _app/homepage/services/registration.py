@@ -9,6 +9,7 @@ from webauthn import (
 from webauthn.helpers import (
     base64url_to_bytes,
     parse_registration_credential_json,
+    parse_registration_options_json,
 )
 from webauthn.helpers.structs import (
     PublicKeyCredentialCreationOptions,
@@ -183,18 +184,7 @@ class RegistrationService:
         if options is None:
             return options
 
-        # We can't use PublicKeyCredentialCreationOptions.parse_raw() because
-        # json_loads_base64url_to_bytes() doesn't know to convert these few values to bytes, so we
-        # have to do it manually
-        options_json: dict = json_loads_base64url_to_bytes(options)
-        options_json["user"]["id"] = base64url_to_bytes(options_json["user"]["id"])
-        options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
-        options_json["excludeCredentials"] = [
-            {**cred, "id": base64url_to_bytes(cred["id"])}
-            for cred in options_json["excludeCredentials"]
-        ]
-
-        return PublicKeyCredentialCreationOptions.parse_obj(options_json)
+        return parse_registration_options_json(options)
 
     def _delete_options(self, username: str) -> int:
         return self.redis.delete(key=username)

@@ -10,6 +10,7 @@ from webauthn import (
 from webauthn.helpers import (
     base64url_to_bytes,
     parse_authentication_credential_json,
+    parse_authentication_options_json,
 )
 from webauthn.helpers.structs import (
     PublicKeyCredentialRequestOptions,
@@ -137,17 +138,7 @@ class AuthenticationService:
         if options is None:
             return options
 
-        # We can't use PublicKeyCredentialRequestOptions.parse_raw() because
-        # json_loads_base64url_to_bytes() doesn't know to convert these few values to bytes, so we
-        # have to do it manually
-        options_json: dict = json_loads_base64url_to_bytes(options)
-        options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
-        options_json["allowCredentials"] = [
-            {**cred, "id": base64url_to_bytes(cred["id"])}
-            for cred in options_json["allowCredentials"]
-        ]
-
-        return PublicKeyCredentialRequestOptions.parse_obj(options_json)
+        return parse_authentication_options_json(options)
 
     def _delete_options(self, *, cache_key: str) -> int:
         return self.redis.delete(key=cache_key)
