@@ -1,5 +1,4 @@
 from typing import List, Union
-import json
 from dataclasses import dataclass
 
 from django.conf import settings
@@ -8,12 +7,15 @@ from webauthn import (
     options_to_json,
     verify_authentication_response,
 )
-from webauthn.helpers import json_loads_base64url_to_bytes, base64url_to_bytes
+from webauthn.helpers import (
+    base64url_to_bytes,
+    parse_authentication_credential_json,
+    parse_authentication_options_json,
+)
 from webauthn.helpers.structs import (
     PublicKeyCredentialRequestOptions,
     UserVerificationRequirement,
     PublicKeyCredentialDescriptor,
-    AuthenticationCredential,
 )
 
 from homepage.services import RedisService
@@ -79,7 +81,7 @@ class AuthenticationService:
         existing_credential: WebAuthnCredential,
         response: dict,
     ) -> VerifiedAuthentication:
-        credential = AuthenticationCredential.parse_raw(json.dumps(response))
+        credential = parse_authentication_credential_json(response)
         options = self._get_options(cache_key=cache_key)
 
         if not options:
@@ -132,21 +134,11 @@ class AuthenticationService:
         """
         Attempt to retrieve saved authentication options for the user
         """
-        options: str = self.redis.retrieve(key=cache_key)
+        options: str | None = self.redis.retrieve(key=cache_key)
         if options is None:
             return options
 
-        # We can't use PublicKeyCredentialRequestOptions.parse_raw() because
-        # json_loads_base64url_to_bytes() doesn't know to convert these few values to bytes, so we
-        # have to do it manually
-        options_json: dict = json_loads_base64url_to_bytes(options)
-        options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
-        options_json["allowCredentials"] = [
-            {**cred, "id": base64url_to_bytes(cred["id"])}
-            for cred in options_json["allowCredentials"]
-        ]
-
-        return PublicKeyCredentialRequestOptions.parse_obj(options_json)
+        return parse_authentication_options_json(options)
 
     def _delete_options(self, *, cache_key: str) -> int:
         return self.redis.delete(key=cache_key)

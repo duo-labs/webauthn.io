@@ -3,6 +3,7 @@ import json
 
 from webauthn.registration.verify_registration_response import VerifiedRegistration
 from webauthn.helpers import bytes_to_base64url
+from webauthn.helpers.structs import AuthenticatorTransport
 
 from homepage.services import RedisService
 from homepage.services.authentication import VerifiedAuthentication
@@ -36,12 +37,16 @@ class CredentialService:
 
         The Redis key will be the base64url-encoded credential ID
         """
+        mapped_transports = None
+        if transports is not None:
+            mapped_transports = [AuthenticatorTransport(transport) for transport in transports]
+
         new_credential = WebAuthnCredential(
             username=username,
             id=bytes_to_base64url(verification.credential_id),
             public_key=bytes_to_base64url(verification.credential_public_key),
             sign_count=verification.sign_count,
-            transports=transports,
+            transports=mapped_transports,
             is_discoverable_credential=is_discoverable_credential,
             device_type=verification.credential_device_type,
             backed_up=verification.credential_backed_up,
@@ -73,7 +78,7 @@ class CredentialService:
         if not raw_credential:
             raise InvalidCredentialID("Unrecognized credential ID")
 
-        credential = WebAuthnCredential.parse_raw(raw_credential)
+        credential = WebAuthnCredential.model_validate_json(raw_credential)
 
         if username and credential.username != username:
             raise InvalidCredentialID("Credential does not belong to user")
@@ -84,7 +89,11 @@ class CredentialService:
         """
         Get all credentials for a given user
         """
-        credentials = [WebAuthnCredential.parse_raw(cred) for cred in self.redis.retrieve_all()]
+        all_creds = self.redis.retrieve_all()
+
+        credentials = [
+            WebAuthnCredential.model_validate_json(cred) for cred in all_creds if cred is not None
+        ]
 
         return [cred for cred in credentials if cred.username == username]
 
@@ -100,7 +109,7 @@ class CredentialService:
         if not raw_credential:
             raise InvalidCredentialID()
 
-        credential = WebAuthnCredential.parse_raw(raw_credential)
+        credential = WebAuthnCredential.model_validate_json(raw_credential)
 
         credential.sign_count = verification.new_sign_count
 
@@ -115,6 +124,6 @@ class CredentialService:
         """
         self.redis.store(
             key=credential.id,
-            value=json.dumps(credential.dict()),
+            value=json.dumps(credential.model_dump()),
             expiration_seconds=60 * 60 * 24,  # 24 hours
         )

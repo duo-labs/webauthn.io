@@ -1,20 +1,27 @@
-import json
 from typing import Union, List, Optional
+import secrets
 
 from django.conf import settings
-from webauthn import generate_registration_options, options_to_json, verify_registration_response
-from webauthn.helpers import json_loads_base64url_to_bytes, base64url_to_bytes
+from webauthn import (
+    generate_registration_options,
+    options_to_json,
+    verify_registration_response,
+)
+from webauthn.helpers import (
+    base64url_to_bytes,
+    parse_registration_credential_json,
+    parse_registration_options_json,
+)
 from webauthn.helpers.structs import (
     PublicKeyCredentialCreationOptions,
-    RegistrationCredential,
     UserVerificationRequirement,
     AttestationConveyancePreference,
     AuthenticatorSelectionCriteria,
     AuthenticatorAttachment,
-    COSEAlgorithmIdentifier,
     PublicKeyCredentialDescriptor,
     ResidentKeyRequirement,
 )
+from webauthn.helpers.cose import COSEAlgorithmIdentifier
 
 from homepage.services import RedisService
 from homepage.exceptions import InvalidRegistrationSession
@@ -103,8 +110,9 @@ class RegistrationService:
         registration_options = generate_registration_options(
             rp_id=settings.RP_ID,
             rp_name=settings.RP_NAME,
-            user_id=username,
             user_name=username,
+            # TODO: Remove when https://github.com/MasterKale/SimpleWebAuthn/issues/530 gets fixed
+            user_id=secrets.token_bytes(32),
             attestation=_attestation,
             authenticator_selection=authenticator_selection,
             supported_pub_key_algs=supported_pub_key_algs,
@@ -126,7 +134,7 @@ class RegistrationService:
         return registration_options
 
     def verify_registration_response(self, *, username: str, response: dict):
-        credential = RegistrationCredential.parse_raw(json.dumps(response))
+        credential = parse_registration_credential_json(response)
         options = self._get_options(username=username)
 
         if not options:
@@ -175,22 +183,11 @@ class RegistrationService:
         """
         Attempt to retrieve saved registration options for the user
         """
-        options: str = self.redis.retrieve(key=username)
+        options: str | None = self.redis.retrieve(key=username)
         if options is None:
             return options
 
-        # We can't use PublicKeyCredentialCreationOptions.parse_raw() because
-        # json_loads_base64url_to_bytes() doesn't know to convert these few values to bytes, so we
-        # have to do it manually
-        options_json: dict = json_loads_base64url_to_bytes(options)
-        options_json["user"]["id"] = base64url_to_bytes(options_json["user"]["id"])
-        options_json["challenge"] = base64url_to_bytes(options_json["challenge"])
-        options_json["excludeCredentials"] = [
-            {**cred, "id": base64url_to_bytes(cred["id"])}
-            for cred in options_json["excludeCredentials"]
-        ]
-
-        return PublicKeyCredentialCreationOptions.parse_obj(options_json)
+        return parse_registration_options_json(options)
 
     def _delete_options(self, username: str) -> int:
         return self.redis.delete(key=username)

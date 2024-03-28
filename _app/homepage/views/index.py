@@ -2,9 +2,11 @@ from django.shortcuts import render
 from webauthn.helpers.structs import CredentialDeviceType
 
 from homepage.const import libraries, demos
-from homepage.logging import logger
 from homepage.services import SessionService, CredentialService, MetadataService
-from homepage.helpers import transports_to_ui_string, truncate_credential_id_to_ui_string
+from homepage.helpers import (
+    transports_to_ui_string,
+    truncate_credential_id_to_ui_string,
+)
 
 
 def index(request):

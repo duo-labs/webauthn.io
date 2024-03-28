@@ -8,5 +8,7 @@
     "editor.formatOnSaveMode": "file",
     "editor.formatOnSave": true
   },
-  "markdown.extension.toc.levels": "2..2"
+  "markdown.extension.toc.levels": "2..2",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true
 }
