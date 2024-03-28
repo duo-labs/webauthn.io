@@ -27,6 +27,29 @@ class MetadataService:
         "17290f1e-c212-34d0-1423-365d729f09d9": {"name": "Thales PIN iOS SDK"},
     }
 
+    # Yubico AAGUIDs from https://support.yubico.com/hc/en-us/articles/360016648959-YubiKey-Hardware-FIDO2-AAGUIDs
+    aaguid_json.update(
+        {
+            "0bb43545-fd2c-4185-87dd-feb0b2916ace": {
+                "name": "Security Key NFC by Yubico - Enterprise Edition"
+            },
+            "149a2021-8ef6-4133-96b8-81f8d5b7f1f5": {"name": "Security Key by Yubico with NFC"},
+            "2fc0579f-8113-47ea-b116-bb5a8db9202a": {"name": "YubiKey 5 Series with NFC"},
+            "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73": {"name": "Security Key by Yubico with NFC"},
+            "73bb0cd4-e502-49b8-9c6f-b59445bf720b": {"name": "YubiKey 5 FIPS Series"},
+            "85203421-48f9-4355-9bc8-8a53846e5083": {"name": "YubiKey 5Ci FIPS"},
+            "a4e9fc6d-4cbe-4758-b8ba-37598bb5bbaa": {"name": "Security Key by Yubico with NFC"},
+            "b92c3f9a-c014-4056-887f-140a2501163b": {"name": "Security Key by Yubico"},
+            "c1f9a0bc-1dd2-404a-b27f-8e29047a43fd": {"name": "YubiKey 5 FIPS Series with NFC"},
+            "c5ef55ff-ad9a-4b9f-b580-adebafe026d0": {"name": "YubiKey 5Ci"},
+            "cb69481e-8ff7-4039-93ec-0a2729a154a8": {"name": "YubiKey 5 Series"},
+            "d8522d9f-575b-4866-88a9-ba99fa02f35b": {"name": "YubiKey Bio Series"},
+            "ee882879-721c-4913-9775-3dfcce97072a": {"name": "YubiKey 5 Series"},
+            "f8a011f3-8c0a-4d15-8006-17111f9edc7d": {"name": "Security Key by Yubico"},
+            "fa2b99dc-9e39-4257-8f92-4a30d23c4118": {"name": "YubiKey 5 Series with NFC"},
+        }
+    )
+
     def get_provider_name(self, *, aaguid: str, device_type: CredentialDeviceType) -> str:
         """
         Try to map the provided AAGUID to a human-friendly provider name
