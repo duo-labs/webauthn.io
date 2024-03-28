@@ -1,5 +1,4 @@
 from typing import List, Union
-import json
 from dataclasses import dataclass
 
 from django.conf import settings
@@ -8,12 +7,14 @@ from webauthn import (
     options_to_json,
     verify_authentication_response,
 )
-from webauthn.helpers import json_loads_base64url_to_bytes, base64url_to_bytes
+from webauthn.helpers import (
+    base64url_to_bytes,
+    parse_authentication_credential_json,
+)
 from webauthn.helpers.structs import (
     PublicKeyCredentialRequestOptions,
     UserVerificationRequirement,
     PublicKeyCredentialDescriptor,
-    AuthenticationCredential,
 )
 
 from homepage.services import RedisService
@@ -79,7 +80,7 @@ class AuthenticationService:
         existing_credential: WebAuthnCredential,
         response: dict,
     ) -> VerifiedAuthentication:
-        credential = AuthenticationCredential.parse_raw(json.dumps(response))
+        credential = parse_authentication_credential_json(response)
         options = self._get_options(cache_key=cache_key)
 
         if not options:
@@ -132,7 +133,7 @@ class AuthenticationService:
         """
         Attempt to retrieve saved authentication options for the user
         """
-        options: str = self.redis.retrieve(key=cache_key)
+        options: str | None = self.redis.retrieve(key=cache_key)
         if options is None:
             return options
 
