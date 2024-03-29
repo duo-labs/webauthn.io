@@ -13,14 +13,18 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DEBUG", False) == "true"
 
 ALLOWED_HOSTS = ["localhost"]
-CSRF_TRUSTED_ORIGINS = ["https://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 
-# Should include protocol (e.g. "https://webauthn.io", "http://localhost")
+# MUST NOT include protocol (e.g. "webauthn.io")
 PROD_HOST_NAME = os.getenv("PROD_HOST_NAME", None)
+# MUST include protocol (e.g. "https://webauthn.io")
+PROD_CSRF_ORIGIN = os.getenv("PROD_CSRF_ORIGIN", None)
 
-if PROD_HOST_NAME:
+if PROD_HOST_NAME and PROD_CSRF_ORIGIN:
+    # e.g. "webauthn.io"
     ALLOWED_HOSTS.append(PROD_HOST_NAME)
-    CSRF_TRUSTED_ORIGINS.append(PROD_HOST_NAME)
+    # e.g. "https://webauthn.io"
+    CSRF_TRUSTED_ORIGINS.append(PROD_CSRF_ORIGIN)
 
 # Application definition
 

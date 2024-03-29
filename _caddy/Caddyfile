@@ -1,4 +1,4 @@
-{$PROD_HOST_NAME}
+{$PROD_CSRF_ORIGIN}
 
 route {
   file_server /static/* {

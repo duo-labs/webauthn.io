@@ -25,7 +25,7 @@ Run the following command to get started:
 $> ./start-dev.sh
 ```
 
-The site will be available at https://localhost
+The site will be available at http://localhost/
 
 ### CSS
 
