@@ -43,6 +43,7 @@ services:
       - PYTHONUNBUFFERED=0
       - DJANGO_SECRET_KEY
       - PROD_HOST_NAME
+      - PROD_CSRF_ORIGIN
       - RP_ID
       - RP_NAME
       - RP_EXPECTED_ORIGIN
