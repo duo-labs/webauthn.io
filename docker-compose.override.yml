@@ -5,7 +5,7 @@ services:
   caddy:
     environment:
       # Site will be available at http://localhost
-      - PROD_HOST_NAME=http://localhost
+      - PROD_CSRF_ORIGIN=http://localhost
 
   redis:
     ports:

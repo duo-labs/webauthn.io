@@ -21,7 +21,7 @@ services:
     networks:
       - caddy_network
     environment:
-      - PROD_HOST_NAME
+      - PROD_CSRF_ORIGIN
 
   django:
     build:
