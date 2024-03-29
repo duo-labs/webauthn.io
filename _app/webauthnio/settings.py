@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DEBUG", False) == "true"
 
 ALLOWED_HOSTS = ["localhost"]
-CSRF_TRUSTED_ORIGINS = ["https://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 
 # Should include protocol (e.g. "https://webauthn.io", "http://localhost")
 PROD_HOST_NAME = os.getenv("PROD_HOST_NAME", None)

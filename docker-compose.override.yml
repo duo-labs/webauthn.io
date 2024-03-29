@@ -4,7 +4,7 @@ version: '3.5'
 services:
   caddy:
     environment:
-      # Site will be available at https://localhost
+      # Site will be available at http://localhost
       - PROD_HOST_NAME=http://localhost
 
   redis:
