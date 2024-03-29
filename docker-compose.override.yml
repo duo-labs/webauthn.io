@@ -19,3 +19,5 @@ services:
       - RP_ID=localhost
       - RP_NAME=WebAuthn.io (Dev)
       - RP_EXPECTED_ORIGIN=http://localhost
+      - PROD_HOST_NAME=
+      - PROD_CSRF_ORIGIN=
