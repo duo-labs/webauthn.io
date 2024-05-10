@@ -47,6 +47,11 @@ class MetadataService:
             "ee882879-721c-4913-9775-3dfcce97072a": {"name": "YubiKey 5 Series"},
             "f8a011f3-8c0a-4d15-8006-17111f9edc7d": {"name": "Security Key by Yubico"},
             "fa2b99dc-9e39-4257-8f92-4a30d23c4118": {"name": "YubiKey 5 Series with NFC"},
+            "30b5035e-d297-4ff1-b00b-addc96ba6a98": {"name": "DIGIPASS FX1 Bio"},
+            "30b5035e-d297-4ff1-010b-addc96ba6a98": {"name": "DIGIPASS FX1a Bio"},
+            "30b5035e-d297-4ff2-b00b-addc96ba6a98": {"name": "DIGIPASS FX2"},
+            "30b5035e-d297-4ff3-b00b-addc96ba6a98": {"name": "DIGIPASS FX3"},
+            "30b5035e-d297-4ff7-b00b-addc96ba6a98": {"name": "DIGIPASS FX7"},
         }
     )
 
