@@ -33,6 +33,18 @@ class MetadataService:
             "0bb43545-fd2c-4185-87dd-feb0b2916ace": {
                 "name": "Security Key NFC by Yubico - Enterprise Edition"
             },
+            "e77e3c64-05e3-428b-8824-0cbeb04b829d": {
+                "name": "Security Key by Yubico with NFC (5.7)"
+            },
+            "47ab2fb4-66ac-4184-9ae1-86be814012d5": {
+                "name": "Security Key by Yubico with NFC - Enterprise Edition (5.7)"
+            },
+            "a25342c0-3cdc-4414-8e46-f4807fca511c": {"name": "YubiKey 5 Series with NFC (5.7)"},
+            "19083c3d-8383-4b18-bc03-8f1c9ab2fd1b": {"name": "YubiKey 5 Series (5.7)"},
+            "a02167b9-ae71-4ac7-9a07-06432ebb6f1c": {"name": "YubiKey 5Ci (5.7)"},
+            "7d1351a6-e097-4852-b8bf-c9ac5c9ce4a3": {
+                "name": "YubiKey Bio Series - Multi-protocol Edition (5.7)"
+            },
             "149a2021-8ef6-4133-96b8-81f8d5b7f1f5": {"name": "Security Key by Yubico with NFC"},
             "2fc0579f-8113-47ea-b116-bb5a8db9202a": {"name": "YubiKey 5 Series with NFC"},
             "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73": {"name": "Security Key by Yubico with NFC"},
@@ -53,6 +65,22 @@ class MetadataService:
             "30b5035e-d297-4ff2-b00b-addc96ba6a98": {"name": "DIGIPASS FX2"},
             "30b5035e-d297-4ff3-b00b-addc96ba6a98": {"name": "DIGIPASS FX3"},
             "30b5035e-d297-4ff7-b00b-addc96ba6a98": {"name": "DIGIPASS FX7"},
+            # YubiKey Firmware 5.7 (Enterprise profile, provided by Yubico)
+            "9ff4cc65-6154-4fff-ba09-9e2af7882ad2": {
+                "name": "Security Key by Yubico with NFC - Enterprise Edition (5.7, enterprise profile)"
+            },
+            "1ac71f64-468d-4fe0-bef1-0e5f2f551f18": {
+                "name": "YubiKey 5 Series with NFC (5.7, enterprise profile)"
+            },
+            "20ac7a17-c814-4833-93fe-539f0d5e3389": {
+                "name": "YubiKey 5 Series (5.7, enterprise profile)"
+            },
+            "b90e7dc1-316e-4fee-a25a-56a666a670fe": {
+                "name": "YubiKey 5Ci (5.7, enterprise profile)"
+            },
+            "68167692-ff5a-4ac8-9fd7-0be292a1af68": {
+                "name": "YubiKey Bio Series - Multi-protocol Edition (5.7, enterprise profile)"
+            },
         }
     )
 
