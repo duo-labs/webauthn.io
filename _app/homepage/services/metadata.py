@@ -27,31 +27,70 @@ class MetadataService:
         "17290f1e-c212-34d0-1423-365d729f09d9": {"name": "Thales PIN iOS SDK"},
     }
 
-    # Yubico AAGUIDs from https://support.yubico.com/hc/en-us/articles/360016648959-YubiKey-Hardware-FIDO2-AAGUIDs
     aaguid_json.update(
         {
+            # Yubico AAGUIDs from https://support.yubico.com/hc/en-us/articles/360016648959-YubiKey-Hardware-FIDO2-AAGUIDs
             "0bb43545-fd2c-4185-87dd-feb0b2916ace": {
-                "name": "Security Key NFC by Yubico - Enterprise Edition"
+                "name": "Security Key NFC by Yubico - Enterprise Edition (5.4)"
             },
-            "149a2021-8ef6-4133-96b8-81f8d5b7f1f5": {"name": "Security Key by Yubico with NFC"},
-            "2fc0579f-8113-47ea-b116-bb5a8db9202a": {"name": "YubiKey 5 Series with NFC"},
-            "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73": {"name": "Security Key by Yubico with NFC"},
-            "73bb0cd4-e502-49b8-9c6f-b59445bf720b": {"name": "YubiKey 5 FIPS Series"},
-            "85203421-48f9-4355-9bc8-8a53846e5083": {"name": "YubiKey 5Ci FIPS"},
-            "a4e9fc6d-4cbe-4758-b8ba-37598bb5bbaa": {"name": "Security Key by Yubico with NFC"},
-            "b92c3f9a-c014-4056-887f-140a2501163b": {"name": "Security Key by Yubico"},
-            "c1f9a0bc-1dd2-404a-b27f-8e29047a43fd": {"name": "YubiKey 5 FIPS Series with NFC"},
-            "c5ef55ff-ad9a-4b9f-b580-adebafe026d0": {"name": "YubiKey 5Ci"},
-            "cb69481e-8ff7-4039-93ec-0a2729a154a8": {"name": "YubiKey 5 Series"},
-            "d8522d9f-575b-4866-88a9-ba99fa02f35b": {"name": "YubiKey Bio Series"},
-            "ee882879-721c-4913-9775-3dfcce97072a": {"name": "YubiKey 5 Series"},
-            "f8a011f3-8c0a-4d15-8006-17111f9edc7d": {"name": "Security Key by Yubico"},
-            "fa2b99dc-9e39-4257-8f92-4a30d23c4118": {"name": "YubiKey 5 Series with NFC"},
+            "149a2021-8ef6-4133-96b8-81f8d5b7f1f5": {
+                "name": "Security Key by Yubico with NFC (5.2, 5.4)"
+            },
+            "2fc0579f-8113-47ea-b116-bb5a8db9202a": {
+                "name": "YubiKey 5 Series with NFC (5.2, 5.4)"
+            },
+            "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73": {
+                "name": "Security Key by Yubico with NFC (5.1)"
+            },
+            "73bb0cd4-e502-49b8-9c6f-b59445bf720b": {"name": "YubiKey 5 FIPS Series (5.4)"},
+            "85203421-48f9-4355-9bc8-8a53846e5083": {"name": "YubiKey 5Ci FIPS (5.4)"},
+            "a4e9fc6d-4cbe-4758-b8ba-37598bb5bbaa": {
+                "name": "Security Key by Yubico with NFC (5.4)"
+            },
+            "b92c3f9a-c014-4056-887f-140a2501163b": {"name": "Security Key by Yubico (5.2)"},
+            "c1f9a0bc-1dd2-404a-b27f-8e29047a43fd": {
+                "name": "YubiKey 5 FIPS Series with NFC (5.4)"
+            },
+            "c5ef55ff-ad9a-4b9f-b580-adebafe026d0": {"name": "YubiKey 5Ci (5.2, 5.4)"},
+            "cb69481e-8ff7-4039-93ec-0a2729a154a8": {"name": "YubiKey 5 Series (5.1)"},
+            "d8522d9f-575b-4866-88a9-ba99fa02f35b": {"name": "YubiKey Bio Series (5.5, 5.6)"},
+            "ee882879-721c-4913-9775-3dfcce97072a": {"name": "YubiKey 5 Series (5.2, 5.4)"},
+            "f8a011f3-8c0a-4d15-8006-17111f9edc7d": {"name": "Security Key by Yubico (5.1)"},
+            "fa2b99dc-9e39-4257-8f92-4a30d23c4118": {"name": "YubiKey 5 Series with NFC (5.1)"},
+            "e77e3c64-05e3-428b-8824-0cbeb04b829d": {
+                "name": "Security Key by Yubico with NFC (5.7)"
+            },
+            "47ab2fb4-66ac-4184-9ae1-86be814012d5": {
+                "name": "Security Key by Yubico with NFC - Enterprise Edition (5.7)"
+            },
+            "a25342c0-3cdc-4414-8e46-f4807fca511c": {"name": "YubiKey 5 Series with NFC (5.7)"},
+            "19083c3d-8383-4b18-bc03-8f1c9ab2fd1b": {"name": "YubiKey 5 Series (5.7)"},
+            "a02167b9-ae71-4ac7-9a07-06432ebb6f1c": {"name": "YubiKey 5Ci (5.7)"},
+            "7d1351a6-e097-4852-b8bf-c9ac5c9ce4a3": {
+                "name": "YubiKey Bio Series - Multi-protocol Edition (5.7)"
+            },
+            # OneSpan
             "30b5035e-d297-4ff1-b00b-addc96ba6a98": {"name": "DIGIPASS FX1 Bio"},
             "30b5035e-d297-4ff1-010b-addc96ba6a98": {"name": "DIGIPASS FX1a Bio"},
             "30b5035e-d297-4ff2-b00b-addc96ba6a98": {"name": "DIGIPASS FX2"},
             "30b5035e-d297-4ff3-b00b-addc96ba6a98": {"name": "DIGIPASS FX3"},
             "30b5035e-d297-4ff7-b00b-addc96ba6a98": {"name": "DIGIPASS FX7"},
+            # YubiKey Firmware 5.7 (Enterprise profile, provided by Yubico)
+            "9ff4cc65-6154-4fff-ba09-9e2af7882ad2": {
+                "name": "Security Key by Yubico with NFC - Enterprise Edition (5.7, enterprise profile)"
+            },
+            "1ac71f64-468d-4fe0-bef1-0e5f2f551f18": {
+                "name": "YubiKey 5 Series with NFC (5.7, enterprise profile)"
+            },
+            "20ac7a17-c814-4833-93fe-539f0d5e3389": {
+                "name": "YubiKey 5 Series (5.7, enterprise profile)"
+            },
+            "b90e7dc1-316e-4fee-a25a-56a666a670fe": {
+                "name": "YubiKey 5Ci (5.7, enterprise profile)"
+            },
+            "68167692-ff5a-4ac8-9fd7-0be292a1af68": {
+                "name": "YubiKey Bio Series - Multi-protocol Edition (5.7, enterprise profile)"
+            },
         }
     )
 
