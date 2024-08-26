@@ -1,30 +1,35 @@
 {% load static %}
 <section class="intro">
   <div class="row">
-    <div class="col-lg-5 d-flex justify-content-center mb-5">
+    <div class="col-lg-5 d-flex justify-content-center">
       <img role="presentation" alt="" src="{% static 'images/shield.svg' %}" />
     </div>
     <div class="col-lg-7">
       <h3>What is WebAuthn?</h3>
       <p>
         Welcome to webauthn.io! This site is designed by
-        <a href="https://duo.com/labs">Duo Labs</a> to test the new W3C
-        Specification Web Authentication. WebAuthn is supported in the Chrome,
-        Firefox, and Edge browsers to different degrees, but support for
-        credential creation and assertion using a U2F Token, like those provided
-        by Yubico and Feitian, is supported by all of them. The code for this
-        demo can be found
-        <a href="https://github.com/duo-labs/webauthn.io">here on GitHub</a>. To
-        read more about WebAuthn and what it does, check out
-        <a href="https://webauthn.guide">webauthn.guide</a> for an introduction.
+        <a href="https://duo.com/labs">Duo Labs</a>
+        to test WebAuthn and passkeys.
+        WebAuthn enjoys wide support in all evergreen browsers including Chrome, Safari,
+        and Firefox, and in all modern operating systems including Android, iOS, macOS,
+        and Windows.
       </p>
-      <div class="row">
+      <p>
+        For an introduction to WebAuthn and what it can do, check out
+        <a href="https://webauthn.guide" target="_blank">webauthn.guide</a>.
+        If you're looking to add WebAuthn support to your site then
+        <a href="https://passkeys.dev" target="_blank">passkeys.dev</a>
+        has you covered.
+        The code for this demo can be found on
+        <a href="https://github.com/duo-labs/webauthn.io" target="_blank">GitHub</a>.
+      </p>
+      <!-- <div class="row">
         <div class="col-md-8 col-sm-12">
-          <a href="https://webauthn.guide" class="btn btn-primary btn-lg w-100">
+          <a href="https://webauthn.guide" class="btn btn-primary btn-lg w-100" target="_blank">
             Read more at webauthn.guide
           </a>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>
