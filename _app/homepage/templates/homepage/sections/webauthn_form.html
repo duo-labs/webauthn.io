@@ -254,12 +254,30 @@
                 <button class="btn btn-warning" @click="resetSettings()">
                   Reset Settings
                 </button>
+                <button
+                  id="advanced-settings-tips-tricks-open"
+                  class="btn btn-link float-right"
+                  @click="openTipsTricks()"
+                >
+                  (tips &amp; tricks)
+                </button>
               </section>
             </div>
 
           </div>
         </div>
       </div>
+      <dialog id="advanced-settings-tips-tricks">
+        <h1>Hello</h1>
+        <button
+          id="advanced-settings-tips-tricks-close"
+          class="btn btn-primary"
+          @click="closeTipsTricks()"
+          autofocus
+        >
+          Close
+        </button>
+      </dialog>
     </section>
   </template>
 
@@ -491,7 +509,13 @@
       handleSelectRegHintsHybrid() {
         this._toggleRegHint('hybrid', this._regHints.hybrid);
       },
-
+      // Tips & Tricks Modal
+      openTipsTricks() {
+        document.getElementById('advanced-settings-tips-tricks').showModal();
+      },
+      closeTipsTricks() {
+        document.getElementById('advanced-settings-tips-tricks').close();
+      },
       // Internal Methods
       async _startRegistration() {
         // Submit options
