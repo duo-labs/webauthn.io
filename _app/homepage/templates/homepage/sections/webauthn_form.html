@@ -379,6 +379,13 @@
           this._formatRegHintsForUI();
         });
 
+        /**
+         * Restart conditional UI when auth UV setting changes
+         */
+        this.$watch('options.authUserVerification', () => {
+          this._startConditionalUI();
+        });
+
         this._startConditionalUI();
       },
 
