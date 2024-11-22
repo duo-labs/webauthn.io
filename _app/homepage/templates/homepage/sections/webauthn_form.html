@@ -379,21 +379,7 @@
           this._formatRegHintsForUI();
         });
 
-        // Set up Conditional UI if supported
-        browserSupportsWebAuthnAutofill().then(async (supported) => {
-          if (supported) {
-            console.log('Setting up Conditional UI');
-            try {
-              await this._startAuthentication(true);
-            } catch (err) {
-              if (err.name === 'AbortError') {
-                console.log('Conditional UI request was aborted');
-              } else {
-                console.error('Conditional UI error:', err);
-              }
-            }
-          }
-        });
+        this._startConditionalUI();
       },
 
       // Default state
@@ -628,6 +614,23 @@
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
+      },
+      async _startConditionalUI() {
+        // Set up Conditional UI if supported
+        browserSupportsWebAuthnAutofill().then(async (supported) => {
+          if (supported) {
+            console.log('Setting up Conditional UI');
+            try {
+              await this._startAuthentication(true);
+            } catch (err) {
+              if (err.name === 'AbortError') {
+                console.log('Conditional UI request was aborted');
+              } else {
+                console.error('Conditional UI error:', err);
+              }
+            }
+          }
+        });
       },
       /**
        * Registration hints can be ordered by preference, but there's no good native HTML element
