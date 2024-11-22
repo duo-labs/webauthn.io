@@ -254,12 +254,47 @@
                 <button class="btn btn-warning" @click="resetSettings()">
                   Reset Settings
                 </button>
+                <button
+                  id="advanced-settings-tips-tricks-open"
+                  class="btn btn-link float-right"
+                  @click="openTipsTricks()"
+                >
+                  (tips &amp; tricks)
+                </button>
               </section>
             </div>
 
           </div>
         </div>
       </div>
+      <dialog id="advanced-settings-tips-tricks">
+        <p class="h5">Advanced Settings Tips & Tricks</p>
+        <p>
+          A brief list of advanced capabilities that may not be immediately obvious when using this site:
+        </p>
+        <ul>
+          <li>
+            <strong>Sharing the URL</strong> in the address bar after making changes in Advanced Settings enables
+            others to open this site with the same configuration.
+          </li>
+          <li>
+            Clicking <strong>Authenticate</strong> without entering a username is supported. This
+            enables testing "usernameless" authentication.
+          </li>
+          <li>
+            Changing <strong>Authentication Settings > User Verification</strong> will restart
+            conditional UI using the chosen setting.
+          </li>
+        </ul>
+        <button
+          id="advanced-settings-tips-tricks-close"
+          class="btn btn-primary"
+          @click="closeTipsTricks()"
+          autofocus
+        >
+          Close
+        </button>
+      </dialog>
     </section>
   </template>
 
@@ -379,21 +414,14 @@
           this._formatRegHintsForUI();
         });
 
-        // Set up Conditional UI if supported
-        browserSupportsWebAuthnAutofill().then(async (supported) => {
-          if (supported) {
-            console.log('Setting up Conditional UI');
-            try {
-              await this._startAuthentication(true);
-            } catch (err) {
-              if (err.name === 'AbortError') {
-                console.log('Conditional UI request was aborted');
-              } else {
-                console.error('Conditional UI error:', err);
-              }
-            }
-          }
+        /**
+         * Restart conditional UI when auth UV setting changes
+         */
+        this.$watch('options.authUserVerification', () => {
+          this._startConditionalUI();
         });
+
+        this._startConditionalUI();
       },
 
       // Default state
@@ -498,7 +526,13 @@
       handleSelectRegHintsHybrid() {
         this._toggleRegHint('hybrid', this._regHints.hybrid);
       },
-
+      // Tips & Tricks Modal
+      openTipsTricks() {
+        document.getElementById('advanced-settings-tips-tricks').showModal();
+      },
+      closeTipsTricks() {
+        document.getElementById('advanced-settings-tips-tricks').close();
+      },
       // Internal Methods
       async _startRegistration() {
         // Submit options
@@ -628,6 +662,23 @@
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
+      },
+      async _startConditionalUI() {
+        // Set up Conditional UI if supported
+        browserSupportsWebAuthnAutofill().then(async (supported) => {
+          if (supported) {
+            console.log('Setting up Conditional UI');
+            try {
+              await this._startAuthentication(true);
+            } catch (err) {
+              if (err.name === 'AbortError') {
+                console.log('Conditional UI request was aborted');
+              } else {
+                console.error('Conditional UI error:', err);
+              }
+            }
+          }
+        });
       },
       /**
        * Registration hints can be ordered by preference, but there's no good native HTML element
