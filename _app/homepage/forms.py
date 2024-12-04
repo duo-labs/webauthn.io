@@ -27,7 +27,7 @@ class RegistrationOptionsRequestForm(forms.Form):
         ],
     )
     algorithms = forms.MultipleChoiceField(
-        required=False, choices=[("es256", "ES256"), ("rs256", "RS256")]
+        required=False, choices=[("es256", "ES256"), ("rs256", "RS256"), ("ed25519", "Ed25519")]
     )
     discoverable_credential = forms.ChoiceField(
         required=True,
