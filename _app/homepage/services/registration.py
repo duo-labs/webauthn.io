@@ -31,8 +31,8 @@ from homepage.models import WebAuthnCredential
 class RegistrationService:
     redis: RedisService
 
-    def __init__(self):
-        self.redis = RedisService(db=2)
+    def __init__(self, redis=RedisService(db=2)):
+        self.redis = redis
 
     def generate_registration_options(
         self,
