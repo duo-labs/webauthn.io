@@ -78,7 +78,7 @@ class CredentialService:
         if not raw_credential:
             raise InvalidCredentialID("Unrecognized credential ID")
 
-        credential = WebAuthnCredential.model_validate_json(raw_credential)
+        credential = WebAuthnCredential.from_json(raw_credential)
 
         if username and credential.username != username:
             raise InvalidCredentialID("Credential does not belong to user")
@@ -92,7 +92,7 @@ class CredentialService:
         all_creds = self.redis.retrieve_all()
 
         credentials = [
-            WebAuthnCredential.model_validate_json(cred) for cred in all_creds if cred is not None
+            WebAuthnCredential.from_json(cred) for cred in all_creds if cred is not None
         ]
 
         return [cred for cred in credentials if cred.username == username]
@@ -109,7 +109,7 @@ class CredentialService:
         if not raw_credential:
             raise InvalidCredentialID()
 
-        credential = WebAuthnCredential.model_validate_json(raw_credential)
+        credential = WebAuthnCredential.from_json(raw_credential)
 
         credential.sign_count = verification.new_sign_count
 
@@ -124,6 +124,6 @@ class CredentialService:
         """
         self.redis.store(
             key=credential.id,
-            value=json.dumps(credential.model_dump()),
+            value=json.dumps(credential.to_json()),
             expiration_seconds=60 * 60 * 24,  # 24 hours
         )

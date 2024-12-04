@@ -35,7 +35,22 @@ class TestWebAuthnCredential(TestCase):
         )
 
     def test_from_json_str(self):
-        cred = WebAuthnCredential.model_validate_json(json.dumps(self.default_cred_dict))
+        cred = WebAuthnCredential.from_json(json.dumps(self.default_cred_dict))
+
+        self.assertEqual(cred.id, CRED_ID)
+        self.assertEqual(cred.public_key, CRED_PUBLIC_KEY)
+        self.assertEqual(cred.username, "mmiller")
+        self.assertEqual(cred.sign_count, 0)
+        self.assertEqual(cred.is_discoverable_credential, True)
+        self.assertEqual(cred.device_type, CredentialDeviceType.MULTI_DEVICE)
+        self.assertEqual(cred.backed_up, True)
+        self.assertEqual(
+            cred.transports, [AuthenticatorTransport.INTERNAL, AuthenticatorTransport.HYBRID]
+        )
+        self.assertEqual(cred.aaguid, "00000000-0000-0000-0000-000000000000")
+
+    def test_from_json_dict(self):
+        cred = WebAuthnCredential.from_json(self.default_cred_dict)
 
         self.assertEqual(cred.id, CRED_ID)
         self.assertEqual(cred.public_key, CRED_PUBLIC_KEY)
@@ -51,18 +66,18 @@ class TestWebAuthnCredential(TestCase):
 
     def test_from_json_no_transports(self):
         self.default_cred_dict["transports"] = None
-        cred = WebAuthnCredential.model_validate_json(json.dumps(self.default_cred_dict))
+        cred = WebAuthnCredential.from_json(self.default_cred_dict)
 
         self.assertIsNone(cred.transports)
 
     def test_from_json_unknown_discoverability(self):
         self.default_cred_dict["is_discoverable_credential"] = None
-        cred = WebAuthnCredential.model_validate_json(json.dumps(self.default_cred_dict))
+        cred = WebAuthnCredential.from_json(self.default_cred_dict)
 
         self.assertIsNone(cred.is_discoverable_credential)
 
     def test_to_json(self):
-        cred_json = self.default_cred_model.model_dump()
+        cred_json = self.default_cred_model.to_json()
 
         self.assertEqual(cred_json["id"], CRED_ID)
         self.assertEqual(cred_json["public_key"], CRED_PUBLIC_KEY)
@@ -76,12 +91,12 @@ class TestWebAuthnCredential(TestCase):
 
     def test_to_json_no_transports(self):
         self.default_cred_model.transports = None
-        cred_json = self.default_cred_model.model_dump()
+        cred_json = self.default_cred_model.to_json()
 
         self.assertIsNone(cred_json["transports"])
 
     def test_to_json_unknown_discoverability(self):
         self.default_cred_model.is_discoverable_credential = None
-        cred_json = self.default_cred_model.model_dump()
+        cred_json = self.default_cred_model.to_json()
 
         self.assertIsNone(cred_json["is_discoverable_credential"])
