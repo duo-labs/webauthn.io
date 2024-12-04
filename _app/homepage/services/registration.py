@@ -31,8 +31,8 @@ from homepage.models import WebAuthnCredential
 class RegistrationService:
     redis: RedisService
 
-    def __init__(self):
-        self.redis = RedisService(db=2)
+    def __init__(self, redis=RedisService(db=2)):
+        self.redis = redis
 
     def generate_registration_options(
         self,
@@ -100,6 +100,9 @@ class RegistrationService:
         supported_pub_key_algs: Optional[List[COSEAlgorithmIdentifier]] = None
         if len(algorithms) > 0:
             supported_pub_key_algs = []
+
+            if "ed25519" in algorithms:
+                supported_pub_key_algs.append(COSEAlgorithmIdentifier.EDDSA)
 
             if "es256" in algorithms:
                 supported_pub_key_algs.append(COSEAlgorithmIdentifier.ECDSA_SHA_256)
