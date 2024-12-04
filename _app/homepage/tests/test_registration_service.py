@@ -55,3 +55,20 @@ class TestRegistrationService(TestCase):
             UserVerificationRequirement.DISCOURAGED,
         )
 
+    def test_options_pub_key_alg_ed25519_is_first(self):
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attachment="",
+            attestation="",
+            discoverable_credential="",
+            existing_credentials=[],
+            hints=[],
+            user_verification="",
+        )
+
+        self.assertEqual(len(options.pub_key_cred_params), 2)
+        self.assertEqual(
+            options.pub_key_cred_params[0],
+            PublicKeyCredentialParameters(alg=COSEAlgorithmIdentifier.EDDSA, type="public-key"),
+        )
