@@ -148,6 +148,20 @@
 
               <section class="col-12 mb-2">
                 <p class="mb-0">Supported Public Key Algorithms</p>
+                <!-- Algorithm - Ed25519 -->
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    name="optAlgEd25519"
+                    id="optAlgEd25519"
+                    class="custom-control-input"
+                    x-model="options.algEd25519"
+                  />
+                  <label for="optAlgEd25519" class="custom-control-label">
+                    Ed25519
+                  </label>
+                </div>
+
                 <!-- Algorithm - ES256 -->
                 <div class="custom-control custom-checkbox custom-control-inline">
                   <input
@@ -337,6 +351,7 @@
            */
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
+          this.options.algEd25519 = currentParams.get('algEd25519') === 'true';
 
           const _regUserVerification = currentParams.get('regUserVerification');
           for (const uv of this.userVerificationOpts) {
@@ -433,6 +448,7 @@
         regUserVerification: 'preferred',
         attestation: 'none',
         attachment: 'all',
+        algEd25519: true,
         algES256: true,
         algRS256: true,
         discoverableCredential: 'preferred',
@@ -538,6 +554,7 @@
         // Submit options
         const {
           regUserVerification,
+          algEd25519,
           algES256,
           algRS256,
           attestation,
@@ -547,6 +564,10 @@
         } = this.options;
 
         const algorithms = [];
+
+        if (algEd25519) {
+          algorithms.push('ed25519');
+        }
 
         if (algES256) {
           algorithms.push('es256');
