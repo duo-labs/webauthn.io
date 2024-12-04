@@ -26,7 +26,7 @@ jobs:
         pipenv install --deploy --dev
     - name: Test with unittest
       run: |
-        python _app/manage.py test homepage.tests
+        pipenv run _app/manage.py test homepage.tests
     - name: Run mypy
       run: |
-        python -m mypy _app/homepage
+        pipenv run mypy _app/homepage
