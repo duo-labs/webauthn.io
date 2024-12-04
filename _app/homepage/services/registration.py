@@ -101,6 +101,9 @@ class RegistrationService:
         if len(algorithms) > 0:
             supported_pub_key_algs = []
 
+            if "ed25519" in algorithms:
+                supported_pub_key_algs.append(COSEAlgorithmIdentifier.EDDSA)
+
             if "es256" in algorithms:
                 supported_pub_key_algs.append(COSEAlgorithmIdentifier.ECDSA_SHA_256)
 
