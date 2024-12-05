@@ -56,28 +56,7 @@ class RegistrationService:
             user_verification=UserVerificationRequirement.DISCOURAGED,
             resident_key=ResidentKeyRequirement.PREFERRED,
         )
-        if len(hints) > 0:
-            """
-            Deferring to hints when present as per https://w3c.github.io/webauthn/#enum-hints
-            """
-            if hints[0] == "security-key":
-                # "For compatibility with older user agents, when this hint is used in
-                # PublicKeyCredentialCreationOptions, the authenticatorAttachment SHOULD be set to
-                # cross-platform."
-                authenticator_attachment = AuthenticatorAttachment.CROSS_PLATFORM
-            elif hints[0] == "hybrid":
-                # "For compatibility with older user agents, when this hint is used in
-                # PublicKeyCredentialCreationOptions, the authenticatorAttachment SHOULD be set to
-                # cross-platform."
-                authenticator_attachment = AuthenticatorAttachment.CROSS_PLATFORM
-            elif hints[0] == "client-device":
-                # "For compatibility with older user agents, when this hint is used in
-                # PublicKeyCredentialCreationOptions, the authenticatorAttachment SHOULD be set to
-                # platform."
-                authenticator_attachment = AuthenticatorAttachment.PLATFORM
-
-            authenticator_selection.authenticator_attachment = authenticator_attachment
-        elif attachment != "all":
+        if attachment != "all":
             authenticator_attachment = AuthenticatorAttachment.CROSS_PLATFORM
             if attachment == "platform":
                 authenticator_attachment = AuthenticatorAttachment.PLATFORM
