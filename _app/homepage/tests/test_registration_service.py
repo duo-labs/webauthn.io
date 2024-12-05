@@ -94,3 +94,84 @@ class TestRegistrationService(TestCase):
                 PublicKeyCredentialHint.HYBRID,
             ],
         )
+
+    def test_set_attachment_platform(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            hints=["client-device", "security-key", "hybrid"],
+            # Support security keys and hybrid
+            attachment="cross-platform",
+        )
+
+        assert options.authenticator_selection
+
+        self.assertEqual(
+            options.authenticator_selection.authenticator_attachment,
+            AuthenticatorAttachment.CROSS_PLATFORM,
+        )
+
+    def test_set_attachment_cross_platform(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            hints=["client-device", "security-key", "hybrid"],
+            # Support only platform authenticators
+            attachment="platform",
+        )
+
+        assert options.authenticator_selection
+
+        self.assertEqual(
+            options.authenticator_selection.authenticator_attachment,
+            AuthenticatorAttachment.PLATFORM,
+        )
+
+    def test_set_attachment_all(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            hints=[],
+            # Support everything
+            attachment="all",
+        )
+
+        assert options.authenticator_selection
+
+        self.assertIsNone(options.authenticator_selection.authenticator_attachment)
+
+    def test_hints_do_not_change_attachment(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            # Sometimes it's useful to test conflicting options like this to gauge browser behavior
+            attachment="platform",
+            hints=["security-key", "hybrid"],
+        )
+
+        assert options.authenticator_selection
+
+        self.assertEqual(
+            options.authenticator_selection.authenticator_attachment,
+            AuthenticatorAttachment.PLATFORM,
+        )
+        self.assertEqual(
+            options.hints,
+            [PublicKeyCredentialHint.SECURITY_KEY, PublicKeyCredentialHint.HYBRID],
+        )
