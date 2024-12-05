@@ -94,3 +94,27 @@ class TestRegistrationService(TestCase):
                 PublicKeyCredentialHint.HYBRID,
             ],
         )
+
+    def test_hints_do_not_change_attachment(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            # Sometimes it's useful to test conflicting options like this to gauge browser behavior
+            attachment="platform",
+            hints=["security-key", "hybrid"],
+        )
+
+        assert options.authenticator_selection
+
+        self.assertEqual(
+            options.authenticator_selection.authenticator_attachment,
+            AuthenticatorAttachment.PLATFORM,
+        )
+        self.assertEqual(
+            options.hints,
+            [PublicKeyCredentialHint.SECURITY_KEY, PublicKeyCredentialHint.HYBRID],
+        )
