@@ -49,9 +49,6 @@ def registration_options(request: HttpRequest) -> JsonResponse:
 
     options_json = json.loads(options_to_json(registration_options))
 
-    # Tack on hints (till py_webauthn learns about hints and we can handle it in the service)
-    options_json["hints"] = options_hints
-
     # Add in credProps extension
     options_json["extensions"] = {
         "credProps": True,

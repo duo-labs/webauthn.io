@@ -19,6 +19,7 @@ from webauthn.helpers.structs import (
     AuthenticatorSelectionCriteria,
     AuthenticatorAttachment,
     PublicKeyCredentialDescriptor,
+    PublicKeyCredentialHint,
     ResidentKeyRequirement,
 )
 from webauthn.helpers.cose import COSEAlgorithmIdentifier
@@ -110,6 +111,8 @@ class RegistrationService:
             if "rs256" in algorithms:
                 supported_pub_key_algs.append(COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
 
+        _hints = [PublicKeyCredentialHint(hint) for hint in hints]
+
         registration_options = generate_registration_options(
             rp_id=settings.RP_ID,
             rp_name=settings.RP_NAME,
@@ -125,6 +128,7 @@ class RegistrationService:
                 )
                 for cred in existing_credentials
             ],
+            hints=_hints,
         )
 
         # py_webauthn will default to all supported algorithms on an empty `algorithms` list
