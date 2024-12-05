@@ -317,7 +317,7 @@
   </template>
 </div>
 
-<script src="{% static "js/simplewebauthn-browser.8.2.1.umd.min.js" %}"></script>
+<script src="{% static "js/simplewebauthn-browser.12.0.0.umd.min.js" %}"></script>
 <script>
   const {
     browserSupportsWebAuthn,
@@ -607,7 +607,7 @@
         console.log(JSON.stringify(registrationOptionsJSON, null, 2));
 
         // Start WebAuthn registration
-        const regResp = await startRegistration(registrationOptionsJSON);
+        const regResp = await startRegistration({ optionsJSON: registrationOptionsJSON });
 
         console.log('REGISTRATION RESPONSE');
         console.log(JSON.stringify(regResp, null, 2));
@@ -661,7 +661,10 @@
         }
 
         // Start WebAuthn authentication
-        const authResp = await startAuthentication(authenticationOptionsJSON, startConditionalUI);
+        const authResp = await startAuthentication({
+          optionsJSON: authenticationOptionsJSON,
+          useBrowserAutofill: startConditionalUI,
+        });
 
         console.log('AUTHENTICATION RESPONSE');
         console.log(JSON.stringify(authResp, null, 2));

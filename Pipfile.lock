@@ -382,11 +382,11 @@
         },
         "webauthn": {
             "hashes": [
-                "sha256:79fca835027d3b39290bfd175d09ca7a2bd6e12163790feb6d9c0b746e4c2ede",
-                "sha256:872668fd8f32e256e76e4251e04eb0737e77e0760b1db3912af11346cbacef9e"
+                "sha256:2bf59646e1ad2aed113d16a1ca90196b45f1c4d160964d6271a181e60d0d03b1",
+                "sha256:9bb4f95c5d2377f9e1abd156ca5a23cbb5def69ef1ed60a7ab70028cc68b741e"
             ],
             "index": "pypi",
-            "version": "==2.3.0"
+            "version": "==2.4.0"
         }
     },
     "develop": {
