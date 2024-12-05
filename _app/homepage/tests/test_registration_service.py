@@ -4,6 +4,7 @@ from django.test import TestCase
 from webauthn.helpers.cose import COSEAlgorithmIdentifier
 from webauthn.helpers.structs import (
     PublicKeyCredentialParameters,
+    PublicKeyCredentialHint,
     AttestationConveyancePreference,
     AuthenticatorAttachment,
     ResidentKeyRequirement,
@@ -71,4 +72,25 @@ class TestRegistrationService(TestCase):
         self.assertEqual(
             options.pub_key_cred_params[0],
             PublicKeyCredentialParameters(alg=COSEAlgorithmIdentifier.EDDSA, type="public-key"),
+        )
+
+    def test_parse_hints(self) -> None:
+        options = self.service.generate_registration_options(
+            username="mmiller",
+            algorithms=["ed25519", "es256"],
+            attachment="all",
+            attestation="direct",
+            discoverable_credential="required",
+            existing_credentials=[],
+            user_verification="discouraged",
+            hints=["client-device", "security-key", "hybrid"],
+        )
+
+        self.assertEqual(
+            options.hints,
+            [
+                PublicKeyCredentialHint.CLIENT_DEVICE,
+                PublicKeyCredentialHint.SECURITY_KEY,
+                PublicKeyCredentialHint.HYBRID,
+            ],
         )
