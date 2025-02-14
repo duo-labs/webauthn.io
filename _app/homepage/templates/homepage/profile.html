@@ -96,4 +96,12 @@
     </div>
   </div>
 </section>
+<script>
+  // Small quirk: Users pressing the back button likels wants to be signed out to sign in again.
+  window.history.pushState({ page: 'profile' }, '', window.location.href);
+
+  window.addEventListener('popstate', function(event) {
+      window.location.href = '/logout';
+  });
+</script>
 {% endblock %}
