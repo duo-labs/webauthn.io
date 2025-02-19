@@ -1,5 +1,4 @@
 from typing import Union, List, Optional
-import secrets
 
 from django.conf import settings
 from webauthn import (
