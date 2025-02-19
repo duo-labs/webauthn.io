@@ -682,7 +682,7 @@
 
         if (verificationJSON.verified === true) {
           // Reload page to display profile
-          window.location.href = '{% url "index" %}';
+          window.location.href = '{% url "profile" %}';
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
