@@ -85,14 +85,40 @@
             <strong>AAGUID:</strong> {{ cred.aaguid }}
           </li>
           <li class="credential-delete">
-            <form action="{% url 'credential-delete' cred.raw_id %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-danger">Delete</button>
-            </form>
+            <button type="button" class="btn btn-outline-danger" onclick="deleteCredential('{{cred.raw_id}}')">Delete</button>
           </li>
         </ul>
       </div>
       {% endfor %}
+      {% csrf_token %}
+      <script>
+        /**
+         * Delete the credential then reload the page so we don't pollute the browser history stack
+         *
+         * @param {string} id
+         */
+        async function deleteCredential(id) {
+          // Normalize the ID a bit
+          const _id = id.trim();
+
+          // Get CSRF token
+          const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+          try {
+            await fetch(
+              `credential/${_id}/delete`,
+              {
+                method: 'post',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
+              },
+            );
+            window.location.reload();
+          } catch (err) {
+            console.error('Error deleting credential', err);
+          }
+        }
+      </script>
     </div>
   </div>
 </section>
