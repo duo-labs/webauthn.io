@@ -1,10 +1,11 @@
+from django.http import HttpRequest
 from django.shortcuts import render
 
 from homepage.const import libraries, demos
 from homepage.services import SessionService
 
 
-def index(request):
+def index(request: HttpRequest):
     """
     Render the homepage
     """
