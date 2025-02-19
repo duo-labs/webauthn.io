@@ -96,8 +96,7 @@ class RegistrationService:
             rp_id=settings.RP_ID,
             rp_name=settings.RP_NAME,
             user_name=username,
-            # TODO: Remove when https://github.com/MasterKale/SimpleWebAuthn/issues/530 gets fixed
-            user_id=secrets.token_bytes(32),
+            user_id=f"webauthnio-{username}".encode(),
             attestation=_attestation,
             authenticator_selection=authenticator_selection,
             supported_pub_key_algs=supported_pub_key_algs,
