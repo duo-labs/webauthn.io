@@ -11,14 +11,14 @@ def index(request: HttpRequest):
     """
     Render the homepage
     """
-    context = {
-        "libraries": libraries,
-        "demos": demos,
-    }
 
     session_service = SessionService()
     session_service.start_session(request=request)
 
     template = "homepage/index.html"
+    context = {
+        "libraries": libraries,
+        "demos": demos,
+    }
 
     return render(request, template, context)
