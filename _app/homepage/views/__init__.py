@@ -6,6 +6,7 @@ from .authentication_verification import authentication_verification
 from .logout import logout
 from .credential_delete import credential_delete
 from .well_known import apple_app_site_association
+from .profile import profile
 
 __all__ = [
     "index",
@@ -16,4 +17,5 @@ __all__ = [
     "logout",
     "credential_delete",
     "apple_app_site_association",
+    "profile",
 ]
