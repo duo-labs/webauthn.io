@@ -551,6 +551,8 @@
       },
       // Internal Methods
       async _startRegistration() {
+        this._syncUsernameInputState();
+
         // Submit options
         const {
           regUserVerification,
@@ -631,6 +633,8 @@
         }
       },
       async _startAuthentication(startConditionalUI = false) {
+        this._syncUsernameInputState();
+
         const {
           authUserVerification,
         } = this.options;
@@ -682,7 +686,7 @@
 
         if (verificationJSON.verified === true) {
           // Reload page to display profile
-          window.location.href = '{% url "index" %}';
+          window.location.href = '{% url "profile" %}';
         } else {
           this.showErrorAlert(`Authentication failed: ${verificationJSON.error}`);
         }
@@ -732,7 +736,17 @@
         formattedHints = formattedHints.replace(/,/g, ", ");
 
         this._regHints.formatted = formattedHints;
-      }
+      },
+      /**
+       * If the user hits the browser back button from the profile page then the input can still
+       * be populated, but Alpine won't know this. This helps sync form state a bit.
+       */
+      _syncUsernameInputState() {
+        const elemUsername = document.getElementById('input-email');
+        if (elemUsername.value && !this.username) {
+          this.username = elemUsername.value;
+        }
+      },
     }));
   });
 </script>

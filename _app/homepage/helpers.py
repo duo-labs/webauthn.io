@@ -1,7 +1,9 @@
 from typing import List
 
+from webauthn.helpers.structs import AuthenticatorTransport
 
-def transports_to_ui_string(transports: List[str]) -> str:
+
+def transports_to_ui_string(transports: List[AuthenticatorTransport]) -> str:
     """
     Generate a human-readable string of transports
 

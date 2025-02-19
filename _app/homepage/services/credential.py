@@ -55,7 +55,7 @@ class CredentialService:
 
         self._temporarily_store_in_redis(new_credential)
 
-        transports_str = transports_to_ui_string(transports or [])
+        transports_str = transports_to_ui_string(mapped_transports or [])
         cred_type = "discoverable credential" if is_discoverable_credential else "credential"
 
         logger.info(f'User "{username}" registered a {cred_type} with transports {transports_str}')
