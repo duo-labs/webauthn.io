@@ -1,10 +1,12 @@
 from django.http import HttpRequest
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 
 from homepage.const import libraries, demos
 from homepage.services import SessionService
 
 
+@never_cache
 def index(request: HttpRequest):
     """
     Render the homepage
