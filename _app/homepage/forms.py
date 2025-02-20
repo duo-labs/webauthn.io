@@ -62,6 +62,14 @@ class AuthenticationOptionsRequestForm(forms.Form):
             ("required", "Required"),
         ],
     )
+    hints = forms.MultipleChoiceField(
+        required=False,
+        choices=[
+            ("security-key", "Security Key"),
+            ("client-device", "Client Device"),
+            ("hybrid", "Hybrid"),
+        ],
+    )
 
 
 class AuthenticationResponseForm(forms.Form):

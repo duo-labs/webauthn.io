@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from webauthn import options_to_json
+from webauthn.helpers.structs import PublicKeyCredentialHint
 
 from homepage.services import AuthenticationService, CredentialService, SessionService
 from homepage.forms import AuthenticationOptionsRequestForm
@@ -21,6 +22,7 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
     form_data = options_form.cleaned_data
     options_username: str | None = form_data["username"]
     options_user_verification = form_data["user_verification"]
+    options_hints = form_data["hints"]
 
     authentication_service = AuthenticationService()
     session_service = SessionService()
@@ -41,4 +43,10 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
         existing_credentials=existing_credentials,
     )
 
-    return JsonResponse(json.loads(options_to_json(authentication_options)))
+    options_json_str = options_to_json(authentication_options)
+    options_json = json.loads(options_json_str)
+
+    # Map hints here (py_webauthn doesn't yet recognize auth hints)
+    options_json["hints"] = [PublicKeyCredentialHint(hint) for hint in options_hints]
+
+    return JsonResponse(options_json)
