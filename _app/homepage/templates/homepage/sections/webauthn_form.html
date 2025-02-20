@@ -261,6 +261,51 @@
                   </template>
                 </select>
               </label>
+
+              <!-- Authentication Hints -->
+              <section class="col-sm-12 mb-2">
+                <p class="mb-0">Authentication Hints (most to least preferred)</p>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="authHintSecurityKey"
+                    x-model="_authHints.securityKey"
+                    @change="handleSelectAuthHintsSecurityKey"
+                  />
+                  <label class="custom-control-label" for="authHintSecurityKey">
+                    Security Key
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="authHintClientDevice"
+                    x-model="_authHints.clientDevice"
+                    @change="handleSelectAuthHintsClientDevice"
+                  />
+                  <label class="custom-control-label" for="authHintClientDevice">
+                    Client Device
+                  </label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="authHintHybrid"
+                    x-model="_authHints.hybrid"
+                    @change="handleSelectAuthHintsHybrid"
+                  />
+                  <label class="custom-control-label" for="authHintHybrid">
+                    Hybrid
+                  </label>
+                </div>
+                <p class="mb-0 text-secondary">
+                  Order:
+                  <span x-text="_authHints.formatted"></span>
+                </p>
+              </section>
             </div>
 
             <div class="row">
@@ -410,6 +455,21 @@
               break;
             }
           }
+
+          const _authHintsStr = currentParams.get('authHints');
+          _authHintsStr.split(',').forEach((hint) => {
+            if (hint === 'security-key') {
+              this._authHints.securityKey = true;
+              this._toggleAuthHint('security-key', true);
+            } else if (hint === 'client-device') {
+              this._authHints.clientDevice = true;
+              this._toggleAuthHint('client-device', true);
+            } else if (hint === 'hybrid') {
+              this._authHints.hybrid = true;
+              this._toggleAuthHint('hybrid', true);
+            }
+          });
+          this._formatAuthHintsForUI();
         }
 
         // Update query parameters when options change
@@ -427,6 +487,13 @@
          */
         this.$watch('options.regHints', () => {
           this._formatRegHintsForUI();
+        });
+
+        /**
+         * Format the list of authentication hints to help confirm the order of preference
+         */
+        this.$watch('options.authHints', () => {
+          this._formatAuthHintsForUI();
         });
 
         /**
@@ -455,6 +522,7 @@
         regHints: [],
         // Authentication
         authUserVerification: 'preferred',
+        authHints: [],
       },
       username: '',
       alert: {
@@ -464,6 +532,12 @@
       },
       // We need to track some state to properly support hints preference order
       _regHints: {
+        securityKey: false,
+        clientDevice: false,
+        hybrid: false,
+        formatted: "[]",
+      },
+      _authHints: {
         securityKey: false,
         clientDevice: false,
         hybrid: false,
@@ -541,6 +615,15 @@
       },
       handleSelectRegHintsHybrid() {
         this._toggleRegHint('hybrid', this._regHints.hybrid);
+      },
+      handleSelectAuthHintsSecurityKey() {
+        this._toggleAuthHint('security-key', this._authHints.securityKey);
+      },
+      handleSelectAuthHintsClientDevice() {
+        this._toggleAuthHint('client-device', this._authHints.clientDevice);
+      },
+      handleSelectAuthHintsHybrid() {
+        this._toggleAuthHint('hybrid', this._authHints.hybrid);
       },
       // Tips & Tricks Modal
       openTipsTricks() {
@@ -637,6 +720,7 @@
 
         const {
           authUserVerification,
+          authHints,
         } = this.options;
 
         let username = this.username;
@@ -652,6 +736,7 @@
           body: JSON.stringify({
             username,
             user_verification: authUserVerification,
+            hints: authHints,
           }),
         });
         const authenticationOptionsJSON = await apiAuthOptsResp.json();
@@ -736,6 +821,35 @@
         formattedHints = formattedHints.replace(/,/g, ", ");
 
         this._regHints.formatted = formattedHints;
+      },
+      /**
+       * Authentication hints can be ordered by preference, but there's no good native HTML element
+       * that allows for selection _and_ sorting.
+       *
+       * We'll handle it here by making each hint a checkbox, and the order in which a checkbox is
+       * checked will simply append that hint to the end of the list of selected hints.
+       *
+       * Unchecking a hint will remove it from its arbitrary place in the list of choices.
+       */
+       _toggleAuthHint(hintName, isChecked) {
+        if (isChecked) {
+          this.options.authHints.push(hintName);
+        } else {
+          const hintIndex = this.options.authHints.indexOf(hintName);
+          if (hintIndex >= 0) {
+            this.options.authHints.splice(hintIndex, 1);
+          }
+        }
+      },
+      /**
+       * Format registration hints so we can visualize their preference order
+       */
+       _formatAuthHintsForUI() {
+        let formattedHints = JSON.stringify(this.options.authHints);
+        // Add a space between items
+        formattedHints = formattedHints.replace(/,/g, ", ");
+
+        this._authHints.formatted = formattedHints;
       },
       /**
        * If the user hits the browser back button from the profile page then the input can still
