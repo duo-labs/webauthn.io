@@ -1,7 +1,6 @@
-version: '3.5'
-
 services:
   redis:
+    restart: unless-stopped
     image: redis:6.2.6
     networks:
       - redis_network
@@ -24,6 +23,7 @@ services:
       - PROD_CSRF_ORIGIN
 
   django:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
