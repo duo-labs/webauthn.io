@@ -1,5 +1,3 @@
-version: '3.5'
-
 # THESE OVERRIDES ARE FOR DEVELOPMENT! DON'T USE THIS IN PRODUCTION!
 services:
   caddy:
