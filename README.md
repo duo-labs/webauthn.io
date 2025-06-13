@@ -22,7 +22,7 @@ Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](
 Run the following command to get started:
 
 ```sh
-$> ./start-dev.sh
+./start-dev.sh
 ```
 
 The site will be available at http://localhost/
@@ -40,7 +40,7 @@ docker compose run django ./manage.py collectstatic --no-input
 Run the following command to start up the website with production-ready settings:
 
 ```sh
-$> ./start-prod.sh
+./start-prod.sh
 ```
 
 The site will be available for viewing at https://{PROD_HOST_NAME}. The included [Caddy server](https://caddyserver.com/) (as the `caddy` service in **docker-compose.yml**) will handle SSL certificate management.
@@ -55,3 +55,11 @@ $> ./update-prod-django.sh
 ```
 
 The `django` and `caddy` services will be temporarily stopped during the build, and will restart once the `django` has been rebuilt.
+
+## Testing
+
+Run the following command to test everything in the `homepage.tests` module:
+
+```sh
+./run-tests.sh
+```
