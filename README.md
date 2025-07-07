@@ -64,3 +64,11 @@ Run the following command to test everything in the `homepage.tests` module:
 ```sh
 ./run-tests.sh
 ```
+
+## A Note about WebAuthn Privacy Considerations
+
+This site's codebase is **not** intended to represent WebAuthn best practices. Its use of WebAuthn is optimized to offer a test bed for the many permutations of possible WebAuthn API calls.
+
+As a result the codebase does not meaningfully try to offer solutions to any of the [Relying Party-specific privacy considerations](https://www.w3.org/TR/webauthn/#sctn-privacy-considerations-rp) as detailed in the spec, like username enumeration or personal information leakage via user ID.
+
+Please keep this in mind as you dive deeper into this project's code. You can consult the spec at the link above for ideas on how to address these problems for your Relying Party implementation.
