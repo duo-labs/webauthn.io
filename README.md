@@ -13,6 +13,7 @@ Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](
 
 - `DJANGO_SECRET_KEY`: A sufficiently random string
 - `PROD_HOST_NAME`: The domain name the site will be hosted at
+- `PROD_CSRF_ORIGIN`: The domain name plus protocol from which requests to the backend should occur (e.g. `https://webauthn.io`)
 - `RP_ID`: The Relying Party ID, typically the same as `PROD_HOST_NAME`
 - `RP_NAME`: A representation of the site's name to be shown to users
 - `RP_EXPECTED_ORIGIN`: The domain name plus protocol at which WebAuthn will be invoked (e.g. `https://webauthn.io`)
