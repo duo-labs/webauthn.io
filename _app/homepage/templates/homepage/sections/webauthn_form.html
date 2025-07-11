@@ -13,6 +13,7 @@
               placeholder="example_username"
               x-model="username"
               autocomplete="username webauthn"
+              @input.debounce="handleSaveUsername"
             />
           </div>
           <template x-if="alert.show">
@@ -344,6 +345,10 @@
             Changing <strong>Authentication Settings > User Verification</strong> will restart
             conditional UI using the chosen setting.
           </li>
+          <li>
+            Usernames are remembered across page loads. Clearing the text box or clicking
+            <strong>Reset Settings</strong> will clear any remembered username.
+          </li>
         </ul>
         <button
           id="advanced-settings-tips-tricks-close"
@@ -483,6 +488,12 @@
         });
 
         /**
+         * Restore the remembered username, if one exists
+         */
+        const savedUsername = this._getUsername();
+        this.username = savedUsername;
+
+        /**
          * Format the list of registration hints to help confirm the order of preference
          */
         this.$watch('options.regHints', () => {
@@ -604,6 +615,8 @@
         }
       },
       resetSettings() {
+        // Clear saved username
+        this._resetUsername();
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
       },
@@ -624,6 +637,12 @@
       },
       handleSelectAuthHintsHybrid() {
         this._toggleAuthHint('hybrid', this._authHints.hybrid);
+      },
+      /**
+       * @param {InputEvent} event
+       */
+      handleSaveUsername(event) {
+        this._saveUsername(event.data);
       },
       // Tips & Tricks Modal
       openTipsTricks() {
@@ -860,6 +879,28 @@
         if (elemUsername.value && !this.username) {
           this.username = elemUsername.value;
         }
+      },
+      /**
+       * Retrieve the remembered username (if it exists)
+       * @returns {string}
+       */
+      _getUsername() {
+        return window.localStorage.getItem('savedUsername') ?? "";
+      },
+      /**
+       * Remember the username so the user doesn't have to keep entering it
+       * @param {string | null} newUsername
+       * @returns {void}
+       */
+      _saveUsername(newUsername) {
+        window.localStorage.setItem('savedUsername', newUsername);
+      },
+      /**
+       * Clear any remembered username
+       * @returns {void}
+       */
+      _resetUsername() {
+        window.localStorage.removeItem('savedUsername');
       },
     }));
   });

@@ -10,9 +10,24 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: for-testing-only
     strategy:
       matrix:
         python-version: ['3.10']
+
+    services:
+      redis:
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Map port 6379 in the container to the workflow environment
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v3
@@ -27,6 +42,9 @@ jobs:
     - name: Test with unittest
       run: |
         pipenv run _app/manage.py test homepage.tests
+      env:
+        # Tests are running "locally" while Redis is in a container
+        REDIS_HOSTNAME: localhost
     - name: Run mypy
       run: |
         pipenv run mypy _app/homepage
