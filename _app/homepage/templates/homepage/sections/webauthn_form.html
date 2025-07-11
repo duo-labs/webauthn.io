@@ -861,6 +861,28 @@
           this.username = elemUsername.value;
         }
       },
+      /**
+       * Retrieve the remembered username (if it exists)
+       * @returns {string}
+       */
+      _getUsername() {
+        return window.localStorage.getItem('savedUsername') ?? "";
+      },
+      /**
+       * Remember the username so the user doesn't have to keep entering it
+       * @param {string | null} newUsername
+       * @returns {void}
+       */
+      _saveUsername(newUsername) {
+        window.localStorage.setItem('savedUsername', newUsername);
+      },
+      /**
+       * Clear any remembered username
+       * @returns {void}
+       */
+      _resetUsername() {
+        window.localStorage.removeItem('savedUsername');
+      },
     }));
   });
 </script>
