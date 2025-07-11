@@ -484,6 +484,12 @@
         });
 
         /**
+         * Restore the remembered username, if one exists
+         */
+        const savedUsername = this._getUsername();
+        this.username = savedUsername;
+
+        /**
          * Format the list of registration hints to help confirm the order of preference
          */
         this.$watch('options.regHints', () => {
