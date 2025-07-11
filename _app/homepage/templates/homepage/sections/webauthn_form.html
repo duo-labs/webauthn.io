@@ -611,6 +611,8 @@
         }
       },
       resetSettings() {
+        // Clear saved username
+        this._resetUsername();
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
       },
