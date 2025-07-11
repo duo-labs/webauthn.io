@@ -26,7 +26,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          # Maps port 6379 on service container to the workflow environment
+          # Map port 6379 in the container to the workflow environment
           - 6379:6379
 
     steps:
@@ -43,6 +43,7 @@ jobs:
       run: |
         pipenv run _app/manage.py test homepage.tests
       env:
+        # Tests are running "locally" while Redis is in a container
         REDIS_HOSTNAME: localhost
     - name: Run mypy
       run: |
