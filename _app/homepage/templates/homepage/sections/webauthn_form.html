@@ -642,7 +642,8 @@
        * @param {InputEvent} event
        */
       handleSaveUsername(event) {
-        this._saveUsername(event.data);
+        const newUsername = event.target.value;
+        this._saveUsername(newUsername);
       },
       // Tips & Tricks Modal
       openTipsTricks() {
