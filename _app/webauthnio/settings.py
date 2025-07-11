@@ -130,6 +130,8 @@ LOGGING = {
 # Redis cache support
 # https://docs.djangoproject.com/en/4.0/topics/cache/#redis-1
 
+# This is only configurable right now to access Redis at a different hostname during testing.
+# The default value is the service name when everything is running in Docker.
 REDIS_HOSTNAME = os.getenv("REDIS_HOSTNAME", "redis")
 REDIS_PORT = 6379
 CACHES = {
