@@ -39,6 +39,8 @@ jobs:
     - name: Test with unittest
       run: |
         pipenv run _app/manage.py test homepage.tests
+      env:
+        REDIS_HOSTNAME: localhost
     - name: Run mypy
       run: |
         pipenv run mypy _app/homepage

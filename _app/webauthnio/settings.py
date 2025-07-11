@@ -130,7 +130,7 @@ LOGGING = {
 # Redis cache support
 # https://docs.djangoproject.com/en/4.0/topics/cache/#redis-1
 
-REDIS_HOSTNAME = "redis"
+REDIS_HOSTNAME = os.getenv("REDIS_HOSTNAME", "redis")
 REDIS_PORT = 6379
 CACHES = {
     "default": {
