@@ -13,6 +13,7 @@
               placeholder="example_username"
               x-model="username"
               autocomplete="username webauthn"
+              @input.debounce="handleSaveUsername"
             />
           </div>
           <template x-if="alert.show">
@@ -624,6 +625,12 @@
       },
       handleSelectAuthHintsHybrid() {
         this._toggleAuthHint('hybrid', this._authHints.hybrid);
+      },
+      /**
+       * @param {InputEvent} event
+       */
+      handleSaveUsername(event) {
+        this._saveUsername(event.data);
       },
       // Tips & Tricks Modal
       openTipsTricks() {
