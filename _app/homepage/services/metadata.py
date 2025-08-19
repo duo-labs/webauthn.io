@@ -91,6 +91,8 @@ class MetadataService:
             "68167692-ff5a-4ac8-9fd7-0be292a1af68": {
                 "name": "YubiKey Bio Series - Multi-protocol Edition (5.7, enterprise profile)"
             },
+            # Google
+            "42b4fb4a-2866-43b2-9bf7-6c6669c2e5d3": {"name": "Google Titan Security Key (2023)"},
         }
     )
 
