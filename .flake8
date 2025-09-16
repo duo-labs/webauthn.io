@@ -4,4 +4,6 @@ exclude =
     manage.py,
     migrations,
     tests
+per-file-ignores =
+    metadata.py: E501
 inline-quotes = "
