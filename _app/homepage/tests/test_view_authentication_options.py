@@ -34,5 +34,5 @@ class TestViewAuthenticationOptions(TestCase):
         self.assertEquals(options.status_code, HttpResponseBadRequest.status_code)
         self.assertEquals(
             options_json,
-            {"error": "Could not parse options: Expecting value: line 1 column 1 (char 0)"},
+            {"error": "Could not parse request: Expecting value: line 1 column 1 (char 0)"},
         )

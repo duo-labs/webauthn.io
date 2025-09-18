@@ -19,7 +19,7 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     try:
         body_json: dict = json.loads(request.body)
     except Exception as exc:
-        return JsonResponseBadRequest({"error": f"Could not parse options: {str(exc)}"})
+        return JsonResponseBadRequest({"error": f"Could not parse request: {str(exc)}"})
 
     response_form = RegistrationResponseForm(body_json)
 
