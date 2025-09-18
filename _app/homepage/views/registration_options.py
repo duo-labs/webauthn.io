@@ -15,7 +15,10 @@ def registration_options(request: HttpRequest) -> JsonResponse:
     Generate options for a WebAuthn registration ceremony
     """
 
-    body_json: dict = json.loads(request.body)
+    try:
+        body_json: dict = json.loads(request.body)
+    except Exception as exc:
+        return JsonResponseBadRequest({"error": f"Could not parse options: {str(exc)}"})
 
     options_form = RegistrationOptionsRequestForm(body_json)
 

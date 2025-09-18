@@ -16,7 +16,10 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     Verify the response from a WebAuthn registration ceremony
     """
 
-    body_json: dict = json.loads(request.body)
+    try:
+        body_json: dict = json.loads(request.body)
+    except Exception as exc:
+        return JsonResponseBadRequest({"error": f"Could not parse options: {str(exc)}"})
 
     response_form = RegistrationResponseForm(body_json)
 
