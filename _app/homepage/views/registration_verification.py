@@ -54,7 +54,10 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
 
         # If we can't determine this using credProps then let's look at the registration options
         if is_discoverable_credential is None:
-            if options.authenticator_selection.resident_key == ResidentKeyRequirement.REQUIRED:
+            if (
+                options.authenticator_selection
+                and options.authenticator_selection.resident_key == ResidentKeyRequirement.REQUIRED
+            ):
                 is_discoverable_credential = True
 
         # Store credential for later
