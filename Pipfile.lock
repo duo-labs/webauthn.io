@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "78beeb7af554b0c97ade35919a3b8345195cdbaa2475141fd8d4ec9dada5bdd6"
+            "sha256": "5afe646a58a904f7b0cd6cc608d039ac8284949e543578e167e2e8068760aaf7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -244,6 +244,15 @@
             ],
             "markers": "python_version >= '3.8' and python_full_version not in '3.9.0, 3.9.1'",
             "version": "==46.0.1"
+        },
+        "dilithium-py": {
+            "hashes": [
+                "sha256:327f3a74e855349095d787afb8ebf1244080ee40a16e03611de3c982055f0d22",
+                "sha256:b48d76eaaf7c01412b2462b7936b6c7171d693af6c71372b545c20b11ba4df9a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==1.3.0"
         },
         "django": {
             "hashes": [
