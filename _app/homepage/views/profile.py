@@ -26,6 +26,10 @@ def profile(request: HttpRequest):
     credential_service = CredentialService()
     metadata_service = MetadataService()
 
+    # Enable adding ?debug=true to the URL to show additional information
+    show_debug_info = request.GET.get("debug", "false") == "true"
+    print(f"show debug: {show_debug_info}")
+
     user_credentials = credential_service.retrieve_credentials_by_username(username=username)
 
     parsed_credentials = []
