@@ -1,6 +1,8 @@
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
+from webauthn.helpers import decode_credential_public_key, base64url_to_bytes
+from webauthn.helpers.cose import COSEKTY, COSEAlgorithmIdentifier
 from webauthn.helpers.structs import CredentialDeviceType
 
 from homepage.services import SessionService, CredentialService, MetadataService
@@ -62,6 +64,24 @@ def profile(request: HttpRequest):
         if not aaguid:
             aaguid = "(Unavailable)"
 
+        debug_info = None
+        if show_debug_info:
+            decoded_pub_key = decode_credential_public_key(base64url_to_bytes(cred.public_key))
+
+            # Make kty and alg sensible for human consumption
+            kty = f"{COSEKTY(decoded_pub_key.kty).name} ({decoded_pub_key.kty})"
+            alg = f"{COSEAlgorithmIdentifier(decoded_pub_key.alg).name} ({decoded_pub_key.alg})"
+
+            normalized_kty = kty.replace("_", "-")
+            normalized_alg = alg.replace("_", "-")
+
+            debug_info = {
+                "public_key": {
+                    "kty": normalized_kty,
+                    "alg": normalized_alg,
+                }
+            }
+
         parsed_credentials.append(
             {
                 "id": truncate_credential_id_to_ui_string(cred.id),
@@ -70,6 +90,7 @@ def profile(request: HttpRequest):
                 "description": description,
                 "provider_name": provider_name,
                 "aaguid": aaguid,
+                "debug_info": debug_info,
             }
         )
 
