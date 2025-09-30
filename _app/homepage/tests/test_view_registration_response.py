@@ -3,25 +3,10 @@ from django.urls import reverse
 from django.http.response import HttpResponseBadRequest
 
 
-class TestViewAuthenticationOptions(TestCase):
+class TestViewRegistrationVerification(TestCase):
     def setUp(self):
-        self.route = reverse("authentication-options")
+        self.route = reverse("registration-verification")
         self.client.get(reverse("index"))
-
-    def test_handles_hints(self):
-
-        options = self.client.post(
-            self.route,
-            {
-                "user_verification": "preferred",
-                "hints": ["security-key", "hybrid", "client-device"],
-            },
-            content_type="application/json",
-        )
-
-        options_json = options.json()
-
-        self.assertEqual(options_json.get("hints"), ["security-key", "hybrid", "client-device"])
 
     def test_returns_400_bad_argument(self):
         response = self.client.post(

@@ -12,7 +12,14 @@ from homepage.response import JsonResponseBadRequest
 
 @csrf_exempt
 def authentication_options(request: HttpRequest) -> JsonResponse:
-    body_json: dict = json.loads(request.body)
+    """
+    Generate options for a WebAuthn authentication ceremony
+    """
+
+    try:
+        body_json: dict = json.loads(request.body)
+    except Exception as exc:
+        return JsonResponseBadRequest({"error": f"Could not parse request: {str(exc)}"})
 
     options_form = AuthenticationOptionsRequestForm(body_json)
 
