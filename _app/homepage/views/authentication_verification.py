@@ -39,7 +39,7 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
         )
 
         verification = authentication_service.verify_authentication_response(
-            cache_key=session_service.get_session_key(request=request),
+            cache_key=session_service.get_session_key(session=request.session),
             existing_credential=existing_credential,
             response=options_webauthn_response,
         )
@@ -49,6 +49,6 @@ def authentication_verification(request: HttpRequest) -> JsonResponse:
     except Exception as err:
         return JsonResponseBadRequest({"error": str(err)})
 
-    session_service.log_in_user(request=request, username=verification.username)
+    session_service.log_in_user(session=request.session, username=verification.username)
 
     return JsonResponse({"verified": True})
