@@ -16,6 +16,7 @@ class SessionService:
         Use a session cookie to temporarily remember the user
         """
         session["username"] = username
+        session.save()
 
     def log_out_user(self, *, session: SessionBase) -> None:
         """
