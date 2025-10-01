@@ -12,12 +12,13 @@ class TestE2EMLDSA(TestCase):
     End-to-end tests of support for authenticators using ML-DSA algorithms
     """
 
+    authentication_service = AuthenticationService()
+    credential_service = CredentialService()
+    registration_service = RegistrationService()
+
     def setUp(self):
         settings.RP_ID = "webauthn.io"
         settings.RP_EXPECTED_ORIGIN = "https://webauthn.io"
-        self.authentication_service = AuthenticationService()
-        self.credential_service = CredentialService()
-        self.registration_service = RegistrationService()
         # Initialize a session
         self.client.get(reverse("index"))
 

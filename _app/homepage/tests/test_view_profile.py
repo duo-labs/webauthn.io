@@ -39,7 +39,6 @@ class TestViewProfile(TestCase):
         # The user has authenticated
         self.client.get(reverse("index"))
         self.session_service.log_in_user(session=self.client.session, username=self.username)
-        self.client.get(self.route)
 
     def tearDown(self) -> None:
         self.client.cookies.clear()

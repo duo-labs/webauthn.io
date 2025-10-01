@@ -3,11 +3,8 @@ from django.urls import reverse
 from django.http.response import HttpResponse
 
 
-class TestViewProfile(TestCase):
+class TestViewIndex(TestCase):
     route = reverse("index")
-
-    def setUp(self):
-        self.client.get(self.route)
 
     def tearDown(self) -> None:
         self.client.cookies.clear()
