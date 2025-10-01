@@ -13,7 +13,7 @@ def index(request: HttpRequest):
     """
 
     session_service = SessionService()
-    session_service.start_session(request=request)
+    session_service.start_session(session=request.session)
 
     template = "homepage/index.html"
     context = {

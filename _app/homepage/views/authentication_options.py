@@ -45,7 +45,7 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
             return JsonResponseBadRequest({"error": "That username has no registered credentials"})
 
     authentication_options = authentication_service.generate_authentication_options(
-        cache_key=session_service.get_session_key(request=request),
+        cache_key=session_service.get_session_key(session=request.session),
         user_verification=options_user_verification,
         existing_credentials=existing_credentials,
     )

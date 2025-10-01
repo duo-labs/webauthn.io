@@ -19,7 +19,7 @@ def profile(request: HttpRequest):
     """
     session_service = SessionService()
 
-    if not session_service.user_is_logged_in(request=request):
+    if not session_service.user_is_logged_in(session=request.session):
         return redirect("index")
 
     template = "homepage/profile.html"
