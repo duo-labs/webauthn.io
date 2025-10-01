@@ -10,6 +10,7 @@ from homepage.helpers import (
     transports_to_ui_string,
     truncate_credential_id_to_ui_string,
 )
+from homepage.cookies import get_debug_cookie_name, get_debug_cookie_expiration
 
 
 @never_cache
@@ -28,9 +29,16 @@ def profile(request: HttpRequest):
     credential_service = CredentialService()
     metadata_service = MetadataService()
 
-    # Enable adding ?debug=true to the URL to show additional information
-    show_debug_info = request.GET.get("debug", "false") == "true"
-    print(f"show debug: {show_debug_info}")
+    cookie_debug = request.COOKIES.get(get_debug_cookie_name())
+    query_debug = request.GET.get("debug")
+
+    show_debug_info = False
+    if cookie_debug == "true":
+        # Show additional information when the debug cookie is set
+        show_debug_info = True
+    elif query_debug == "true":
+        # Enable adding ?debug=true to the URL to show additional information
+        show_debug_info = True
 
     user_credentials = credential_service.retrieve_credentials_by_username(username=username)
 
@@ -98,4 +106,13 @@ def profile(request: HttpRequest):
         "credentials": parsed_credentials,
     }
 
-    return render(request, template, context)
+    response = render(request, template, context)
+
+    if show_debug_info:
+        response.set_cookie(
+            key=get_debug_cookie_name(),
+            value="true",
+            expires=get_debug_cookie_expiration(),
+        )
+
+    return response
