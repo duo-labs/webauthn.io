@@ -24,7 +24,7 @@ class RedisService:
         *,
         key: str,
         value: Union[bytes, str, int, float],
-        expiration_seconds: Optional[int] = None
+        expiration_seconds: Optional[int] = None,
     ):
         return self._instance.set(key, value, ex=expiration_seconds)
 
