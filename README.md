@@ -5,9 +5,8 @@ Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](
 ## Prerequisites
 
 - Docker
-- Pipenv
-  - Make sure Python3 is available
-  - Enables `pipenv install` to set up libraries locally for the editor to crawl. The Django container also uses Pipenv to install dependencies to encourage use of this new Python package management tool.
+- uv (See https://docs.astral.sh/uv/getting-started/installation/)
+  - Setting up libraries locally gives the editor something to crawl
 
 ## Environmental Variable
 
