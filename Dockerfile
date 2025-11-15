@@ -1,6 +1,8 @@
-# Tweak the base image by installing pipenv
+# Tweak the base image by installing uv
 FROM python:3.10-slim AS base
-RUN pip install pipenv
+
+# Install uv (https://docs.astral.sh/uv/)
+COPY --from=ghcr.io/astral-sh/uv:0.9.9 /uv /uvx /bin/
 
 # Begin our actual build
 FROM base AS base1
@@ -11,13 +13,12 @@ ARG DJANGO_SECRET_KEY
 RUN mkdir -p /usr/src/app
 
 COPY ./_app /usr/src/app
-COPY Pipfile /usr/src/app/
-COPY Pipfile.lock /usr/src/app/
+COPY pyproject.toml uv.lock /usr/src/app/
 
 WORKDIR /usr/src/app
 
 # Install Python dependencies
-RUN pipenv install --system --deploy
+RUN uv sync --locked
 
 # Collect static files
-RUN python manage.py collectstatic --no-input
+RUN uv run python manage.py collectstatic --no-input
