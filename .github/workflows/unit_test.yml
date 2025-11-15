@@ -30,21 +30,27 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
-        python-version: ${{ matrix.python-version }}
+          python-version-file: "pyproject.toml"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+          version: "0.9.9"
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pipenv
-        pipenv install --deploy --dev
+      run: uv sync --locked --all-extras --dev
+
     - name: Test with unittest
-      run: |
-        pipenv run _app/manage.py test homepage.tests
+      run: uv run python _app/manage.py test homepage.tests
       env:
         # Tests are running "locally" while Redis is in a container
         REDIS_HOSTNAME: localhost
+
     - name: Run mypy
       run: |
-        pipenv run mypy _app/homepage
+        uv run mypy _app/homepage
