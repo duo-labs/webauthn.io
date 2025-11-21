@@ -6,7 +6,7 @@ Duo's introduction to the wonderful world of WebAuthn. Powered by [py_webauthn](
 
 - Docker
 - uv (See https://docs.astral.sh/uv/getting-started/installation/)
-  - Setting up libraries locally gives the editor something to crawl
+  - Run `uv sync` locally to install dependencies and give the editor something to crawl
 
 ## Environmental Variable
 
