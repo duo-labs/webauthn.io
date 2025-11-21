@@ -4,12 +4,13 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Read the secret from the file that Docker injects
+# (see https://docs.docker.com/reference/compose-file/build/#secrets)
+_secret_key_file = open("/run/secrets/django_secret_key", "r")
+SECRET_KEY = _secret_key_file.read()
+_secret_key_file.close()
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-
+# Enable doing things differently if we're in debug mode
 DEBUG = os.getenv("DEBUG", False) == "true"
 
 ALLOWED_HOSTS = ["localhost"]

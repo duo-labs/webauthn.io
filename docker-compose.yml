@@ -42,9 +42,10 @@ services:
     networks:
       - caddy_network
       - redis_network
+    secrets:
+      - django_secret_key
     environment:
       - PYTHONUNBUFFERED=0
-      - DJANGO_SECRET_KEY
       - PROD_HOST_NAME
       - PROD_CSRF_ORIGIN
       - RP_ID
