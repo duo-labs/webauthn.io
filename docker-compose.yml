@@ -61,3 +61,7 @@ volumes:
 networks:
   caddy_network:
   redis_network:
+
+secrets:
+  django_secret_key:
+    environment: DJANGO_SECRET_KEY
