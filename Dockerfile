@@ -1,7 +1,7 @@
 # Tweak the base image by installing uv
 FROM python:3.10-slim AS base
 
-# Install uv (https://docs.astral.sh/uv/)
+# Install uv (https://docs.astral.sh/uv/guides/integration/docker/#installing-uv)
 COPY --from=ghcr.io/astral-sh/uv:0.9.9 /uv /uvx /bin/
 
 # Begin our actual build
