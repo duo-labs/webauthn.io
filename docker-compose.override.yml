@@ -11,7 +11,7 @@ services:
 
   django:
     # Automatically reload Gunicorn when a file changes
-    command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py --reload
+    command: uv run gunicorn webauthnio.wsgi -c gunicorn.cfg.py --reload
     environment:
       - DEBUG=true
       - RP_ID=localhost

@@ -9,7 +9,6 @@ class TestViewAuthenticationOptions(TestCase):
         self.client.get(reverse("index"))
 
     def test_handles_hints(self):
-
         options = self.client.post(
             self.route,
             {

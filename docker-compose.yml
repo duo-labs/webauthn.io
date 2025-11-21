@@ -31,9 +31,12 @@ services:
         - DJANGO_SECRET_KEY
     depends_on:
       - redis
-    command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py
+    command: uv run gunicorn webauthnio.wsgi -c gunicorn.cfg.py
     volumes:
       - ./_app:/usr/src/app
+      # uv-specific files needed for `uv run` commands to succeed
+      - ./pyproject.toml:/usr/src/app/pyproject.toml
+      - ./uv.lock:/usr/src/app/uv.lock
       # Django static files will go here so Caddy can access them
       - static_files_volume:/usr/src/app/static
     networks:

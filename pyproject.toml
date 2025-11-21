@@ -1,0 +1,30 @@
+[project]
+name = "webauthn-io"
+version = "0.1.0"
+description = "Duo's introduction to the wonderful world of WebAuthn"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dilithium-py==1.3.0",
+    "django==5.1.4",
+    "gunicorn==23.0.0",
+    "hiredis==3.3.0",
+    "redis==5.2.0",
+    "webauthn==2.8.0a1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "ruff>=0.14.5",
+]
+
+[tool.ruff]
+line-length = 99
+exclude = [
+    "_app/homepage/migrations"
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
