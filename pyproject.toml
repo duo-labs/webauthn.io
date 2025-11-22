@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "dilithium-py==1.3.0",
-    "django==5.1.4",
+    "django==5.1.14",
     "gunicorn==23.0.0",
     "hiredis==3.3.0",
     "redis==5.2.0",
