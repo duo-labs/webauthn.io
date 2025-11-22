@@ -4,12 +4,17 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Get the path to the file containing the secret
+_secret_key_file_path = os.getenv("DJANGO_SECRET_KEY_FILE")
+if not _secret_key_file_path:
+    raise Exception("DJANGO_SECRET_KEY_FILE must be a file path string")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+# Read the secret from the file
+_secret_key_file = open(_secret_key_file_path, "r")
+SECRET_KEY = _secret_key_file.read()
+_secret_key_file.close()
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-
+# Enable doing things differently if we're in debug mode
 DEBUG = os.getenv("DEBUG", False) == "true"
 
 ALLOWED_HOSTS = ["localhost"]
