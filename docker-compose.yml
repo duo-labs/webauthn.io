@@ -27,8 +27,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - DJANGO_SECRET_KEY
+      secrets:
+        - django_secret_key
     depends_on:
       - redis
     command: uv run gunicorn webauthnio.wsgi -c gunicorn.cfg.py
