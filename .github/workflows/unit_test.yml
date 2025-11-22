@@ -10,8 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SECRET_KEY_FILE: ${{ runner.temp }}/django_secret_key
     strategy:
       matrix:
         python-version: ['3.10']
@@ -30,10 +28,6 @@ jobs:
           - 6379:6379
 
     steps:
-    - name: Write Docker-secrets-like file for CI
-      run: |
-        echo "for-testing-only" > $DJANGO_SECRET_KEY_FILE
-
     - uses: actions/checkout@v5
 
     - name: Set up Python ${{ matrix.python-version }}
@@ -49,11 +43,15 @@ jobs:
     - name: Install dependencies
       run: uv sync --locked --all-extras --dev
 
+    - name: Create Docker-secrets-like file for Django to read
+      run: echo "for-testing-only" > ${{ runner.temp }}/django_secret_key
+
     - name: Test with unittest
       run: uv run python _app/manage.py test homepage.tests
       env:
         # Tests are running "locally" while Redis is in a container
         REDIS_HOSTNAME: localhost
+        DJANGO_SECRET_KEY_FILE: ${{ runner.temp }}/django_secret_key
 
     - name: Run mypy
       run: |
