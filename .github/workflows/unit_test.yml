@@ -32,7 +32,7 @@ jobs:
     steps:
     - name: Write Docker-secrets-like file for CI
       run: |
-        touch /run/secrets/django_secret_key
+        mkdir -p /run/secrets && touch /run/secrets/django_secret_key
         echo "for-testing-only" > /run/secrets/django_secret_key
 
     - uses: actions/checkout@v5
