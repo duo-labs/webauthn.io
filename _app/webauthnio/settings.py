@@ -4,9 +4,13 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Read the secret from the file that Docker injects
-# (see https://docs.docker.com/reference/compose-file/build/#secrets)
-_secret_key_file = open("/run/secrets/django_secret_key", "r")
+# Get path to the file containing the secret (this is a Docker-specific method)
+_secret_key_file_path = os.getenv("DJANGO_SECRET_KEY_FILE")
+if not _secret_key_file_path:
+    raise Exception("DJANGO_SECRET_KEY_FILE must be a file path string")
+
+# Read the secret from the file
+_secret_key_file = open(_secret_key_file_path, "r")
 SECRET_KEY = _secret_key_file.read()
 _secret_key_file.close()
 

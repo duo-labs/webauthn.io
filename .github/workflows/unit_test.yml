@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      DJANGO_SECRET_KEY: for-testing-only
+      DJANGO_SECRET_KEY_FILE: ${{ runner.temp }}/django_secret_key
     strategy:
       matrix:
         python-version: ['3.10']
@@ -32,8 +32,7 @@ jobs:
     steps:
     - name: Write Docker-secrets-like file for CI
       run: |
-        mkdir -p /run/secrets && touch /run/secrets/django_secret_key
-        echo "for-testing-only" > /run/secrets/django_secret_key
+        echo "for-testing-only" > $DJANGO_SECRET_KEY_FILE
 
     - uses: actions/checkout@v5
 

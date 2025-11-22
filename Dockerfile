@@ -20,4 +20,5 @@ WORKDIR /usr/src/app
 RUN uv sync --locked
 
 # Collect static files
-RUN --mount=type=secret,id=django_secret_key,required=true uv run python manage.py collectstatic --no-input
+RUN --mount=type=secret,id=django_secret_key,required=true \
+DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key uv run python manage.py collectstatic --no-input
