@@ -35,6 +35,13 @@ libraries = [
         type="Library",
     ),
     WebAuthnExample(
+        language="TypeScript",
+        url="https://github.com/w3hc/w3pk",
+        title="w3pk",
+        author="Julien Béranger",
+        type="Library",
+    ),
+    WebAuthnExample(
         language="Ruby",
         url="https://github.com/cedarcode/webauthn-ruby",
         title="cedarcode/webauthn-ruby",
