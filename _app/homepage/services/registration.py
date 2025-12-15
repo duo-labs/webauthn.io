@@ -89,6 +89,15 @@ class RegistrationService:
             if "rs256" in algorithms:
                 supported_pub_key_algs.append(COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
 
+            if "mldsa44" in algorithms:
+                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_44)
+
+            if "mldsa65" in algorithms:
+                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_65)
+
+            if "mldsa87" in algorithms:
+                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_87)
+
         _hints = [PublicKeyCredentialHint(hint) for hint in hints]
 
         registration_options = generate_registration_options(
@@ -139,6 +148,7 @@ class RegistrationService:
             expected_rp_id=settings.RP_ID,
             expected_origin=settings.RP_EXPECTED_ORIGIN,
             require_user_verification=require_user_verification,
+            supported_pub_key_algs=[param.alg for param in options.pub_key_cred_params],
         )
 
         return (

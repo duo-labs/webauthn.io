@@ -28,4 +28,4 @@ def truncate_credential_id_to_ui_string(id: str) -> str:
         # Return the entire ID if there's nothing to truncate
         return id
 
-    return f"{id[0:truncation_length]}...{id[(0-truncation_length):]}"
+    return f"{id[0:truncation_length]}...{id[(0 - truncation_length) :]}"

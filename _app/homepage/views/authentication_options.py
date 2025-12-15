@@ -12,7 +12,14 @@ from homepage.response import JsonResponseBadRequest
 
 @csrf_exempt
 def authentication_options(request: HttpRequest) -> JsonResponse:
-    body_json: dict = json.loads(request.body)
+    """
+    Generate options for a WebAuthn authentication ceremony
+    """
+
+    try:
+        body_json: dict = json.loads(request.body)
+    except Exception as exc:
+        return JsonResponseBadRequest({"error": f"Could not parse request: {str(exc)}"})
 
     options_form = AuthenticationOptionsRequestForm(body_json)
 
@@ -38,7 +45,7 @@ def authentication_options(request: HttpRequest) -> JsonResponse:
             return JsonResponseBadRequest({"error": "That username has no registered credentials"})
 
     authentication_options = authentication_service.generate_authentication_options(
-        cache_key=session_service.get_session_key(request=request),
+        cache_key=session_service.get_session_key(session=request.session),
         user_verification=options_user_verification,
         existing_credentials=existing_credentials,
     )

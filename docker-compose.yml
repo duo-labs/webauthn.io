@@ -27,21 +27,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - DJANGO_SECRET_KEY
+      secrets:
+        - django_secret_key
     depends_on:
       - redis
-    command: gunicorn webauthnio.wsgi -c gunicorn.cfg.py
+    command: uv run gunicorn webauthnio.wsgi -c gunicorn.cfg.py
     volumes:
       - ./_app:/usr/src/app
+      # uv-specific files needed for `uv run` commands to succeed
+      - ./pyproject.toml:/usr/src/app/pyproject.toml
+      - ./uv.lock:/usr/src/app/uv.lock
       # Django static files will go here so Caddy can access them
       - static_files_volume:/usr/src/app/static
     networks:
       - caddy_network
       - redis_network
+    secrets:
+      - django_secret_key
     environment:
       - PYTHONUNBUFFERED=0
-      - DJANGO_SECRET_KEY
+      - DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key
       - PROD_HOST_NAME
       - PROD_CSRF_ORIGIN
       - RP_ID
@@ -58,3 +63,7 @@ volumes:
 networks:
   caddy_network:
   redis_network:
+
+secrets:
+  django_secret_key:
+    environment: DJANGO_SECRET_KEY

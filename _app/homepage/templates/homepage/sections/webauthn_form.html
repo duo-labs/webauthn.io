@@ -13,6 +13,8 @@
               placeholder="example_username"
               x-model="username"
               autocomplete="username webauthn"
+              autofocus
+              @input.debounce="handleSaveUsername"
             />
           </div>
           <template x-if="alert.show">
@@ -148,6 +150,52 @@
 
               <section class="col-12 mb-2">
                 <p class="mb-0">Supported Public Key Algorithms</p>
+
+                <!-- ML-DSA Algorithms -->
+                <div x-show="_canShowMLDSA">
+                  <!-- Algorithm - ML-DSA 44 -->
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input
+                      type="checkbox"
+                      name="optAlgMLDSA44"
+                      id="optAlgMLDSA44"
+                      class="custom-control-input"
+                      x-model="options.algMLDSA44"
+                    />
+                    <label for="optAlgMLDSA44" class="custom-control-label">
+                      ML-DSA 44
+                    </label>
+                  </div>
+
+                  <!-- Algorithm - ML-DSA 65 -->
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input
+                      type="checkbox"
+                      name="optAlgMLDSA65"
+                      id="optAlgMLDSA65"
+                      class="custom-control-input"
+                      x-model="options.algMLDSA65"
+                    />
+                    <label for="optAlgMLDSA65" class="custom-control-label">
+                      ML-DSA 65
+                    </label>
+                  </div>
+
+                  <!-- Algorithm - ML-DSA 87 -->
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input
+                      type="checkbox"
+                      name="optAlgMLDSA87"
+                      id="optAlgMLDSA87"
+                      class="custom-control-input"
+                      x-model="options.algMLDSA87"
+                    />
+                    <label for="optAlgMLDSA87" class="custom-control-label">
+                      ML-DSA 87
+                    </label>
+                  </div>
+                </div>
+
                 <!-- Algorithm - Ed25519 -->
                 <div class="custom-control custom-checkbox custom-control-inline">
                   <input
@@ -344,6 +392,16 @@
             Changing <strong>Authentication Settings > User Verification</strong> will restart
             conditional UI using the chosen setting.
           </li>
+          <li>
+            Usernames are remembered across page loads. Clearing the text box or clicking
+            <strong>Reset Settings</strong> will clear any remembered username.
+          </li>
+          <li>
+            Add <strong>?debug=true</strong> to the URL and press Enter to enter "debug mode."
+            In debug mode, additional lower-level information will become available on the profile
+            page after login. A cookie gets set to remember this so you do not need to set the
+            query parameter every time.
+          </li>
         </ul>
         <button
           id="advanced-settings-tips-tricks-close"
@@ -397,6 +455,15 @@
           this.options.algES256 = currentParams.get('algES256') === 'true';
           this.options.algRS256 = currentParams.get('algRS256') === 'true';
           this.options.algEd25519 = currentParams.get('algEd25519') === 'true';
+          this.options.algMLDSA44 = currentParams.get('algMLDSA44') === 'true';
+          this.options.algMLDSA65 = currentParams.get('algMLDSA65') === 'true';
+          this.options.algMLDSA87 = currentParams.get('algMLDSA87') === 'true';
+          // Grant users who manually add the ML-DSA query param some UI
+          this._canShowMLDSA = (
+            this.options.algMLDSA44
+            || this.options.algMLDSA65
+            || this.options.algMLDSA87
+          );
 
           const _regUserVerification = currentParams.get('regUserVerification');
           for (const uv of this.userVerificationOpts) {
@@ -431,19 +498,21 @@
           }
 
           const _regHintsStr = currentParams.get('regHints');
-          _regHintsStr.split(',').forEach((hint) => {
-            if (hint === 'security-key') {
-              this._regHints.securityKey = true;
-              this._toggleRegHint('security-key', true);
-            } else if (hint === 'client-device') {
-              this._regHints.clientDevice = true;
-              this._toggleRegHint('client-device', true);
-            } else if (hint === 'hybrid') {
-              this._regHints.hybrid = true;
-              this._toggleRegHint('hybrid', true);
-            }
-          });
-          this._formatRegHintsForUI();
+          if (_regHintsStr) {
+            _regHintsStr.split(',').forEach((hint) => {
+              if (hint === 'security-key') {
+                this._regHints.securityKey = true;
+                this._toggleRegHint('security-key', true);
+              } else if (hint === 'client-device') {
+                this._regHints.clientDevice = true;
+                this._toggleRegHint('client-device', true);
+              } else if (hint === 'hybrid') {
+                this._regHints.hybrid = true;
+                this._toggleRegHint('hybrid', true);
+              }
+            });
+            this._formatRegHintsForUI();
+          }
 
           /**
            * Authentication Settings
@@ -457,30 +526,46 @@
           }
 
           const _authHintsStr = currentParams.get('authHints');
-          _authHintsStr.split(',').forEach((hint) => {
-            if (hint === 'security-key') {
-              this._authHints.securityKey = true;
-              this._toggleAuthHint('security-key', true);
-            } else if (hint === 'client-device') {
-              this._authHints.clientDevice = true;
-              this._toggleAuthHint('client-device', true);
-            } else if (hint === 'hybrid') {
-              this._authHints.hybrid = true;
-              this._toggleAuthHint('hybrid', true);
-            }
-          });
-          this._formatAuthHintsForUI();
+          if (_authHintsStr) {
+            _authHintsStr.split(',').forEach((hint) => {
+              if (hint === 'security-key') {
+                this._authHints.securityKey = true;
+                this._toggleAuthHint('security-key', true);
+              } else if (hint === 'client-device') {
+                this._authHints.clientDevice = true;
+                this._toggleAuthHint('client-device', true);
+              } else if (hint === 'hybrid') {
+                this._authHints.hybrid = true;
+                this._toggleAuthHint('hybrid', true);
+              }
+            });
+            this._formatAuthHintsForUI();
+          }
         }
 
         // Update query parameters when options change
         this.$watch('options', () => {
           const newParams = new URLSearchParams(this.options);
+
+          // Still testing these query params, so require manual opt-in
+          if (!this._canShowMLDSA) {
+            newParams.delete("algMLDSA44");
+            newParams.delete("algMLDSA65");
+            newParams.delete("algMLDSA87");
+          }
+
           window.history.replaceState(
             {},
             "",
             `${location.pathname}?${newParams}`
           );
         });
+
+        /**
+         * Restore the remembered username, if one exists
+         */
+        const savedUsername = this._getUsername();
+        this.username = savedUsername;
 
         /**
          * Format the list of registration hints to help confirm the order of preference
@@ -510,6 +595,7 @@
       webauthnSupported: true,
       showAdvancedSettings: false,
       formAction: 'registration',
+      _canShowMLDSA: false,
       options: {
         // Registration
         regUserVerification: 'preferred',
@@ -518,6 +604,9 @@
         algEd25519: true,
         algES256: true,
         algRS256: true,
+        algMLDSA44: false,
+        algMLDSA65: false,
+        algMLDSA87: false,
         discoverableCredential: 'preferred',
         regHints: [],
         // Authentication
@@ -604,6 +693,8 @@
         }
       },
       resetSettings() {
+        // Clear saved username
+        this._resetUsername();
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
       },
@@ -625,6 +716,13 @@
       handleSelectAuthHintsHybrid() {
         this._toggleAuthHint('hybrid', this._authHints.hybrid);
       },
+      /**
+       * @param {InputEvent} event
+       */
+      handleSaveUsername(event) {
+        const newUsername = event.target.value;
+        this._saveUsername(newUsername);
+      },
       // Tips & Tricks Modal
       openTipsTricks() {
         document.getElementById('advanced-settings-tips-tricks').showModal();
@@ -642,6 +740,9 @@
           algEd25519,
           algES256,
           algRS256,
+          algMLDSA44,
+          algMLDSA65,
+          algMLDSA87,
           attestation,
           attachment,
           discoverableCredential,
@@ -649,6 +750,18 @@
         } = this.options;
 
         const algorithms = [];
+
+        if (algMLDSA44) {
+          algorithms.push('mldsa44');
+        }
+
+        if (algMLDSA65) {
+          algorithms.push('mldsa65');
+        }
+
+        if (algMLDSA87) {
+          algorithms.push('mldsa87');
+        }
 
         if (algEd25519) {
           algorithms.push('ed25519');
@@ -860,6 +973,28 @@
         if (elemUsername.value && !this.username) {
           this.username = elemUsername.value;
         }
+      },
+      /**
+       * Retrieve the remembered username (if it exists)
+       * @returns {string}
+       */
+      _getUsername() {
+        return window.localStorage.getItem('savedUsername') ?? "";
+      },
+      /**
+       * Remember the username so the user doesn't have to keep entering it
+       * @param {string | null} newUsername
+       * @returns {void}
+       */
+      _saveUsername(newUsername) {
+        window.localStorage.setItem('savedUsername', newUsername);
+      },
+      /**
+       * Clear any remembered username
+       * @returns {void}
+       */
+      _resetUsername() {
+        window.localStorage.removeItem('savedUsername');
       },
     }));
   });

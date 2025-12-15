@@ -16,7 +16,10 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
     Verify the response from a WebAuthn registration ceremony
     """
 
-    body_json: dict = json.loads(request.body)
+    try:
+        body_json: dict = json.loads(request.body)
+    except Exception as exc:
+        return JsonResponseBadRequest({"error": f"Could not parse request: {str(exc)}"})
 
     response_form = RegistrationResponseForm(body_json)
 
@@ -51,7 +54,10 @@ def registration_verification(request: HttpRequest) -> JsonResponse:
 
         # If we can't determine this using credProps then let's look at the registration options
         if is_discoverable_credential is None:
-            if options.authenticator_selection.resident_key == ResidentKeyRequirement.REQUIRED:
+            if (
+                options.authenticator_selection
+                and options.authenticator_selection.resident_key == ResidentKeyRequirement.REQUIRED
+            ):
                 is_discoverable_credential = True
 
         # Store credential for later

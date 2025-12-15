@@ -5,3 +5,6 @@ _psql
 *.env
 .DS_Store
 _app/**/styles/*.css
+_app/.venv
+_app/pyproject.toml
+_app/uv.lock

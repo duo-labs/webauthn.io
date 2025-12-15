@@ -84,6 +84,15 @@
             <br>
             <strong>AAGUID:</strong> {{ cred.aaguid }}
           </li>
+          {% if cred.debug_info %}
+          <li>
+            <strong>Debug Information:</strong>
+            <br>
+            <strong>Public Key Type:</strong> {{ cred.debug_info.public_key.kty }}
+            <br>
+            <strong>Public Key Algorithm:</strong> {{ cred.debug_info.public_key.alg }}
+          </li>
+          {% endif %}
           <li class="credential-delete">
             <button type="button" class="btn btn-outline-danger" onclick="deleteCredential('{{cred.raw_id}}')">Delete</button>
           </li>
