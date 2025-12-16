@@ -1,13 +1,13 @@
 services:
   redis:
-    restart: unless-stopped
+    restart: always
     image: redis:6.2.6
     networks:
       - redis_network
 
   caddy:
     image: caddy:2.6.1-alpine
-    restart: unless-stopped
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -23,7 +23,7 @@ services:
       - PROD_CSRF_ORIGIN
 
   django:
-    restart: unless-stopped
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
