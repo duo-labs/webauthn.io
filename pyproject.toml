@@ -10,7 +10,7 @@ dependencies = [
     "gunicorn==23.0.0",
     "hiredis==3.3.0",
     "redis==5.2.0",
-    "webauthn==2.8.0a1",
+    "webauthn==2.8.0",
 ]
 
 [dependency-groups]
