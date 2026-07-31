@@ -246,7 +246,7 @@
                   input-class="custom-control-input"
                   label-class="custom-control-label"
                   stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
-                  x-init="$el.items = regHintOpts"
+                  x-init="$el.items = regHintOpts; $el.value = options.regHints"
                   @order-change="options.regHints = $event.detail.value"
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
@@ -290,7 +290,7 @@
                   input-class="custom-control-input"
                   label-class="custom-control-label"
                   stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
-                  x-init="$el.items = authHintOpts"
+                  x-init="$el.items = authHintOpts; $el.value = options.authHints"
                   @order-change="options.authHints = $event.detail.value"
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
@@ -438,9 +438,7 @@
 
           const _regHintsStr = currentParams.get('regHints');
           if (_regHintsStr) {
-            const regHintsOrder = _regHintsStr.split(',');
-            this.options.regHints = regHintsOrder;
-            document.getElementById('reg-hints-list').value = regHintsOrder;
+            this.options.regHints = _regHintsStr.split(',');
           }
 
           /**
@@ -456,9 +454,7 @@
 
           const _authHintsStr = currentParams.get('authHints');
           if (_authHintsStr) {
-            const authHintsOrder = _authHintsStr.split(',');
-            this.options.authHints = authHintsOrder;
-            document.getElementById('auth-hints-list').value = authHintsOrder;
+            this.options.authHints = _authHintsStr.split(',');
           }
         }
 
