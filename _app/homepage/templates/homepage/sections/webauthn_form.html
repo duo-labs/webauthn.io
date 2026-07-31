@@ -513,12 +513,7 @@
         text: '',
       },
       // Possible values for options.regHints and options.authHints
-      regHintOpts: [
-        { label: 'Security Key', value: 'security-key' },
-        { label: 'Client Device', value: 'client-device' },
-        { label: 'Hybrid', value: 'hybrid' },
-      ],
-      authHintOpts: [
+      hintOpts: [
         { label: 'Security Key', value: 'security-key' },
         { label: 'Client Device', value: 'client-device' },
         { label: 'Hybrid', value: 'hybrid' },
@@ -593,7 +588,7 @@
        * @param {OrderedCheckboxList} listEl
        */
       initRegHintsList(listEl) {
-        listEl.items = this.regHintOpts;
+        listEl.items = this.hintOpts;
         listEl.value = this.options.regHints;
       },
       /**
@@ -606,7 +601,7 @@
        * @param {OrderedCheckboxList} listEl
        */
       initAuthHintsList(listEl) {
-        listEl.items = this.authHintOpts;
+        listEl.items = this.hintOpts;
         listEl.value = this.options.authHints;
       },
       /**
