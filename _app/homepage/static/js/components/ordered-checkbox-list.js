@@ -1,24 +1,35 @@
 /**
- * <ordered-checkbox-list>
- *
+ * @typedef {Object} OrderedCheckboxListItem
+ * @property {string} value
+ * @property {string} label
+ */
+
+/**
+ * @typedef {Object} OrderChangeEventDetail
+ * @property {string[]} value - The ordered array of currently-checked values.
+ */
+
+/**
  * Renders a list of checkboxes from `items`. Checking a box appends its value to the end
- * of the ordered `value` array; unchecking it removes it from wherever it sits. Fires
- * `order-change` (CustomEvent, detail: { value: string[] }) on every change.
+ * of the ordered `value` array; unchecking it removes it from wherever it sits.
  *
- * Attributes:
- *   wrapper-class, input-class, label-class - applied verbatim to the shadow-internal
- *     wrapper/input/label elements, for consumers who want to reuse an existing stylesheet
- *   stylesheet-href - optional <link rel="stylesheet"> injected into the shadow root so
- *     wrapper-class/input-class/label-class actually render styled
+ * @element ordered-checkbox-list
  *
- * Properties:
- *   items - array of { value, label } (or plain strings) describing the checkboxes to render
- *   value - ordered array of currently-checked values; get returns live order, set
- *     reconciles checked state and order (e.g. to restore from a URL query param)
+ * @attr {string} wrapper-class - Applied verbatim to the shadow-internal wrapper `<div>`,
+ *   for consumers who want to reuse an existing stylesheet.
+ * @attr {string} input-class - Applied verbatim to the shadow-internal `<input>`.
+ * @attr {string} label-class - Applied verbatim to the shadow-internal `<label>`.
+ * @attr {string} stylesheet-href - Optional `<link rel="stylesheet">` href injected into
+ *   the shadow root so `wrapper-class`/`input-class`/`label-class` actually render styled.
  *
- * CSS Parts: wrapper, input, label (per checkbox row) for ::part() styling.
+ * @csspart wrapper - The `<div>` wrapping each checkbox/label pair.
+ * @csspart input - Each `<input type="checkbox">`.
+ * @csspart label - Each `<label>`.
+ *
+ * @fires {CustomEvent<OrderChangeEventDetail>} order-change - Fired after every check/uncheck.
  */
 class OrderedCheckboxList extends HTMLElement {
+  /** @returns {string[]} */
   static get observedAttributes() {
     return ["wrapper-class", "input-class", "label-class", "stylesheet-href"];
   }
@@ -30,18 +41,26 @@ class OrderedCheckboxList extends HTMLElement {
     this.attachShadow({ mode: "open" });
   }
 
+  /** @returns {void} */
   connectedCallback() {
     this._render();
   }
 
+  /** @returns {void} */
   attributeChangedCallback() {
     this._render();
   }
 
+  /** @type {OrderedCheckboxListItem[]} */
   get items() {
     return this._items;
   }
 
+  /**
+   * @param {(OrderedCheckboxListItem | string)[]} newItems - Plain strings are normalized
+   *   to `{ value: s, label: s }`. Re-renders, preserving checked state for values that
+   *   still exist.
+   */
   set items(newItems) {
     this._items = (newItems ?? []).map((item) =>
       typeof item === "string" ? { value: item, label: item } : item
@@ -52,15 +71,21 @@ class OrderedCheckboxList extends HTMLElement {
     this._render();
   }
 
+  /** @type {string[]} The ordered array of currently-checked values. */
   get value() {
     return [...this._order];
   }
 
+  /**
+   * @param {string[]} newValue - Reconciles which boxes are checked and their order (e.g.
+   *   to restore state from a URL query param).
+   */
   set value(newValue) {
     this._order = [...(newValue ?? [])];
     this._render();
   }
 
+  /** @returns {void} */
   _render() {
     if (!this.shadowRoot) {
       return;
@@ -102,6 +127,10 @@ class OrderedCheckboxList extends HTMLElement {
     });
   }
 
+  /**
+   * @param {Event & { target: HTMLInputElement }} event
+   * @returns {void}
+   */
   _handleChange(event) {
     const value = event.target.dataset.value;
 
@@ -123,6 +152,7 @@ class OrderedCheckboxList extends HTMLElement {
     );
   }
 
+  /** @returns {string} */
   _instanceId() {
     if (!this._id) {
       this._id = this.id || `ordered-checkbox-list-${Math.random().toString(36).slice(2)}`;
