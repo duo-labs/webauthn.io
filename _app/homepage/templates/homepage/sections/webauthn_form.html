@@ -246,8 +246,8 @@
                   input-class="custom-control-input"
                   label-class="custom-control-label"
                   stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
-                  x-init="$el.items = regHintOpts; $el.value = options.regHints"
-                  @order-change="options.regHints = $event.detail.value"
+                  x-init="initRegHintsList($el)"
+                  @order-change="handleRegHintsOrderChange($event)"
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
@@ -290,8 +290,8 @@
                   input-class="custom-control-input"
                   label-class="custom-control-label"
                   stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
-                  x-init="$el.items = authHintOpts; $el.value = options.authHints"
-                  @order-change="options.authHints = $event.detail.value"
+                  x-init="initAuthHintsList($el)"
+                  @order-change="handleAuthHintsOrderChange($event)"
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
@@ -588,6 +588,32 @@
         this._resetUsername();
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
+      },
+      /**
+       * @param {OrderedCheckboxList} listEl
+       */
+      initRegHintsList(listEl) {
+        listEl.items = this.regHintOpts;
+        listEl.value = this.options.regHints;
+      },
+      /**
+       * @param {CustomEvent} event
+       */
+      handleRegHintsOrderChange(event) {
+        this.options.regHints = event.detail.value;
+      },
+      /**
+       * @param {OrderedCheckboxList} listEl
+       */
+      initAuthHintsList(listEl) {
+        listEl.items = this.authHintOpts;
+        listEl.value = this.options.authHints;
+      },
+      /**
+       * @param {CustomEvent} event
+       */
+      handleAuthHintsOrderChange(event) {
+        this.options.authHints = event.detail.value;
       },
       /**
        * @param {InputEvent} event
