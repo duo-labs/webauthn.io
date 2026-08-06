@@ -455,6 +455,11 @@
             this.options.regHints = _regHintsStr.split(',');
           }
 
+          const _regPubKeyAlgs = currentParams.get('regPubKeyAlgs');
+          if (_regPubKeyAlgs) {
+            this.options.regPubKeyAlgs = _regPubKeyAlgs.split(',');
+          }
+
           /**
            * Authentication Settings
            */
