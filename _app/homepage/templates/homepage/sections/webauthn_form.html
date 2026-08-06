@@ -13,6 +13,8 @@
               placeholder="example_username"
               x-model="username"
               autocomplete="username webauthn"
+              autocapitalize="off"
+              autocorrect="off"
               autofocus
               @input.debounce="handleSaveUsername"
             />
