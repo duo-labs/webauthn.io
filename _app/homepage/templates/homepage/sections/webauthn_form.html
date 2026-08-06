@@ -629,7 +629,7 @@
         listEl.value = this.options.regHints;
       },
       /**
-       * @param {CustomEvent} event
+       * @param {CustomEvent<OrderChangeEventDetail>} event
        */
       handleRegHintsOrderChange(event) {
         this.options.regHints = event.detail.value;
