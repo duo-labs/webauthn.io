@@ -235,6 +235,20 @@
                     RS256
                   </label>
                 </div>
+                <p class="mb-0">Supported Public Key Algorithms<br>(most to least preferred)</p>
+                <ordered-checkbox-list
+                  id="reg-pubkey-algs-list"
+                  wrapper-class="custom-control custom-checkbox custom-control-inline"
+                  input-class="custom-control-input"
+                  label-class="custom-control-label"
+                  stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
+                  x-init="initRegPubKeyAlgsList($el)"
+                  @order-change="handleRegPubKeyAlgsOrderChange($event)"
+                ></ordered-checkbox-list>
+                <p class="mb-0 text-secondary">
+                  Order:
+                  <span x-text="formatListOrder(options.regPubKeyAlgs)"></span>
+                </p>
               </section>
 
               <!-- Registration Hints -->
@@ -518,6 +532,15 @@
         { label: 'Client Device', value: 'client-device' },
         { label: 'Hybrid', value: 'hybrid' },
       ],
+      // Possible values for options.regPubKeyAlgs
+      pubKeyAlgs: [
+        { label: 'ML-DSA 44', value: 'mldsa44' },
+        { label: 'ML-DSA 65', value: 'mldsa65' },
+        { label: 'ML-DSA 87', value: 'mldsa87' },
+        { label: 'Ed25519', value: 'ed25519' },
+        { label: 'ES256', value: 'es256' },
+        { label: 'RS256', value: 'rs256' },
+      ],
       // Possible values for options.regUserVerification and options.authUserVerification
       userVerificationOpts: [
         { label: 'Discouraged', value: 'discouraged' },
@@ -583,6 +606,19 @@
         this._resetUsername();
         // Reload the page sans query params
         window.location.href = '{% url "index" %}';
+      },
+      /**
+       * @param {OrderedCheckboxList} listEl
+       */
+      initRegPubKeyAlgsList(listEl) {
+        listEl.items = this.pubKeyAlgs;
+        listEl.value = this.options.regPubKeyAlgs;
+      },
+      /**
+       * @param {CustomEvent<OrderChangeEventDetail>} event
+       */
+      handleRegPubKeyAlgsOrderChange(event) {
+        this.options.regPubKeyAlgs = event.detail.value;
       },
       /**
        * @param {OrderedCheckboxList} listEl
