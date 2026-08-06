@@ -149,92 +149,20 @@
               </label>
 
               <section class="col-12 mb-2">
-                <p class="mb-0">Supported Public Key Algorithms</p>
-
-                <!-- ML-DSA Algorithms -->
-                <!-- Algorithm - ML-DSA-44 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgMLDSA44"
-                    id="optAlgMLDSA44"
-                    class="custom-control-input"
-                    x-model="options.algMLDSA44"
-                  />
-                  <label for="optAlgMLDSA44" class="custom-control-label alg-label">
-                    ML-DSA-44
-                  </label>
-                </div>
-
-                <!-- Algorithm - ML-DSA-65 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgMLDSA65"
-                    id="optAlgMLDSA65"
-                    class="custom-control-input"
-                    x-model="options.algMLDSA65"
-                  />
-                  <label for="optAlgMLDSA65" class="custom-control-label alg-label">
-                    ML-DSA-65
-                  </label>
-                </div>
-
-                <!-- Algorithm - ML-DSA-87 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgMLDSA87"
-                    id="optAlgMLDSA87"
-                    class="custom-control-input"
-                    x-model="options.algMLDSA87"
-                  />
-                  <label for="optAlgMLDSA87" class="custom-control-label alg-label">
-                    ML-DSA-87
-                  </label>
-                </div>
-
-                <!-- Algorithm - Ed25519 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgEd25519"
-                    id="optAlgEd25519"
-                    class="custom-control-input"
-                    x-model="options.algEd25519"
-                  />
-                  <label for="optAlgEd25519" class="custom-control-label alg-label">
-                    Ed25519
-                  </label>
-                </div>
-
-                <!-- Algorithm - ES256 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgES256"
-                    id="optAlgES256"
-                    class="custom-control-input"
-                    x-model="options.algES256"
-                  />
-                  <label for="optAlgES256" class="custom-control-label alg-label">
-                    ES256
-                  </label>
-                </div>
-
-                <!-- Algorithm - RS256 -->
-                <div class="custom-control custom-checkbox custom-control-inline">
-                  <input
-                    type="checkbox"
-                    name="optAlgRS256"
-                    id="optAlgRS256"
-                    class="custom-control-input"
-                    x-model="options.algRS256"
-                  />
-                  <label for="optAlgRS256" class="custom-control-label alg-label">
-                    RS256
-                  </label>
-                </div>
+                <p class="mb-0">Supported Public Key Algorithms<br>(most to least preferred)</p>
+                <ordered-checkbox-list
+                  id="reg-pubkey-algs-list"
+                  wrapper-class="custom-control custom-checkbox custom-control-inline"
+                  input-class="custom-control-input"
+                  label-class="custom-control-label"
+                  stylesheet-href="{% static "css/bootstrap-v4.6.1.css" %}"
+                  x-init="initRegPubKeyAlgsList($el)"
+                  @order-change="handleRegPubKeyAlgsOrderChange($event)"
+                ></ordered-checkbox-list>
+                <p class="mb-0 text-secondary">
+                  Order:
+                  <span x-text="formatListOrder(options.regPubKeyAlgs)"></span>
+                </p>
               </section>
 
               <!-- Registration Hints -->
@@ -251,7 +179,7 @@
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
-                  <span x-text="formatHintsOrder(options.regHints)"></span>
+                  <span x-text="formatListOrder(options.regHints)"></span>
                 </p>
               </section>
             </div>
@@ -295,7 +223,7 @@
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
-                  <span x-text="formatHintsOrder(options.authHints)"></span>
+                  <span x-text="formatListOrder(options.authHints)"></span>
                 </p>
               </section>
             </div>
@@ -441,6 +369,11 @@
             this.options.regHints = _regHintsStr.split(',');
           }
 
+          const _regPubKeyAlgs = currentParams.get('regPubKeyAlgs');
+          if (_regPubKeyAlgs) {
+            this.options.regPubKeyAlgs = _regPubKeyAlgs.split(',');
+          }
+
           /**
            * Authentication Settings
            */
@@ -494,13 +427,8 @@
         regUserVerification: 'preferred',
         attestation: 'none',
         attachment: 'all',
-        algEd25519: true,
-        algES256: true,
-        algRS256: true,
-        algMLDSA44: false,
-        algMLDSA65: false,
-        algMLDSA87: false,
         discoverableCredential: 'preferred',
+        regPubKeyAlgs: ['ed25519', 'es256', 'rs256'], // See `pubKeyAlgs` for possible values
         regHints: [],
         // Authentication
         authUserVerification: 'preferred',
@@ -517,6 +445,15 @@
         { label: 'Security Key', value: 'security-key' },
         { label: 'Client Device', value: 'client-device' },
         { label: 'Hybrid', value: 'hybrid' },
+      ],
+      // Possible values for options.regPubKeyAlgs
+      pubKeyAlgs: [
+        { label: 'ML-DSA 44', value: 'mldsa44' },
+        { label: 'ML-DSA 65', value: 'mldsa65' },
+        { label: 'ML-DSA 87', value: 'mldsa87' },
+        { label: 'Ed25519', value: 'ed25519' },
+        { label: 'ES256', value: 'es256' },
+        { label: 'RS256', value: 'rs256' },
       ],
       // Possible values for options.regUserVerification and options.authUserVerification
       userVerificationOpts: [
@@ -587,12 +524,25 @@
       /**
        * @param {OrderedCheckboxList} listEl
        */
+      initRegPubKeyAlgsList(listEl) {
+        listEl.items = this.pubKeyAlgs;
+        listEl.value = this.options.regPubKeyAlgs;
+      },
+      /**
+       * @param {CustomEvent<OrderChangeEventDetail>} event
+       */
+      handleRegPubKeyAlgsOrderChange(event) {
+        this.options.regPubKeyAlgs = event.detail.value;
+      },
+      /**
+       * @param {OrderedCheckboxList} listEl
+       */
       initRegHintsList(listEl) {
         listEl.items = this.hintOpts;
         listEl.value = this.options.regHints;
       },
       /**
-       * @param {CustomEvent} event
+       * @param {CustomEvent<OrderChangeEventDetail>} event
        */
       handleRegHintsOrderChange(event) {
         this.options.regHints = event.detail.value;
@@ -611,11 +561,11 @@
         this.options.authHints = event.detail.value;
       },
       /**
-       * @param {string[]} hints
+       * @param {string[]} list
        * @returns {string}
        */
-      formatHintsOrder(hints) {
-        return JSON.stringify(hints).replace(/,/g, ", ");
+      formatListOrder(list) {
+        return JSON.stringify(list).replace(/,/g, ", ");
       },
       /**
        * @param {InputEvent} event
@@ -638,43 +588,12 @@
         // Submit options
         const {
           regUserVerification,
-          algEd25519,
-          algES256,
-          algRS256,
-          algMLDSA44,
-          algMLDSA65,
-          algMLDSA87,
           attestation,
           attachment,
           discoverableCredential,
           regHints,
+          regPubKeyAlgs,
         } = this.options;
-
-        const algorithms = [];
-
-        if (algMLDSA44) {
-          algorithms.push('mldsa44');
-        }
-
-        if (algMLDSA65) {
-          algorithms.push('mldsa65');
-        }
-
-        if (algMLDSA87) {
-          algorithms.push('mldsa87');
-        }
-
-        if (algEd25519) {
-          algorithms.push('ed25519');
-        }
-
-        if (algES256) {
-          algorithms.push('es256');
-        }
-
-        if (algRS256) {
-          algorithms.push('rs256');
-        }
 
         if (!this.username) {
           this.showErrorAlert('Please enter a username to register');
@@ -693,7 +612,7 @@
             // e.g. 'platform'
             attachment,
             // e.g. ['es256', 'rs256']
-            algorithms,
+            algorithms: regPubKeyAlgs,
             // e.g. 'preferred'
             discoverable_credential: discoverableCredential,
             // e.g. ['security-key', 'hybrid']

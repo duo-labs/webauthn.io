@@ -57,6 +57,9 @@ class TestRegistrationService(TestCase):
         )
 
     def test_options_pub_key_cred_params_order(self):
+        """
+        Make sure the order of options specified on the frontend is respected on the backend
+        """
         options = self.service.generate_registration_options(
             username="mmiller",
             # Purposefully putting algs in reverse order, from least to most desirable
@@ -72,12 +75,12 @@ class TestRegistrationService(TestCase):
         pk_cred_params = options.pub_key_cred_params
 
         self.assertEqual(len(options.pub_key_cred_params), 6)
-        self.assertEqual(pk_cred_params[0].alg, COSEAlgorithmIdentifier.ML_DSA_44)
-        self.assertEqual(pk_cred_params[1].alg, COSEAlgorithmIdentifier.ML_DSA_65)
-        self.assertEqual(pk_cred_params[2].alg, COSEAlgorithmIdentifier.ML_DSA_87)
-        self.assertEqual(pk_cred_params[3].alg, COSEAlgorithmIdentifier.EDDSA)
-        self.assertEqual(pk_cred_params[4].alg, COSEAlgorithmIdentifier.ECDSA_SHA_256)
-        self.assertEqual(pk_cred_params[5].alg, COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
+        self.assertEqual(pk_cred_params[0].alg, COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
+        self.assertEqual(pk_cred_params[1].alg, COSEAlgorithmIdentifier.ECDSA_SHA_256)
+        self.assertEqual(pk_cred_params[2].alg, COSEAlgorithmIdentifier.EDDSA)
+        self.assertEqual(pk_cred_params[3].alg, COSEAlgorithmIdentifier.ML_DSA_87)
+        self.assertEqual(pk_cred_params[4].alg, COSEAlgorithmIdentifier.ML_DSA_65)
+        self.assertEqual(pk_cred_params[5].alg, COSEAlgorithmIdentifier.ML_DSA_44)
 
     def test_parse_hints(self) -> None:
         options = self.service.generate_registration_options(

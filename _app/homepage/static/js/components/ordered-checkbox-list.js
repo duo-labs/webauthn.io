@@ -36,7 +36,9 @@ class OrderedCheckboxList extends HTMLElement {
 
   constructor() {
     super();
+    /** @type {OrderedCheckboxListItem[]} */
     this._items = [];
+    /** @type {string[]} */
     this._order = [];
     this.attachShadow({ mode: "open" });
   }
