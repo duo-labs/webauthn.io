@@ -79,37 +79,25 @@ class RegistrationService:
         supported_pub_key_algs: Optional[List[COSEAlgorithmIdentifier]] = None
         if len(algorithms) > 0:
             """
-            Algorithms below are currently sorted by how desirable the various groups of algorithms
-            will be for RPs to request. Put another way, PQC algorithms will be higher-priority in
-            pubKeyCredParams over classical algorithms when both are selected in Advanced Settings.
-            This will make it easier to e.g. test the behavior of existing non-PQC authenticators
-            when ML-DSA-44 is first, followed by EDDSA, to ensure proper fallback to EDDSA.
-
-            It also (currently) matches the order the algorithms are displayed in Advanced Settings.
-            Let's assume that this goes a long way in helping users intuit the order the algorithms
-            will ultimately be in when included in the .create() call.
+            Map algorithm IDs from the front end to proper COSE algorithm IDs
             """
             supported_pub_key_algs = []
 
-            # PQC Algorithms
-            if "mldsa44" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_44)
-
-            if "mldsa65" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_65)
-
-            if "mldsa87" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_87)
-
-            # Classical Algorithms
-            if "ed25519" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.EDDSA)
-
-            if "es256" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.ECDSA_SHA_256)
-
-            if "rs256" in algorithms:
-                supported_pub_key_algs.append(COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256)
+            for alg in algorithms:
+                if alg == "mldsa44":
+                    supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_44)
+                elif alg == "mldsa65":
+                    supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_65)
+                elif alg == "mldsa87":
+                    supported_pub_key_algs.append(COSEAlgorithmIdentifier.ML_DSA_87)
+                elif alg == "ed25519":
+                    supported_pub_key_algs.append(COSEAlgorithmIdentifier.EDDSA)
+                elif alg == "es256":
+                    supported_pub_key_algs.append(COSEAlgorithmIdentifier.ECDSA_SHA_256)
+                elif alg == "rs256":
+                    supported_pub_key_algs.append(
+                        COSEAlgorithmIdentifier.RSASSA_PKCS1_v1_5_SHA_256
+                    )
 
         _hints = [PublicKeyCredentialHint(hint) for hint in hints]
 
