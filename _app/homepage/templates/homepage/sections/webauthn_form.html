@@ -690,6 +690,7 @@
           attachment,
           discoverableCredential,
           regHints,
+          regPubKeyAlgs,
         } = this.options;
 
         const algorithms = [];
@@ -735,7 +736,7 @@
             // e.g. 'platform'
             attachment,
             // e.g. ['es256', 'rs256']
-            algorithms,
+            algorithms: regPubKeyAlgs,
             // e.g. 'preferred'
             discoverable_credential: discoverableCredential,
             // e.g. ['security-key', 'hybrid']
