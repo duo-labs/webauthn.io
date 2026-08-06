@@ -265,7 +265,7 @@
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
-                  <span x-text="formatHintsOrder(options.regHints)"></span>
+                  <span x-text="formatListOrder(options.regHints)"></span>
                 </p>
               </section>
             </div>
@@ -309,7 +309,7 @@
                 ></ordered-checkbox-list>
                 <p class="mb-0 text-secondary">
                   Order:
-                  <span x-text="formatHintsOrder(options.authHints)"></span>
+                  <span x-text="formatListOrder(options.authHints)"></span>
                 </p>
               </section>
             </div>
@@ -647,11 +647,11 @@
         this.options.authHints = event.detail.value;
       },
       /**
-       * @param {string[]} hints
+       * @param {string[]} list
        * @returns {string}
        */
-      formatHintsOrder(hints) {
-        return JSON.stringify(hints).replace(/,/g, ", ");
+      formatListOrder(list) {
+        return JSON.stringify(list).replace(/,/g, ", ");
       },
       /**
        * @param {InputEvent} event
